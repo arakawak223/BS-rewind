@@ -198,6 +198,18 @@ export default function DraggableBSBar({
   // ---- sub-components ----
   const isActive = (id) => activeHandle === id;
 
+  // Draggable block: each colored section is itself a drag zone
+  const DragBlock = ({ handleId, style, className = "", children }) => (
+    <div
+      className={`w-full flex items-center justify-center text-xs font-bold select-none shrink-0 cursor-row-resize ${className}`}
+      style={style}
+      onMouseDown={(e) => handleDragStart(handleId, e)}
+      onTouchStart={(e) => handleDragStart(handleId, e)}
+    >
+      {children}
+    </div>
+  );
+
   const InternalHandle = ({ handleId }) => (
     <div
       className="w-full h-6 cursor-row-resize flex items-center justify-center z-10 group relative touch-none"
@@ -284,16 +296,16 @@ export default function DraggableBSBar({
       )}
 
       {/* ---- columns ---- */}
-      <div className="flex gap-1 items-start relative">
+      <div className="flex gap-1 items-start relative touch-none">
         {/* === Assets === */}
         <div className="flex flex-col items-center w-24">
           <div
-            className="flex flex-col w-full border-2 border-yellow-400/50 rounded-t overflow-hidden bg-slate-800/50 relative"
-            style={{ height: assetColH }}
+            className="flex flex-col w-full border-2 border-yellow-400/50 rounded-t bg-slate-800/50 relative"
+            style={{ height: assetColH, overflow: "visible" }}
           >
-            {/* 現金 */}
-            <div
-              className="w-full flex items-center justify-center text-xs font-bold select-none shrink-0"
+            {/* 現金 — タッチで cash-others ハンドルを操作 */}
+            <DragBlock
+              handleId="cash-others"
               style={{ height: cashH, backgroundColor: COLORS.cash }}
             >
               {cashH > 26 && (
@@ -301,13 +313,13 @@ export default function DraggableBSBar({
                   現金<br />{r(values.cash)}
                 </span>
               )}
-            </div>
+            </DragBlock>
 
             <InternalHandle handleId="cash-others" />
 
-            {/* その他資産 */}
-            <div
-              className="w-full flex items-center justify-center text-xs font-bold select-none shrink-0"
+            {/* その他資産 — タッチで others-goodwill ハンドルを操作 */}
+            <DragBlock
+              handleId="others-goodwill"
               style={{ height: othersH, backgroundColor: COLORS.others }}
             >
               {othersH > 26 && (
@@ -315,13 +327,13 @@ export default function DraggableBSBar({
                   その他<br />{r(values.others)}
                 </span>
               )}
-            </div>
+            </DragBlock>
 
             <InternalHandle handleId="others-goodwill" />
 
-            {/* のれん */}
-            <div
-              className="w-full flex items-center justify-center text-xs font-bold select-none shrink-0"
+            {/* のれん — タッチで others-goodwill ハンドルを操作 */}
+            <DragBlock
+              handleId="others-goodwill"
               style={{
                 height: gwH,
                 backgroundColor: COLORS.goodwill,
@@ -334,7 +346,7 @@ export default function DraggableBSBar({
                   のれん<br />{r(values.goodwill)}
                 </span>
               )}
-            </div>
+            </DragBlock>
           </div>
           <BottomHandle handleId="asset-total" />
           <div className="text-[10px] text-slate-400 text-center">
@@ -364,9 +376,9 @@ export default function DraggableBSBar({
             className="flex flex-col w-full border-2 border-yellow-400/50 rounded-t bg-slate-800/50"
             style={{ height: rightPosH, overflow: "visible" }}
           >
-            {/* 有利子負債 */}
-            <div
-              className="w-full flex items-center justify-center text-xs font-bold select-none shrink-0"
+            {/* 有利子負債 — タッチで debt-otherliab ハンドルを操作 */}
+            <DragBlock
+              handleId="debt-otherliab"
               style={{ height: debtH, backgroundColor: COLORS.debt }}
             >
               {debtH > 38 && (
@@ -374,13 +386,13 @@ export default function DraggableBSBar({
                   有利子<br />負債<br />{r(values.debt)}
                 </span>
               )}
-            </div>
+            </DragBlock>
 
             <InternalHandle handleId="debt-otherliab" />
 
-            {/* その他負債 */}
-            <div
-              className="w-full flex items-center justify-center text-xs font-bold select-none shrink-0"
+            {/* その他負債 — タッチで otherliab-equity ハンドルを操作 */}
+            <DragBlock
+              handleId="otherliab-equity"
               style={{ height: otherLiabH, backgroundColor: COLORS.otherLiab }}
             >
               {otherLiabH > 26 && (
@@ -388,15 +400,15 @@ export default function DraggableBSBar({
                   その他<br />{r(values.otherLiab)}
                 </span>
               )}
-            </div>
+            </DragBlock>
 
             {!isNeg && (
               <>
                 <InternalHandle handleId="otherliab-equity" />
 
-                {/* 純資産 (正) */}
-                <div
-                  className="w-full flex items-center justify-center text-xs font-bold select-none shrink-0"
+                {/* 純資産 (正) — タッチで otherliab-equity ハンドルを操作 */}
+                <DragBlock
+                  handleId="otherliab-equity"
                   style={{ height: equityH, backgroundColor: COLORS.equity }}
                 >
                   {equityH > 26 && (
@@ -404,7 +416,7 @@ export default function DraggableBSBar({
                       純資産<br />{r(values.equity)}
                     </span>
                   )}
-                </div>
+                </DragBlock>
               </>
             )}
           </div>
@@ -414,8 +426,9 @@ export default function DraggableBSBar({
             <>
               <InternalHandle handleId="otherliab-equity" />
               <div className="w-full border-t-2 border-dashed border-white/70" />
-              <div
-                className="w-full flex items-center justify-center text-xs font-bold select-none border-2 border-t-0 border-yellow-400/50 rounded-b"
+              <DragBlock
+                handleId="otherliab-equity"
+                className="border-2 border-t-0 border-yellow-400/50 rounded-b"
                 style={{
                   height: negEquityH,
                   backgroundColor: COLORS.equityNeg,
@@ -428,7 +441,7 @@ export default function DraggableBSBar({
                     債務超過<br />{r(values.equity)}
                   </span>
                 )}
-              </div>
+              </DragBlock>
             </>
           )}
 
