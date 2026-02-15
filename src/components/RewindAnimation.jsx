@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { bsTotal } from "../data/stages";
 
 const COLORS = {
   cash: "#4ade80",
@@ -31,9 +32,11 @@ function interpolateBS(before, after, t) {
 }
 
 /**
- * Animated B/S bar — 6項目構成 / 債務超過突き抜け。
+ * Animated B/S bar with framer-motion dynamic scaling.
+ * Container height changes smoothly as total changes.
+ * maxTotal: スケーリング基準値 (全フェーズの最大値)
  */
-function BSBarAnimated({ data, barHeight, opacity = 1, borderColorHex = "#475569" }) {
+function BSBarAnimated({ data, barHeight, maxTotal, opacity = 1, borderColorHex = "#475569" }) {
   const cash = Math.abs(data.assets.cash || 0);
   const goodwill = Math.abs(data.assets.goodwill || 0);
   const others = Math.abs(data.assets.others || 0);
@@ -46,8 +49,9 @@ function BSBarAnimated({ data, barHeight, opacity = 1, borderColorHex = "#475569
   const absEquity = Math.abs(equity);
 
   const rightPositive = debt + otherLiab + Math.max(equity, 0);
-  const maxPositive = Math.max(assetTotal, rightPositive, 1);
-  const scale = barHeight / maxPositive;
+  const ownMax = Math.max(assetTotal, rightPositive, 1);
+  const referenceMax = maxTotal || ownMax;
+  const scale = barHeight / referenceMax;
 
   const cashH = cash * scale;
   const gwH = goodwill * scale;
@@ -58,120 +62,135 @@ function BSBarAnimated({ data, barHeight, opacity = 1, borderColorHex = "#475569
   const equityH = isNeg ? 0 : equity * scale;
   const negEquityH = isNeg ? absEquity * scale : 0;
 
-  const assetColH = assetTotal * scale;
-  const rightPosH = rightPositive * scale;
+  const assetColH = Math.max(assetTotal * scale, 4);
+  const rightPosH = Math.max(rightPositive * scale, 4);
 
-  const trans = "height 0.05s linear";
   const r = (v) => Math.round(v * 10) / 10;
 
   return (
-    <div className="flex gap-1 items-start">
+    <div className="flex gap-1 items-end">
       {/* Assets */}
-      <div
+      <motion.div
         className="flex flex-col w-20 border rounded overflow-hidden bg-slate-800/30"
-        style={{ borderColor: borderColorHex, height: assetColH, transition: trans }}
+        style={{ borderColor: borderColorHex }}
+        animate={{ height: assetColH }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
       >
-        <div
+        <motion.div
           className="w-full flex items-center justify-center text-xs font-bold select-none shrink-0"
-          style={{ height: cashH, backgroundColor: COLORS.cash, opacity, minHeight: cash > 0.1 ? 2 : 0, transition: trans }}
+          style={{ backgroundColor: COLORS.cash, opacity, minHeight: cash > 0.1 ? 2 : 0 }}
+          animate={{ height: cashH }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
         >
           {cashH > 24 && (
             <span className="text-gray-900 drop-shadow-sm text-center leading-tight px-1">
               現金<br />{r(cash)}
             </span>
           )}
-        </div>
-        <div
+        </motion.div>
+        <motion.div
           className="w-full flex items-center justify-center text-xs font-bold select-none shrink-0"
-          style={{ height: othersH, backgroundColor: COLORS.others, opacity, minHeight: others > 0.1 ? 2 : 0, transition: trans }}
+          style={{ backgroundColor: COLORS.others, opacity, minHeight: others > 0.1 ? 2 : 0 }}
+          animate={{ height: othersH }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
         >
           {othersH > 24 && (
             <span className="text-gray-900 drop-shadow-sm text-center leading-tight px-1">
               その他<br />{r(others)}
             </span>
           )}
-        </div>
+        </motion.div>
         {goodwill > 0.1 && (
-          <div
+          <motion.div
             className="w-full flex items-center justify-center text-xs font-bold select-none shrink-0"
             style={{
-              height: gwH, backgroundColor: COLORS.goodwill, opacity, minHeight: 2, transition: trans,
+              backgroundColor: COLORS.goodwill, opacity, minHeight: 2,
               backgroundImage: "repeating-linear-gradient(45deg, transparent, transparent 3px, rgba(0,0,0,0.1) 3px, rgba(0,0,0,0.1) 6px)",
             }}
+            animate={{ height: gwH }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
           >
             {gwH > 24 && (
               <span className="text-gray-900 drop-shadow-sm text-center leading-tight px-1">
                 のれん<br />{r(goodwill)}
               </span>
             )}
-          </div>
+          </motion.div>
         )}
-      </div>
+      </motion.div>
 
       {/* Right side */}
       <div className="flex flex-col w-20">
         {/* 正の領域 */}
-        <div
+        <motion.div
           className="flex flex-col w-full border rounded-t overflow-hidden bg-slate-800/30"
-          style={{ borderColor: borderColorHex, height: rightPosH, transition: trans }}
+          style={{ borderColor: borderColorHex }}
+          animate={{ height: rightPosH }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
         >
-          <div
+          <motion.div
             className="w-full flex items-center justify-center text-xs font-bold select-none shrink-0"
-            style={{ height: debtH, backgroundColor: COLORS.debt, opacity, minHeight: debt > 0.1 ? 2 : 0, transition: trans }}
+            style={{ backgroundColor: COLORS.debt, opacity, minHeight: debt > 0.1 ? 2 : 0 }}
+            animate={{ height: debtH }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
           >
             {debtH > 36 && (
               <span className="text-gray-900 drop-shadow-sm text-center leading-tight px-1">
                 有利子<br />負債<br />{r(debt)}
               </span>
             )}
-          </div>
-          <div
+          </motion.div>
+          <motion.div
             className="w-full flex items-center justify-center text-xs font-bold select-none shrink-0"
-            style={{ height: otherLiabH, backgroundColor: COLORS.otherLiab, opacity, minHeight: otherLiab > 0.1 ? 2 : 0, transition: trans }}
+            style={{ backgroundColor: COLORS.otherLiab, opacity, minHeight: otherLiab > 0.1 ? 2 : 0 }}
+            animate={{ height: otherLiabH }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
           >
             {otherLiabH > 24 && (
               <span className="text-gray-900 drop-shadow-sm text-center leading-tight px-1">
                 その他<br />{r(otherLiab)}
               </span>
             )}
-          </div>
+          </motion.div>
           {!isNeg && (
-            <div
+            <motion.div
               className="w-full flex items-center justify-center text-xs font-bold select-none shrink-0"
-              style={{ height: equityH, backgroundColor: COLORS.equity, opacity, minHeight: equity > 0.1 ? 2 : 0, transition: trans }}
+              style={{ backgroundColor: COLORS.equity, opacity, minHeight: equity > 0.1 ? 2 : 0 }}
+              animate={{ height: equityH }}
+              transition={{ duration: 0.5, ease: "easeOut" }}
             >
               {equityH > 24 && (
                 <span className="text-gray-900 drop-shadow-sm text-center leading-tight px-1">
                   純資産<br />{r(equity)}
                 </span>
               )}
-            </div>
+            </motion.div>
           )}
-        </div>
+        </motion.div>
 
         {/* 債務超過: 突き抜け */}
         {isNeg && (
           <>
             <div className="w-full border-t-2 border-dashed border-white/70" />
-            <div
+            <motion.div
               className="w-full flex items-center justify-center text-xs font-bold select-none border border-t-0 rounded-b"
               style={{
                 borderColor: borderColorHex,
-                height: negEquityH,
                 backgroundColor: COLORS.equityNeg,
                 opacity,
                 minHeight: 2,
-                transition: trans,
                 backgroundImage:
                   "repeating-linear-gradient(-45deg, transparent, transparent 4px, rgba(0,0,0,0.15) 4px, rgba(0,0,0,0.15) 8px)",
               }}
+              animate={{ height: negEquityH }}
+              transition={{ duration: 0.5, ease: "easeOut" }}
             >
               {negEquityH > 20 && (
                 <span className="text-white drop-shadow-md text-center leading-tight px-1">
                   債務超過<br />{r(absEquity)}
                 </span>
               )}
-            </div>
+            </motion.div>
           </>
         )}
       </div>
@@ -196,6 +215,20 @@ export default function RewindAnimation({
 
   const totalYears = after_year - before_year;
 
+  // Rewind用スケール: deal, after, prediction の最大値
+  const predictionBS = prediction
+    ? {
+        assets: prediction.assets,
+        liabilities: prediction.liabilities,
+        equity: prediction.equity,
+      }
+    : null;
+
+  const dealTotal = bsTotal(startBS);
+  const afterTotal = bsTotal(actualAfter);
+  const predTotal = predictionBS ? bsTotal(predictionBS) : 0;
+  const rewindMax = Math.max(dealTotal, afterTotal, predTotal);
+
   useEffect(() => {
     if (phase !== "counting") return;
 
@@ -217,14 +250,6 @@ export default function RewindAnimation({
 
     return () => clearInterval(interval);
   }, [phase, before_year, after_year, actualAfter, startBS, totalYears, onComplete]);
-
-  const predictionBS = prediction
-    ? {
-        assets: prediction.assets,
-        liabilities: prediction.liabilities,
-        equity: prediction.equity,
-      }
-    : null;
 
   return (
     <motion.div
@@ -258,6 +283,7 @@ export default function RewindAnimation({
               <BSBarAnimated
                 data={predictionBS}
                 barHeight={barHeight}
+                maxTotal={rewindMax}
                 opacity={0.3}
                 borderColorHex="rgba(250, 204, 21, 0.3)"
               />
@@ -271,6 +297,7 @@ export default function RewindAnimation({
             <BSBarAnimated
               data={currentBS}
               barHeight={barHeight}
+              maxTotal={rewindMax}
               opacity={0.85}
             />
           </div>

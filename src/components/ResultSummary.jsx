@@ -239,7 +239,7 @@ function getRank(rate) {
   return { label: "D", color: "text-red-400", desc: "歴史は予想外の展開に..." };
 }
 
-export default function ResultSummary({ prediction, actual, stage, postDeal, onRetry }) {
+export default function ResultSummary({ prediction, actual, stage, postDeal, onRetry, onSelectStage }) {
   const syncRate = calcSyncRate(prediction, actual);
   const rank = getRank(syncRate);
   const isFailure = actual.equity < 0;
@@ -379,16 +379,28 @@ export default function ResultSummary({ prediction, actual, stage, postDeal, onR
         {stage.description}
       </motion.div>
 
-      {/* Retry button */}
-      <motion.button
+      {/* Action buttons */}
+      <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1.8 }}
-        onClick={onRetry}
-        className="px-8 py-3 bg-slate-700 hover:bg-slate-600 text-white font-bold rounded-xl border border-slate-500 transition-colors cursor-pointer"
+        className="flex gap-3"
       >
-        もう一度挑戦する
-      </motion.button>
+        <button
+          onClick={onRetry}
+          className="px-8 py-3 bg-slate-700 hover:bg-slate-600 text-white font-bold rounded-xl border border-slate-500 transition-colors cursor-pointer"
+        >
+          もう一度挑戦する
+        </button>
+        {onSelectStage && (
+          <button
+            onClick={onSelectStage}
+            className="px-8 py-3 bg-yellow-600/20 hover:bg-yellow-600/40 text-yellow-300 font-bold rounded-xl border border-yellow-600/50 transition-colors cursor-pointer"
+          >
+            別のステージへ
+          </button>
+        )}
+      </motion.div>
     </motion.div>
   );
 }

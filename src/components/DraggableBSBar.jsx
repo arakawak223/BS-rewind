@@ -132,6 +132,12 @@ export default function DraggableBSBar({
             return prev;
 
           draggingRef.current.startY = curY;
+
+          // ドラッグ感度を現在の総額に合わせて更新 (膨張/収縮に対応)
+          const newAt = next.cash + next.goodwill + next.others;
+          const newRp = next.debt + next.otherLiab + Math.max(next.equity, 0);
+          draggingRef.current.maxTotal = Math.max(newAt, newRp, 1);
+
           return next;
         });
       };

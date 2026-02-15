@@ -1,20 +1,31 @@
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import BSBar from "./components/BSBar";
 import DraggableBSBar from "./components/DraggableBSBar";
 import InvestmentCard from "./components/InvestmentCard";
 import RewindAnimation from "./components/RewindAnimation";
 import ResultSummary from "./components/ResultSummary";
-import { getStage, calcPostDeal } from "./data/stages";
+import { stages, bsTotal } from "./data/stages";
 
-const STAGE = getStage("toshiba_2006");
-const BAR_HEIGHT = 380;
+const BAR_HEIGHT = 400;
 
 function App() {
-  const [phase, setPhase] = useState("build"); // build | rewind | result
+  const [phase, setPhase] = useState("select"); // select | build | rewind | result
+  const [stage, setStage] = useState(null);
   const [prediction, setPrediction] = useState(null);
 
-  const postDeal = useMemo(() => calcPostDeal(STAGE), []);
+  const postDeal = stage?.data.deal ?? null;
+
+  // Build phase scale: max of before and deal for consistent sizing
+  const buildMaxTotal = stage
+    ? Math.max(bsTotal(stage.data.before), bsTotal(stage.data.deal))
+    : 1;
+
+  const handleStageSelect = (s) => {
+    setStage(s);
+    setPrediction(null);
+    setPhase("build");
+  };
 
   const handleDataChange = useCallback((data) => {
     setPrediction(data);
@@ -53,29 +64,117 @@ function App() {
     setPhase("build");
   };
 
+  const handleBackToSelect = () => {
+    setStage(null);
+    setPrediction(null);
+    setPhase("select");
+  };
+
   return (
     <div className="min-h-screen bg-dark-bg">
       {/* Header */}
       <header className="border-b border-slate-700/50 bg-slate-900/80 backdrop-blur-sm sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <h1 className="text-xl font-black text-white tracking-tight">
+            <h1
+              className="text-xl font-black text-white tracking-tight cursor-pointer hover:text-yellow-300 transition-colors"
+              onClick={handleBackToSelect}
+            >
               B/S Rewind
             </h1>
             <span className="text-xs text-slate-500 hidden sm:inline">
               財務シミュレーションゲーム
             </span>
           </div>
-          <div className="text-sm text-slate-400">
-            {STAGE.company_name} / {STAGE.before_year}-{STAGE.after_year}
-          </div>
+          {stage && phase !== "select" && (
+            <div className="flex items-center gap-3">
+              <div className="text-sm text-slate-400">
+                {stage.company_name} / {stage.before_year}-{stage.after_year}
+              </div>
+              <button
+                onClick={handleBackToSelect}
+                className="text-xs text-slate-500 hover:text-slate-300 border border-slate-600 px-2 py-1 rounded transition-colors cursor-pointer"
+              >
+                ステージ選択
+              </button>
+            </div>
+          )}
         </div>
       </header>
 
       <main className="max-w-6xl mx-auto px-4 py-8">
         <AnimatePresence mode="wait">
+          {/* ====== SELECT PHASE ====== */}
+          {phase === "select" && (
+            <motion.div
+              key="select"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.4 }}
+            >
+              <div className="text-center mb-10">
+                <motion.h2
+                  initial={{ y: -20, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  className="text-3xl font-black text-white mb-3"
+                >
+                  B/S Rewind
+                </motion.h2>
+                <motion.p
+                  initial={{ y: -10, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ delay: 0.1 }}
+                  className="text-slate-400"
+                >
+                  歴史的な投資判断のその後を予測せよ
+                </motion.p>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto">
+                {stages.map((s, i) => {
+                  const isFailure = s.data.after_actual.equity < 0;
+                  return (
+                    <motion.button
+                      key={s.stage_id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: i * 0.1 }}
+                      whileHover={{ scale: 1.03 }}
+                      whileTap={{ scale: 0.97 }}
+                      onClick={() => handleStageSelect(s)}
+                      className={`p-5 rounded-xl border text-left cursor-pointer transition-colors ${
+                        isFailure
+                          ? "bg-red-950/30 border-red-800/50 hover:bg-red-950/50 hover:border-red-700/70"
+                          : "bg-green-950/30 border-green-800/50 hover:bg-green-950/50 hover:border-green-700/70"
+                      }`}
+                    >
+                      <div className="flex items-center gap-2 mb-1">
+                        <span
+                          className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${
+                            isFailure
+                              ? "bg-red-900/60 text-red-300"
+                              : "bg-green-900/60 text-green-300"
+                          }`}
+                        >
+                          {s.before_year}-{s.after_year}
+                        </span>
+                      </div>
+                      <div className="text-lg font-bold text-white mb-1">
+                        {s.stage_name}
+                      </div>
+                      <div className="text-xs text-slate-500 line-clamp-2 leading-relaxed">
+                        {s.description}
+                      </div>
+                    </motion.button>
+                  );
+                })}
+              </div>
+            </motion.div>
+          )}
+
           {/* ====== BUILD PHASE ====== */}
-          {phase === "build" && (
+          {phase === "build" && stage && (
             <motion.div
               key="build"
               initial={{ opacity: 0 }}
@@ -90,31 +189,32 @@ function App() {
                   animate={{ y: 0, opacity: 1 }}
                   className="text-2xl font-black text-white mb-2"
                 >
-                  {STAGE.company_name}の{STAGE.after_year}年を予測せよ
+                  {stage.company_name}の{stage.after_year}年を予測せよ
                 </motion.h2>
                 <p className="text-slate-400 text-sm">
                   投資直後のB/Sから、
-                  {STAGE.after_year - STAGE.before_year}
+                  {stage.after_year - stage.before_year}
                   年後のB/Sを予測してください
                 </p>
               </div>
 
               {/* Investment info */}
               <div className="flex justify-center mb-8">
-                <InvestmentCard stage={STAGE} />
+                <InvestmentCard stage={stage} />
               </div>
 
               {/* 3-stage layout */}
               <div className="flex flex-col lg:flex-row items-start justify-center gap-6 lg:gap-4">
-                {/* ① Before B/S */}
+                {/* Before B/S */}
                 <div className="flex flex-col items-center">
                   <BSBar
-                    data={STAGE.data.before}
+                    data={stage.data.before}
                     barHeight={BAR_HEIGHT}
+                    maxTotal={buildMaxTotal}
                     label="投資前"
-                    year={STAGE.before_year}
+                    year={stage.before_year}
                     animate
-                    unit={STAGE.unit}
+                    unit={stage.unit}
                   />
                 </div>
 
@@ -122,22 +222,23 @@ function App() {
                 <div className="hidden lg:flex flex-col items-center self-center mt-16 gap-1">
                   <span className="text-3xl text-slate-500 font-bold">→</span>
                   <span className="text-[10px] text-slate-500">
-                    {STAGE.investment_target}
+                    {stage.investment_target}
                   </span>
                 </div>
                 <div className="lg:hidden flex justify-center text-2xl text-slate-500 font-bold">
-                  ↓ {STAGE.investment_target}
+                  ↓ {stage.investment_target}
                 </div>
 
-                {/* ② 投資直後 B/S */}
+                {/* Deal B/S */}
                 <div className="flex flex-col items-center">
                   <BSBar
                     data={postDeal}
                     barHeight={BAR_HEIGHT}
+                    maxTotal={buildMaxTotal}
                     label="Deal直後"
-                    year={STAGE.before_year}
+                    year={stage.before_year}
                     animate
-                    unit={STAGE.unit}
+                    unit={stage.unit}
                   />
                 </div>
 
@@ -145,20 +246,20 @@ function App() {
                 <div className="hidden lg:flex flex-col items-center self-center mt-16 gap-1">
                   <span className="text-3xl text-orange-400 font-bold">→</span>
                   <span className="text-[10px] text-orange-400/70">
-                    {STAGE.after_year - STAGE.before_year}年後は？
+                    {stage.after_year - stage.before_year}年後は？
                   </span>
                 </div>
                 <div className="lg:hidden flex justify-center text-2xl text-orange-400 font-bold">
-                  ↓ {STAGE.after_year - STAGE.before_year}年後は？
+                  ↓ {stage.after_year - stage.before_year}年後は？
                 </div>
 
-                {/* ③ あなたの予測 */}
+                {/* Prediction */}
                 <div className="flex flex-col items-center">
                   <DraggableBSBar
                     initialData={postDeal}
                     barHeight={BAR_HEIGHT}
                     onDataChange={handleDataChange}
-                    year={STAGE.after_year}
+                    year={stage.after_year}
                   />
                   <div className="text-[10px] text-slate-500 mt-1">
                     境界線 / 底辺▲▼をドラッグして調整
@@ -187,7 +288,7 @@ function App() {
           )}
 
           {/* ====== REWIND PHASE ====== */}
-          {phase === "rewind" && (
+          {phase === "rewind" && stage && (
             <motion.div
               key="rewind"
               initial={{ opacity: 0 }}
@@ -196,7 +297,7 @@ function App() {
               className="flex justify-center py-8"
             >
               <RewindAnimation
-                stage={STAGE}
+                stage={stage}
                 postDeal={postDeal}
                 prediction={prediction}
                 barHeight={BAR_HEIGHT}
@@ -206,7 +307,7 @@ function App() {
           )}
 
           {/* ====== RESULT PHASE ====== */}
-          {phase === "result" && prediction && (
+          {phase === "result" && stage && prediction && (
             <motion.div
               key="result"
               initial={{ opacity: 0 }}
@@ -215,10 +316,11 @@ function App() {
             >
               <ResultSummary
                 prediction={prediction}
-                actual={STAGE.data.after_actual}
-                stage={STAGE}
+                actual={stage.data.after_actual}
+                stage={stage}
                 postDeal={postDeal}
                 onRetry={handleRetry}
+                onSelectStage={handleBackToSelect}
               />
             </motion.div>
           )}

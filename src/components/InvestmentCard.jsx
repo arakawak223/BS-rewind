@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 const METHOD_LABELS = {
   debt_financed: "借入 (有利子負債)",
   cash_financed: "現金買収",
+  cash_to_capex: "現金 → 設備投資",
 };
 
 export default function InvestmentCard({ stage }) {
