@@ -95,6 +95,7 @@ export default function DraggableBSBar({
 
       const handleMove = (moveEvent) => {
         if (!draggingRef.current) return;
+        if (moveEvent.cancelable) moveEvent.preventDefault();
         const curY = getY(moveEvent);
         const deltaY = curY - draggingRef.current.startY;
         const vd = (deltaY / barHeight) * draggingRef.current.maxTotal;
@@ -161,23 +162,23 @@ export default function DraggableBSBar({
   // ---- sub-components ----
   const InternalHandle = ({ handleId }) => (
     <div
-      className="w-full h-3 cursor-row-resize flex items-center justify-center z-10 group relative"
-      style={{ marginTop: -6, marginBottom: -6 }}
+      className="w-full h-6 cursor-row-resize flex items-center justify-center z-10 group relative touch-none"
+      style={{ marginTop: -12, marginBottom: -12 }}
       onMouseDown={(e) => handleDragStart(handleId, e)}
       onTouchStart={(e) => handleDragStart(handleId, e)}
     >
       <div className="w-3/4 h-1 bg-white/60 rounded-full group-hover:bg-white group-hover:h-1.5 group-active:bg-yellow-300 transition-all" />
-      <div className="absolute -top-2 -bottom-2 left-0 right-0" />
+      <div className="absolute -top-3 -bottom-3 left-0 right-0" />
     </div>
   );
 
   const BottomHandle = ({ handleId }) => (
     <div
-      className="w-full h-4 cursor-row-resize flex items-center justify-center group"
+      className="w-full h-7 cursor-row-resize flex items-center justify-center group touch-none"
       onMouseDown={(e) => handleDragStart(handleId, e)}
       onTouchStart={(e) => handleDragStart(handleId, e)}
     >
-      <div className="w-full h-1.5 bg-orange-400/50 rounded-b group-hover:bg-orange-400 group-active:bg-yellow-300 transition-all flex items-center justify-center">
+      <div className="w-full h-2 bg-orange-400/50 rounded-b group-hover:bg-orange-400 group-active:bg-yellow-300 transition-all flex items-center justify-center">
         <span className="text-[8px] text-orange-200/70 group-hover:text-white pointer-events-none select-none">
           ▲▼
         </span>
