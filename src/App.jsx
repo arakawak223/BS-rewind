@@ -9,7 +9,7 @@ import StockPriceTicker from "./components/StockPriceTicker";
 import HowToPlayGuide from "./components/HowToPlayGuide";
 import { stages, bsTotal } from "./data/stages";
 
-const BAR_HEIGHT = 400;
+const BAR_HEIGHT = 480;
 
 function App() {
   const [phase, setPhase] = useState("select"); // select | build | rewind | result
@@ -206,27 +206,8 @@ function App() {
                 <InvestmentCard stage={stage} />
               </div>
 
-              {/* How to play guide */}
-              <HowToPlayGuide
-                visible={showGuide}
-                onDismiss={() => setShowGuide(false)}
-              />
-              {!showGuide && (
-                <div className="flex justify-center mb-4">
-                  <button
-                    onClick={() => setShowGuide(true)}
-                    className="text-xs text-slate-500 hover:text-yellow-300 border border-slate-600 hover:border-yellow-400/50 px-3 py-1 rounded-lg transition-colors cursor-pointer flex items-center gap-1"
-                  >
-                    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" className="shrink-0">
-                      <circle cx="8" cy="8" r="7" stroke="currentColor" strokeWidth="1.5" />
-                      <text x="8" y="12" textAnchor="middle" fill="currentColor" fontSize="11" fontWeight="bold">?</text>
-                    </svg>
-                    操作ガイド
-                  </button>
-                </div>
-              )}
-
-              {/* 3-stage layout */}
+              {/* 3-stage layout + side guide */}
+              <div className="flex items-start justify-center gap-4">
               <div className="flex flex-col lg:flex-row items-start justify-center gap-6 lg:gap-4">
                 {/* Before B/S */}
                 <div className="flex flex-col items-center">
@@ -321,6 +302,27 @@ function App() {
                     ドラッグして予測B/Sを作成
                   </div>
                 </div>
+              </div>
+
+              {/* Side guide — lg+ only */}
+              <div className="hidden lg:block self-center">
+                <HowToPlayGuide
+                  visible={showGuide}
+                  onDismiss={() => setShowGuide(false)}
+                />
+                {!showGuide && (
+                  <button
+                    onClick={() => setShowGuide(true)}
+                    className="text-slate-500 hover:text-yellow-300 border border-slate-600 hover:border-yellow-400/50 p-2 rounded-lg transition-colors cursor-pointer"
+                    title="操作ガイド"
+                  >
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                      <circle cx="8" cy="8" r="7" stroke="currentColor" strokeWidth="1.5" />
+                      <text x="8" y="12" textAnchor="middle" fill="currentColor" fontSize="11" fontWeight="bold">?</text>
+                    </svg>
+                  </button>
+                )}
+              </div>
               </div>
 
               {/* DECISION button */}
