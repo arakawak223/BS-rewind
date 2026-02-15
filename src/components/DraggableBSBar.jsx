@@ -10,6 +10,19 @@ const COLORS = {
   equityNeg: "#ef4444",
 };
 
+const HANDLE_LABELS = {
+  "cash-others": ["現金", "その他"],
+  "others-goodwill": ["その他", "のれん"],
+  "debt-otherliab": ["有利子負債", "その他負債"],
+  "otherliab-equity": ["その他負債", "純資産"],
+  "asset-total": ["資産合計"],
+  "right-total": ["負債合計"],
+};
+
+function vibrate(ms = 10) {
+  try { navigator.vibrate?.(ms); } catch {}
+}
+
 /**
  * Interactive B/S bar — 6項目構成 / 総額可変 / 債務超過突き抜け表現。
  *
@@ -40,9 +53,13 @@ export default function DraggableBSBar({
     equity: initialData.equity ?? 10,
   }));
 
+  const [activeHandle, setActiveHandle] = useState(null);
+  const [tooltip, setTooltip] = useState(null); // { handleId, y }
+
   const draggingRef = useRef(null);
   const valuesRef = useRef(values);
   valuesRef.current = values;
+  const containerRef = useRef(null);
 
   // ---- derived ----
   const assetTotal = values.cash + values.goodwill + values.others;
@@ -86,12 +103,21 @@ export default function DraggableBSBar({
   const handleDragStart = useCallback(
     (handleId, e) => {
       e.preventDefault();
+      vibrate(10);
+      setActiveHandle(handleId);
+
       const startY = getY(e);
       const v = valuesRef.current;
       const at = v.cash + v.goodwill + v.others;
       const rp = v.debt + v.otherLiab + Math.max(v.equity, 0);
       const mt = Math.max(at, rp, 1);
       draggingRef.current = { handleId, startY, maxTotal: mt };
+
+      // tooltip position relative to container
+      const containerRect = containerRef.current?.getBoundingClientRect();
+      if (containerRect) {
+        setTooltip({ handleId, y: startY - containerRect.top - 30 });
+      }
 
       const handleMove = (moveEvent) => {
         if (!draggingRef.current) return;
@@ -100,6 +126,12 @@ export default function DraggableBSBar({
         const deltaY = curY - draggingRef.current.startY;
         const vd = (deltaY / barHeight) * draggingRef.current.maxTotal;
         const id = draggingRef.current.handleId;
+
+        // update tooltip position
+        const rect = containerRef.current?.getBoundingClientRect();
+        if (rect) {
+          setTooltip({ handleId: id, y: curY - rect.top - 30 });
+        }
 
         setValues((prev) => {
           const next = { ...prev };
@@ -129,8 +161,10 @@ export default function DraggableBSBar({
             next.others < 0 ||
             next.debt < 0 ||
             next.otherLiab < 0
-          )
+          ) {
+            vibrate(15);
             return prev;
+          }
 
           draggingRef.current.startY = curY;
 
@@ -145,6 +179,8 @@ export default function DraggableBSBar({
 
       const handleEnd = () => {
         draggingRef.current = null;
+        setActiveHandle(null);
+        setTooltip(null);
         window.removeEventListener("mousemove", handleMove);
         window.removeEventListener("mouseup", handleEnd);
         window.removeEventListener("touchmove", handleMove);
@@ -160,6 +196,8 @@ export default function DraggableBSBar({
   );
 
   // ---- sub-components ----
+  const isActive = (id) => activeHandle === id;
+
   const InternalHandle = ({ handleId }) => (
     <div
       className="w-full h-6 cursor-row-resize flex items-center justify-center z-10 group relative touch-none"
@@ -167,7 +205,13 @@ export default function DraggableBSBar({
       onMouseDown={(e) => handleDragStart(handleId, e)}
       onTouchStart={(e) => handleDragStart(handleId, e)}
     >
-      <div className="w-3/4 h-1 bg-white/60 rounded-full group-hover:bg-white group-hover:h-1.5 group-active:bg-yellow-300 transition-all" />
+      <div
+        className={`w-3/4 rounded-full transition-all ${
+          isActive(handleId)
+            ? "h-2 bg-yellow-300 shadow-[0_0_8px_rgba(250,204,21,0.6)]"
+            : "h-1 bg-white/60 group-hover:bg-white group-hover:h-1.5 group-active:bg-yellow-300"
+        }`}
+      />
       <div className="absolute -top-3 -bottom-3 left-0 right-0" />
     </div>
   );
@@ -178,8 +222,20 @@ export default function DraggableBSBar({
       onMouseDown={(e) => handleDragStart(handleId, e)}
       onTouchStart={(e) => handleDragStart(handleId, e)}
     >
-      <div className="w-full h-2 bg-orange-400/50 rounded-b group-hover:bg-orange-400 group-active:bg-yellow-300 transition-all flex items-center justify-center">
-        <span className="text-[8px] text-orange-200/70 group-hover:text-white pointer-events-none select-none">
+      <div
+        className={`w-full rounded-b transition-all flex items-center justify-center ${
+          isActive(handleId)
+            ? "h-3 bg-yellow-400 shadow-[0_0_8px_rgba(250,204,21,0.5)]"
+            : "h-2 bg-orange-400/50 group-hover:bg-orange-400 group-active:bg-yellow-300"
+        }`}
+      >
+        <span
+          className={`text-[8px] pointer-events-none select-none ${
+            isActive(handleId)
+              ? "text-gray-900 font-bold"
+              : "text-orange-200/70 group-hover:text-white"
+          }`}
+        >
           ▲▼
         </span>
       </div>
@@ -204,8 +260,22 @@ export default function DraggableBSBar({
 
   const r = (v) => Math.round(v * 10) / 10;
 
+  // tooltip content
+  const tooltipValues = useCallback((handleId) => {
+    const v = valuesRef.current;
+    const labels = HANDLE_LABELS[handleId];
+    if (!labels) return "";
+    if (handleId === "cash-others") return `${labels[0]} ${r(v.cash)} / ${labels[1]} ${r(v.others)}`;
+    if (handleId === "others-goodwill") return `${labels[0]} ${r(v.others)} / ${labels[1]} ${r(v.goodwill)}`;
+    if (handleId === "debt-otherliab") return `${labels[0]} ${r(v.debt)} / ${labels[1]} ${r(v.otherLiab)}`;
+    if (handleId === "otherliab-equity") return `${labels[0]} ${r(v.otherLiab)} / ${labels[1]} ${r(v.equity)}`;
+    if (handleId === "asset-total") return `${labels[0]} ${r(v.cash + v.goodwill + v.others)}`;
+    if (handleId === "right-total") return `${labels[0]} ${r(v.debt + v.otherLiab)}`;
+    return "";
+  }, []);
+
   return (
-    <div className="flex flex-col items-center gap-2">
+    <div className="flex flex-col items-center gap-2" ref={containerRef}>
       <div className="text-sm font-bold text-yellow-300 tracking-wide">
         {label}
       </div>
@@ -214,7 +284,7 @@ export default function DraggableBSBar({
       )}
 
       {/* ---- columns ---- */}
-      <div className="flex gap-1 items-start">
+      <div className="flex gap-1 items-start relative">
         {/* === Assets === */}
         <div className="flex flex-col items-center w-24">
           <div
@@ -378,6 +448,16 @@ export default function DraggableBSBar({
           </div>
         </div>
       </div>
+
+      {/* floating tooltip */}
+      {tooltip && activeHandle && (
+        <div
+          className="absolute left-1/2 -translate-x-1/2 px-2.5 py-1 bg-slate-900/90 border border-yellow-400/60 text-yellow-200 text-[10px] font-bold rounded-md whitespace-nowrap pointer-events-none z-50 shadow-lg backdrop-blur-sm"
+          style={{ top: Math.max(0, tooltip.y) }}
+        >
+          {tooltipValues(activeHandle)}
+        </div>
+      )}
 
       {/* controls */}
       <div className="flex flex-col items-center gap-2 mt-1">
