@@ -1,4 +1,5 @@
-import { useState, useCallback, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
+import BSBar from "./BSBar";
 
 const COLORS = {
   cash: "#4ade80",
@@ -11,18 +12,17 @@ const COLORS = {
 };
 
 /**
- * Interactive B/S bar — ネイティブ range スライダー方式。
- *
- * 上: B/Sバー (リアルタイム表示)
- * 下: 各項目の水平スライダー
- * 純資産は自動計算 (= 資産合計 - 負債合計)
+ * Deal B/S + 予測 B/S を横並び表示し、下にスライダーを配置。
+ * 純資産は自動計算 (= 資産合計 - 負債合計)。
  */
 export default function DraggableBSBar({
   initialData,
+  dealData,
   barHeight = 400,
   onDataChange,
-  label = "あなたの予測",
   year,
+  dealYear,
+  unit,
 }) {
   const initCash = initialData.assets.cash || 0;
   const initGoodwill = initialData.assets.goodwill || 0;
@@ -50,9 +50,8 @@ export default function DraggableBSBar({
   const liabTotal = debt + otherLiab;
   const equity = assetTotal - liabTotal;
   const isNeg = equity < 0;
-  const absEquity = Math.abs(equity);
 
-  // ---- notify parent ----
+  // Notify parent
   useEffect(() => {
     onDataChange?.({
       assets: { cash, goodwill, others },
@@ -64,19 +63,20 @@ export default function DraggableBSBar({
 
   const r = (v) => Math.round(v * 10) / 10;
 
-  // ---- Visual bar heights ----
-  const visualBarHeight = Math.min(barHeight * 0.55, 260);
-  const rightPositive = debt + otherLiab + Math.max(equity, 0);
-  const maxPositive = Math.max(assetTotal, rightPositive, 1);
-  const scale = visualBarHeight / maxPositive;
+  // Prediction data object for BSBar
+  const predictionData = {
+    assets: { cash, goodwill, others },
+    liabilities: { debt, others: otherLiab },
+    equity,
+  };
 
-  const cashH = cash * scale;
-  const othersH = others * scale;
-  const gwH = goodwill * scale;
-  const debtH = debt * scale;
-  const otherLiabH = otherLiab * scale;
-  const equityH = isNeg ? 0 : equity * scale;
-  const negEquityH = isNeg ? absEquity * scale : 0;
+  // Pair maxTotal for consistent Deal/Prediction scaling
+  const bsMax = (d) => {
+    const a = (d.assets.cash || 0) + (d.assets.goodwill || 0) + (d.assets.others || 0);
+    const rp = (d.liabilities.debt || 0) + (d.liabilities.others || 0) + Math.max(d.equity, 0);
+    return Math.max(a, rp);
+  };
+  const pairMaxTotal = Math.max(bsMax(dealData), bsMax(predictionData), 1);
 
   const SLIDER_ITEMS = [
     { key: "cash", label: "現金", color: COLORS.cash, value: cash, setter: setCash, group: "asset" },
@@ -89,159 +89,44 @@ export default function DraggableBSBar({
   const assetSliders = SLIDER_ITEMS.filter((s) => s.group === "asset");
   const liabSliders = SLIDER_ITEMS.filter((s) => s.group === "liab");
 
+  const yearDiff = year && dealYear ? year - dealYear : null;
+
   return (
-    <div className="flex flex-col items-center gap-2">
-      <div className="text-sm font-bold text-yellow-300 tracking-wide">
-        {label}
-      </div>
-      {year && (
-        <div className="text-lg font-black text-white">{year}年</div>
-      )}
+    <div className="flex flex-col items-center gap-3">
+      {/* Side-by-side Deal + Prediction bars */}
+      <div className="flex items-end gap-0.5">
+        <BSBar
+          data={dealData}
+          barHeight={barHeight}
+          maxTotal={pairMaxTotal}
+          label="Deal直後"
+          year={dealYear}
+          unit={unit}
+        />
 
-      {/* ---- Visual B/S bar (read-only) ---- */}
-      <div className="flex gap-1 items-start">
-        {/* Assets */}
-        <div className="flex flex-col items-center w-20">
-          <div
-            className="flex flex-col w-full border-2 border-yellow-400/50 rounded-t bg-slate-800/50"
-            style={{ height: assetTotal * scale, overflow: "hidden" }}
-          >
-            <div
-              className="w-full flex items-center justify-center text-[10px] font-bold select-none shrink-0"
-              style={{ height: cashH, backgroundColor: COLORS.cash }}
-            >
-              {cashH > 18 && (
-                <span className="text-gray-900 text-center leading-tight px-0.5 pointer-events-none">
-                  現金
-                  <br />
-                  {r(cash)}
-                </span>
-              )}
-            </div>
-            <div
-              className="w-full flex items-center justify-center text-[10px] font-bold select-none shrink-0"
-              style={{ height: othersH, backgroundColor: COLORS.others }}
-            >
-              {othersH > 18 && (
-                <span className="text-gray-900 text-center leading-tight px-0.5 pointer-events-none">
-                  その他
-                  <br />
-                  {r(others)}
-                </span>
-              )}
-            </div>
-            <div
-              className="w-full flex items-center justify-center text-[10px] font-bold select-none shrink-0"
-              style={{
-                height: gwH,
-                backgroundColor: COLORS.goodwill,
-                backgroundImage:
-                  "repeating-linear-gradient(45deg, transparent, transparent 3px, rgba(0,0,0,0.1) 3px, rgba(0,0,0,0.1) 6px)",
-              }}
-            >
-              {gwH > 18 && (
-                <span className="text-gray-900 text-center leading-tight px-0.5 pointer-events-none">
-                  のれん
-                  <br />
-                  {r(goodwill)}
-                </span>
-              )}
-            </div>
-          </div>
-          <div className="text-[9px] text-slate-400 text-center mt-1">
-            資産 {r(assetTotal)}
-          </div>
-        </div>
-
-        {/* Balance indicator */}
-        <div className="flex flex-col items-center justify-center self-center px-1">
-          <span className="text-green-400 text-lg font-bold">=</span>
-        </div>
-
-        {/* Liabilities + Equity */}
-        <div className="flex flex-col items-center w-20">
-          <div
-            className="flex flex-col w-full border-2 border-yellow-400/50 rounded-t bg-slate-800/50"
-            style={{ height: rightPositive * scale, overflow: "visible" }}
-          >
-            <div
-              className="w-full flex items-center justify-center text-[10px] font-bold select-none shrink-0"
-              style={{ height: debtH, backgroundColor: COLORS.debt }}
-            >
-              {debtH > 18 && (
-                <span className="text-gray-900 text-center leading-tight px-0.5 pointer-events-none">
-                  負債
-                  <br />
-                  {r(debt)}
-                </span>
-              )}
-            </div>
-            <div
-              className="w-full flex items-center justify-center text-[10px] font-bold select-none shrink-0"
-              style={{ height: otherLiabH, backgroundColor: COLORS.otherLiab }}
-            >
-              {otherLiabH > 18 && (
-                <span className="text-gray-900 text-center leading-tight px-0.5 pointer-events-none">
-                  その他
-                  <br />
-                  {r(otherLiab)}
-                </span>
-              )}
-            </div>
-            {!isNeg && (
-              <div
-                className="w-full flex items-center justify-center text-[10px] font-bold select-none shrink-0"
-                style={{ height: equityH, backgroundColor: COLORS.equity }}
-              >
-                {equityH > 18 && (
-                  <span className="text-gray-900 text-center leading-tight px-0.5 pointer-events-none">
-                    純資産
-                    <br />
-                    {r(equity)}
-                  </span>
-                )}
-              </div>
-            )}
-          </div>
-
-          {/* 債務超過 */}
-          {isNeg && (
-            <>
-              <div className="w-full border-t-2 border-dashed border-white/70" />
-              <div
-                className="w-full flex items-center justify-center text-[10px] font-bold select-none border-2 border-t-0 border-yellow-400/50 rounded-b"
-                style={{
-                  height: negEquityH,
-                  backgroundColor: COLORS.equityNeg,
-                  backgroundImage:
-                    "repeating-linear-gradient(-45deg, transparent, transparent 4px, rgba(0,0,0,0.15) 4px, rgba(0,0,0,0.15) 8px)",
-                }}
-              >
-                {negEquityH > 14 && (
-                  <span className="text-white text-center leading-tight px-0.5 pointer-events-none drop-shadow-md">
-                    債務超過
-                    <br />
-                    {r(equity)}
-                  </span>
-                )}
-              </div>
-            </>
+        {/* Arrow between bars */}
+        <div className="flex flex-col items-center justify-center px-0.5 pb-8">
+          <span className="text-lg text-orange-400 font-bold">→</span>
+          {yearDiff && (
+            <span className="text-[8px] text-orange-400/70 text-center leading-tight whitespace-nowrap">
+              {yearDiff}年後?
+            </span>
           )}
-          <div className="text-[9px] text-slate-400 text-center mt-1">
-            {isNeg ? (
-              <>
-                負債 {r(liabTotal)}{" "}
-                <span className="text-red-400">純資産 {r(equity)}</span>
-              </>
-            ) : (
-              <>負債+純資産 {r(assetTotal)}</>
-            )}
-          </div>
         </div>
+
+        <BSBar
+          data={predictionData}
+          barHeight={barHeight}
+          maxTotal={pairMaxTotal}
+          label="あなたの予測"
+          labelClassName="text-sm font-bold text-yellow-300 tracking-wide"
+          year={year}
+          unit={unit}
+        />
       </div>
 
-      {/* ---- Range sliders ---- */}
-      <div className="w-full max-w-xs mt-2 space-y-3.5">
+      {/* Range sliders */}
+      <div className="w-full max-w-xs mt-1 space-y-3.5">
         {/* Assets section */}
         <div className="text-[10px] text-slate-500 font-bold border-b border-slate-700/50 pb-0.5">
           資産

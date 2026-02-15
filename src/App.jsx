@@ -19,10 +19,8 @@ function App() {
 
   const postDeal = stage?.data.deal ?? null;
 
-  // Build phase scale: max of before and deal for consistent sizing
-  const buildMaxTotal = stage
-    ? Math.max(bsTotal(stage.data.before), bsTotal(stage.data.deal))
-    : 1;
+  // Build phase scale for Before bar
+  const beforeMaxTotal = stage ? bsTotal(stage.data.before) : 1;
 
   const handleStageSelect = (s) => {
     setStage(s);
@@ -206,7 +204,7 @@ function App() {
                   <BSBar
                     data={stage.data.before}
                     barHeight={BAR_HEIGHT}
-                    maxTotal={buildMaxTotal}
+                    maxTotal={beforeMaxTotal}
                     label="投資前"
                     year={stage.before_year}
                     animate
@@ -225,7 +223,7 @@ function App() {
                   ↓ {stage.investment_target}
                 </div>
 
-                {/* Deal B/S */}
+                {/* Deal + Prediction side by side */}
                 <div className="flex flex-col items-center">
                   {stage.data.stockPrice && (
                     <div className="mb-2">
@@ -238,46 +236,14 @@ function App() {
                       />
                     </div>
                   )}
-                  <BSBar
-                    data={postDeal}
-                    barHeight={BAR_HEIGHT}
-                    maxTotal={buildMaxTotal}
-                    label="Deal直後"
-                    year={stage.before_year}
-                    animate
-                    unit={stage.unit}
-                  />
-                </div>
-
-                {/* Arrow 2 */}
-                <div className="hidden lg:flex flex-col items-center self-center mt-16 gap-1">
-                  <span className="text-3xl text-orange-400 font-bold">→</span>
-                  <span className="text-[10px] text-orange-400/70">
-                    {stage.after_year - stage.before_year}年後は？
-                  </span>
-                </div>
-                <div className="lg:hidden flex justify-center text-2xl text-orange-400 font-bold">
-                  ↓ {stage.after_year - stage.before_year}年後は？
-                </div>
-
-                {/* Prediction */}
-                <div className="flex flex-col items-center">
-                  {stage.data.stockPrice && (
-                    <div className="mb-2 invisible" aria-hidden="true">
-                      <StockPriceTicker
-                        price={0}
-                        previousPrice={0}
-                        unit={stage.data.stockPrice.unit}
-                        label={`${stage.company_name} 株価`}
-                        animate={false}
-                      />
-                    </div>
-                  )}
                   <DraggableBSBar
                     initialData={postDeal}
+                    dealData={postDeal}
                     barHeight={BAR_HEIGHT}
                     onDataChange={handleDataChange}
                     year={stage.after_year}
+                    dealYear={stage.before_year}
+                    unit={stage.unit}
                   />
                   <div className="text-[10px] text-slate-500 mt-1">
                     スライダーで予測B/Sを作成

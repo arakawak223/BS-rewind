@@ -23,6 +23,7 @@ export default function BSBar({
   barHeight = 400,
   maxTotal,
   label,
+  labelClassName,
   year,
   animate = false,
   opacity = 1,
@@ -70,7 +71,7 @@ export default function BSBar({
   return (
     <div className="flex flex-col items-center gap-2">
       {label && (
-        <div className="text-sm font-bold text-slate-300 tracking-wide">
+        <div className={labelClassName || "text-sm font-bold text-slate-300 tracking-wide"}>
           {label}
         </div>
       )}
@@ -81,7 +82,7 @@ export default function BSBar({
         {/* Assets (left) */}
         <Wrapper
           {...containerProps(assetColH)}
-          className="flex flex-col w-20 border border-slate-600 rounded overflow-hidden bg-slate-800/50"
+          className="flex flex-col w-16 border border-slate-600 rounded overflow-hidden bg-slate-800/50"
         >
           {/* 現金 */}
           {animate ? (
@@ -184,7 +185,7 @@ export default function BSBar({
         </Wrapper>
 
         {/* Liabilities + Equity (right) */}
-        <div className="flex flex-col w-20">
+        <div className="flex flex-col w-16">
           {/* 正の領域 */}
           <Wrapper
             {...containerProps(rightPosH)}
@@ -325,8 +326,8 @@ export default function BSBar({
         </div>
       </div>
       <div className="flex gap-1 text-[10px] text-slate-400">
-        <span className="w-20 text-center">資産</span>
-        <span className="w-20 text-center">負債+純資産</span>
+        <span className="w-16 text-center">資産</span>
+        <span className="w-16 text-center">負債+純資産</span>
       </div>
       {unit && (
         <div className="text-[10px] text-slate-500 mt-1">単位: {unit}</div>
