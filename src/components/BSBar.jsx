@@ -77,7 +77,7 @@ export default function BSBar({
       {year && (
         <div className="text-lg font-black text-white">{year}年</div>
       )}
-      <div className="flex gap-1 items-end">
+      <div className="flex gap-1 items-start" style={{ height: barHeight }}>
         {/* Assets (left) */}
         <Wrapper
           {...containerProps(assetColH)}

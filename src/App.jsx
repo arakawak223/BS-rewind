@@ -5,6 +5,8 @@ import DraggableBSBar from "./components/DraggableBSBar";
 import InvestmentCard from "./components/InvestmentCard";
 import RewindAnimation from "./components/RewindAnimation";
 import ResultSummary from "./components/ResultSummary";
+import StockPriceTicker from "./components/StockPriceTicker";
+import HowToPlayGuide from "./components/HowToPlayGuide";
 import { stages, bsTotal } from "./data/stages";
 
 const BAR_HEIGHT = 400;
@@ -13,6 +15,7 @@ function App() {
   const [phase, setPhase] = useState("select"); // select | build | rewind | result
   const [stage, setStage] = useState(null);
   const [prediction, setPrediction] = useState(null);
+  const [showGuide, setShowGuide] = useState(true);
 
   const postDeal = stage?.data.deal ?? null;
 
@@ -131,7 +134,7 @@ function App() {
                 </motion.p>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-4xl mx-auto">
                 {stages.map((s, i) => {
                   const isFailure = s.data.after_actual.equity < 0;
                   return (
@@ -203,10 +206,41 @@ function App() {
                 <InvestmentCard stage={stage} />
               </div>
 
+              {/* How to play guide */}
+              <HowToPlayGuide
+                visible={showGuide}
+                onDismiss={() => setShowGuide(false)}
+              />
+              {!showGuide && (
+                <div className="flex justify-center mb-4">
+                  <button
+                    onClick={() => setShowGuide(true)}
+                    className="text-xs text-slate-500 hover:text-yellow-300 border border-slate-600 hover:border-yellow-400/50 px-3 py-1 rounded-lg transition-colors cursor-pointer flex items-center gap-1"
+                  >
+                    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" className="shrink-0">
+                      <circle cx="8" cy="8" r="7" stroke="currentColor" strokeWidth="1.5" />
+                      <text x="8" y="12" textAnchor="middle" fill="currentColor" fontSize="11" fontWeight="bold">?</text>
+                    </svg>
+                    操作ガイド
+                  </button>
+                </div>
+              )}
+
               {/* 3-stage layout */}
               <div className="flex flex-col lg:flex-row items-start justify-center gap-6 lg:gap-4">
                 {/* Before B/S */}
                 <div className="flex flex-col items-center">
+                  {stage.data.stockPrice && (
+                    <div className="mb-2">
+                      <StockPriceTicker
+                        price={stage.data.stockPrice.before}
+                        previousPrice={stage.data.stockPrice.before}
+                        unit={stage.data.stockPrice.unit}
+                        label={`${stage.company_name} 株価`}
+                        animate={false}
+                      />
+                    </div>
+                  )}
                   <BSBar
                     data={stage.data.before}
                     barHeight={BAR_HEIGHT}
@@ -231,6 +265,17 @@ function App() {
 
                 {/* Deal B/S */}
                 <div className="flex flex-col items-center">
+                  {stage.data.stockPrice && (
+                    <div className="mb-2">
+                      <StockPriceTicker
+                        price={stage.data.stockPrice.deal}
+                        previousPrice={stage.data.stockPrice.before}
+                        unit={stage.data.stockPrice.unit}
+                        label={`${stage.company_name} 株価`}
+                        animate={false}
+                      />
+                    </div>
+                  )}
                   <BSBar
                     data={postDeal}
                     barHeight={BAR_HEIGHT}
@@ -255,6 +300,17 @@ function App() {
 
                 {/* Prediction */}
                 <div className="flex flex-col items-center">
+                  {stage.data.stockPrice && (
+                    <div className="mb-2 invisible" aria-hidden="true">
+                      <StockPriceTicker
+                        price={0}
+                        previousPrice={0}
+                        unit={stage.data.stockPrice.unit}
+                        label={`${stage.company_name} 株価`}
+                        animate={false}
+                      />
+                    </div>
+                  )}
                   <DraggableBSBar
                     initialData={postDeal}
                     barHeight={BAR_HEIGHT}
@@ -262,7 +318,7 @@ function App() {
                     year={stage.after_year}
                   />
                   <div className="text-[10px] text-slate-500 mt-1">
-                    境界線 / 底辺▲▼をドラッグして調整
+                    ドラッグして予測B/Sを作成
                   </div>
                 </div>
               </div>
