@@ -99,7 +99,7 @@ const NEGATIVE_MESSAGES = [
   "取引先が離反...",
   "リストラの噂が...",
   "空売り残が増加中",
-  "監査法人が懸念表明",
+  "決算に重大な懸念",
   "社債が格下げ",
 ];
 const POSITIVE_MESSAGES = [

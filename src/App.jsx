@@ -9,7 +9,7 @@ import StockPriceTicker from "./components/StockPriceTicker";
 import HowToPlayGuide from "./components/HowToPlayGuide";
 import { stages, bsTotal } from "./data/stages";
 
-const BAR_HEIGHT = 480;
+const BAR_HEIGHT = 320;
 
 function App() {
   const [phase, setPhase] = useState("select"); // select | build | rewind | result

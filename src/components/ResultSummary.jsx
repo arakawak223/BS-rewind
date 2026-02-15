@@ -495,7 +495,7 @@ export default function ResultSummary({ prediction, actual, stage, postDeal, onR
         >
           <div className="mb-2">
             <span className="text-xs px-2 py-1 rounded bg-amber-600/40 text-amber-200 font-bold">
-              監査法人コメント
+              重要決算情報
             </span>
           </div>
           <div className="text-sm text-amber-100 leading-relaxed space-y-1">

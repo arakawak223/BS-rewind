@@ -37,8 +37,8 @@ export const stages = [
         { year: 2006, headline: "東芝、米原発大手WHを6600億円で買収", isBreaking: true },
         { year: 2011, headline: "福島原発事故発生。世界の原子力政策が転換", isBreaking: false },
         { year: 2015, headline: "東芝、不正会計が発覚。利益水増し7年間", isBreaking: false },
-        { year: 2016, type: "official", headline: "監査法人：過年度決算の訂正を要求。利益水増し1,562億円", isCritical: true },
-        { year: 2017, type: "audit_warning", subtype: "going_concern", headline: "監査法人：『継続企業の前提に関する重要な疑義』を注記", severity: "high", isCritical: true },
+        { year: 2016, type: "official", headline: "重要決算情報：過年度決算の訂正を要求。利益水増し1,562億円", isCritical: true },
+        { year: 2017, type: "audit_warning", subtype: "going_concern", headline: "重要決算情報：『継続企業の前提に関する重要な疑義』を注記", severity: "high", isCritical: true },
         { year: 2017, type: "financial", headline: "メインバンク：融資維持の条件として半導体事業の売却を要求" },
         { year: 2017, headline: "東芝、債務超過で上場廃止の瀬戸際", isBreaking: true },
       ],
@@ -82,8 +82,8 @@ export const stages = [
       news: [
         { year: 2009, headline: "シャープ、堺に世界最大の液晶工場建設", isBreaking: true },
         { year: 2012, headline: "液晶パネル価格崩落。シャープ、過去最大の赤字", isBreaking: false },
-        { year: 2013, type: "official", headline: "監査法人：継続企業の前提に重要な疑義を記載", isCritical: true },
-        { year: 2015, type: "audit_warning", subtype: "going_concern", headline: "監査法人：『継続企業の前提に関する重要な疑義』— 2期連続注記", severity: "high", isCritical: true },
+        { year: 2013, type: "official", headline: "重要決算情報：継続企業の前提に重要な疑義を記載", isCritical: true },
+        { year: 2015, type: "audit_warning", subtype: "going_concern", headline: "重要決算情報：『継続企業の前提に関する重要な疑義』— 2期連続注記", severity: "high", isCritical: true },
         { year: 2015, type: "financial", headline: "メインバンク：追加融資の条件として大規模リストラを要求" },
         { year: 2016, headline: "シャープ、鴻海傘下に。日本の液晶神話が終焉", isBreaking: true },
       ],
@@ -212,7 +212,7 @@ export const stages = [
       },
       news: [
         { year: 2010, type: "official", headline: "パナソニック、三洋電機を子会社化。電池事業を核に成長へ", isBreaking: true },
-        { year: 2012, type: "audit", headline: "監査法人：プラズマ及び三洋関連資産の減損を指摘。2年連続7000億超の赤字", isCritical: true },
+        { year: 2012, type: "audit", headline: "重要決算情報：プラズマ及び三洋関連資産の減損を指摘。2年連続7000億超の赤字", isCritical: true },
         { year: 2013, type: "official", headline: "無配転落：創業以来の危機。金融機関が劣後ローンによる資本支援", isCritical: true },
       ],
       summary: { totalImpairment: 15.0 },
@@ -383,7 +383,7 @@ export const stages = [
       },
       news: [
         { year: 2013, type: "official", headline: "過去最大の赤字4500億円。平井新体制で『One Sony』掲げ構造改革へ", isCritical: true },
-        { year: 2015, type: "audit", headline: "監査法人：継続企業の前提（GC）注記の検討から脱却。黒字化定着を確認" },
+        { year: 2015, type: "audit", headline: "重要決算情報：継続企業の前提（GC）注記の検討から脱却。黒字化定着を確認" },
         { year: 2021, type: "official", headline: "純利益1兆円突破。ハードからコンテンツと金融の融合B/Sへ完全転換", isBreaking: true },
       ],
       summary: { totalImpairment: 8.0 },
@@ -554,7 +554,7 @@ export const stages = [
         curve: "surge_early",
       },
       news: [
-        { year: 2011, type: "audit", headline: "監査法人：不明瞭な買収資金を指摘。1177億円の損失隠しが発覚", isCritical: true },
+        { year: 2011, type: "audit", headline: "重要決算情報：不明瞭な買収資金を指摘。1177億円の損失隠しが発覚", isCritical: true },
         { year: 2012, type: "official", headline: "上場廃止の危機を回避。ソニーとの資本提携により500億円の資金注入", isCritical: true },
         { year: 2013, type: "official", headline: "医療機器事業の強みで再建。B/Sから過去の膿を完全に排出", isBreaking: true },
       ],
@@ -656,7 +656,7 @@ export const stages = [
     after_year: 2024,
     unit: "10億ドル",
     description:
-      "債務超過なのに倒産しない、超優良企業の「自社株買い」特化型B/S。稼いだ現金を全て株主還元へ投入し、会計上の純資産がマイナスに。それでも圧倒的なブランド力と稼ぐ力で、監査法人は適正と判断する異色の事例。",
+      "債務超過なのに倒産しない、超優良企業の「自社株買い」特化型B/S。稼いだ現金を全て株主還元へ投入し、会計上の純資産がマイナスに。それでも圧倒的なブランド力と稼ぐ力で、決算は適正と判断される異色の事例。",
     data: {
       before: {
         assets: { cash: 2.5, goodwill: 0.0, others: 22.5 },
@@ -684,7 +684,7 @@ export const stages = [
       news: [
         { year: 2019, type: "financial", headline: "稼いだ現金を全て自社株買いへ投入。会計上の純資産がマイナスに", isBreaking: true },
         { year: 2020, type: "official", headline: "パンデミックで売上減も、ブランド力で低金利社債を発行。現金を維持" },
-        { year: 2023, type: "audit", headline: "『稼ぐ力』が強すぎて、マイナスの純資産でも監査法人は適正と判断", isBreaking: true },
+        { year: 2023, type: "audit", headline: "『稼ぐ力』が強すぎて、マイナスの純資産でも決算は適正と判断", isBreaking: true },
       ],
       summary: { totalImpairment: 0.0 },
     },
@@ -699,7 +699,7 @@ export const stages = [
     after_year: 2002,
     unit: "10億ドル",
     description:
-      "B/Sに載っていない負債（簿外）が、名門企業を一夜で破滅させた事例。数百の特別目的会社(SPE)へ負債を飛ばし、監査法人アーサー・アンダーセンも隠蔽に協力。米史上最大（当時）の経営破綻となり、B/Sへの信頼性を根本から揺るがした。",
+      "B/Sに載っていない負債（簿外）が、名門企業を一夜で破滅させた事例。数百の特別目的会社(SPE)へ負債を飛ばし、会計事務所アーサー・アンダーセンも隠蔽に協力。米史上最大（当時）の経営破綻となり、B/Sへの信頼性を根本から揺るがした。",
     data: {
       before: {
         assets: { cash: 1.0, goodwill: 0.0, others: 64.0 },
@@ -726,7 +726,7 @@ export const stages = [
       },
       news: [
         { year: 2001, type: "audit", headline: "簿外債務の発覚。数百の特別目的会社(SPE)へ負債を飛ばしていたことが露呈", isCritical: true },
-        { year: 2001, type: "audit", headline: "アーサー・アンダーセン（監査法人）による隠蔽協力の疑い。解体へ", isCritical: true },
+        { year: 2001, type: "audit", headline: "アーサー・アンダーセン（会計事務所）による隠蔽協力の疑い。解体へ", isCritical: true },
         { year: 2001, type: "official", subtype: "going_concern", headline: "米史上最大（当時）の経営破綻。B/Sへの信頼性が根本から揺らぐ", isCritical: true },
       ],
       summary: { totalImpairment: 60.0 },

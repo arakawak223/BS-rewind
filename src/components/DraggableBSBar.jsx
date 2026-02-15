@@ -241,7 +241,7 @@ export default function DraggableBSBar({
       </div>
 
       {/* ---- Range sliders ---- */}
-      <div className="w-full max-w-xs mt-2 space-y-1.5">
+      <div className="w-full max-w-xs mt-2 space-y-3.5">
         {/* Assets section */}
         <div className="text-[10px] text-slate-500 font-bold border-b border-slate-700/50 pb-0.5">
           資産
@@ -272,7 +272,7 @@ export default function DraggableBSBar({
         ))}
 
         {/* Liabilities section */}
-        <div className="text-[10px] text-slate-500 font-bold border-b border-slate-700/50 pb-0.5 mt-2">
+        <div className="text-[10px] text-slate-500 font-bold border-b border-slate-700/50 pb-0.5 mt-3">
           負債
         </div>
         {liabSliders.map(({ key, label, color, value, setter }) => (
