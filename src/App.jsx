@@ -36,25 +36,6 @@ function App() {
 
   const handleDecision = () => {
     if (!prediction) return;
-
-    // 未バランスなら純資産で自動調整
-    const at =
-      (prediction.assets.cash || 0) +
-      (prediction.assets.goodwill || 0) +
-      (prediction.assets.others || 0);
-    const rt =
-      (prediction.liabilities.debt || 0) +
-      (prediction.liabilities.others || 0) +
-      prediction.equity;
-
-    if (Math.abs(at - rt) >= 0.5) {
-      const newEq =
-        at -
-        (prediction.liabilities.debt || 0) -
-        (prediction.liabilities.others || 0);
-      setPrediction((prev) => ({ ...prev, equity: newEq }));
-    }
-
     setPhase("rewind");
   };
 
@@ -299,7 +280,7 @@ function App() {
                     year={stage.after_year}
                   />
                   <div className="text-[10px] text-slate-500 mt-1">
-                    ドラッグして予測B/Sを作成
+                    スライダーで予測B/Sを作成
                   </div>
                 </div>
               </div>
@@ -338,9 +319,7 @@ function App() {
                 </motion.button>
               </div>
               <p className="text-center text-xs text-slate-500 mt-3">
-                {prediction?._balanced === false
-                  ? "※ 未バランスの場合、純資産で自動調整されます"
-                  : "予測を確定して歴史を再生する"}
+                予測を確定して歴史を再生する
               </p>
             </motion.div>
           )}

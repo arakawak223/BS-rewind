@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useMemo } from "react";
 
 const COLORS = {
   cash: "#4ade80",
@@ -10,32 +10,12 @@ const COLORS = {
   equityNeg: "#ef4444",
 };
 
-const HANDLE_LABELS = {
-  "cash-others": ["現金", "その他"],
-  "others-goodwill": ["その他", "のれん"],
-  "debt-otherliab": ["有利子負債", "その他負債"],
-  "otherliab-equity": ["その他負債", "純資産"],
-  "asset-total": ["資産合計"],
-  "right-total": ["負債合計"],
-};
-
-function vibrate(ms = 10) {
-  try { navigator.vibrate?.(ms); } catch {}
-}
-
 /**
- * Interactive B/S bar — 6項目構成 / 総額可変 / 債務超過突き抜け表現。
+ * Interactive B/S bar — ネイティブ range スライダー方式。
  *
- * 資産側 (top→bottom): 現金 → その他資産 → のれん
- * 右側 (top→bottom): 有利子負債 → その他負債 → 純資産
- *
- * ハンドル:
- *   cash-others      : 現金 ↔ その他資産
- *   others-goodwill  : その他資産 ↔ のれん
- *   debt-otherliab   : 有利子負債 ↔ その他負債
- *   otherliab-equity : その他負債 ↔ 純資産 (純資産マイナス可)
- *   asset-total      : 資産合計を増減 (のれんが伸縮)
- *   right-total      : 右側合計を増減 (有利子負債が伸縮)
+ * 上: B/Sバー (リアルタイム表示)
+ * 下: 各項目の水平スライダー
+ * 純資産は自動計算 (= 資産合計 - 負債合計)
  */
 export default function DraggableBSBar({
   initialData,
@@ -44,250 +24,73 @@ export default function DraggableBSBar({
   label = "あなたの予測",
   year,
 }) {
-  const [values, setValues] = useState(() => ({
-    cash: initialData.assets.cash || 0,
-    goodwill: initialData.assets.goodwill || 0,
-    others: initialData.assets.others || 0,
-    debt: initialData.liabilities.debt || 0,
-    otherLiab: initialData.liabilities.others || 0,
-    equity: initialData.equity ?? 10,
-  }));
+  const initCash = initialData.assets.cash || 0;
+  const initGoodwill = initialData.assets.goodwill || 0;
+  const initOthers = initialData.assets.others || 0;
+  const initDebt = initialData.liabilities.debt || 0;
+  const initOtherLiab = initialData.liabilities.others || 0;
 
-  const [activeHandle, setActiveHandle] = useState(null);
-  const [tooltip, setTooltip] = useState(null); // { handleId, y }
+  const sliderMax = useMemo(() => {
+    const at = initCash + initGoodwill + initOthers;
+    const rt = initDebt + initOtherLiab + Math.abs(initialData.equity ?? 0);
+    return Math.max(at, rt, 1) * 2;
+  }, [initCash, initGoodwill, initOthers, initDebt, initOtherLiab, initialData.equity]);
 
-  const draggingRef = useRef(null);
-  const valuesRef = useRef(values);
-  valuesRef.current = values;
-  const containerRef = useRef(null);
+  const sliderStep = useMemo(() => {
+    return Math.max(0.1, Math.round((sliderMax / 200) * 10) / 10);
+  }, [sliderMax]);
 
-  // ---- derived ----
-  const assetTotal = values.cash + values.goodwill + values.others;
-  const isNeg = values.equity < 0;
-  const absEquity = Math.abs(values.equity);
-  const rightAccounting = values.debt + values.otherLiab + values.equity;
-  const isBalanced = Math.abs(assetTotal - rightAccounting) < 0.5;
-  const diff = Math.round((assetTotal - rightAccounting) * 10) / 10;
+  const [cash, setCash] = useState(initCash);
+  const [goodwill, setGoodwill] = useState(initGoodwill);
+  const [others, setOthers] = useState(initOthers);
+  const [debt, setDebt] = useState(initDebt);
+  const [otherLiab, setOtherLiab] = useState(initOtherLiab);
+
+  const assetTotal = cash + goodwill + others;
+  const liabTotal = debt + otherLiab;
+  const equity = assetTotal - liabTotal;
+  const isNeg = equity < 0;
+  const absEquity = Math.abs(equity);
 
   // ---- notify parent ----
   useEffect(() => {
     onDataChange?.({
-      assets: {
-        cash: values.cash,
-        goodwill: values.goodwill,
-        others: values.others,
-      },
-      liabilities: {
-        debt: values.debt,
-        others: values.otherLiab,
-      },
-      equity: values.equity,
-      _balanced: isBalanced,
+      assets: { cash, goodwill, others },
+      liabilities: { debt, others: otherLiab },
+      equity,
+      _balanced: true,
     });
-  }, [values, isBalanced, onDataChange]);
-
-  // ---- auto balance ----
-  const handleAutoBalance = useCallback(() => {
-    setValues((prev) => {
-      const at = prev.cash + prev.goodwill + prev.others;
-      return { ...prev, equity: at - prev.debt - prev.otherLiab };
-    });
-  }, []);
-
-  // ---- drag ----
-  const getY = useCallback(
-    (e) => (e.touches ? e.touches[0].clientY : e.clientY),
-    []
-  );
-
-  const handleDragStart = useCallback(
-    (handleId, e) => {
-      e.preventDefault();
-      vibrate(10);
-      setActiveHandle(handleId);
-
-      const startY = getY(e);
-      const v = valuesRef.current;
-      const at = v.cash + v.goodwill + v.others;
-      const rp = v.debt + v.otherLiab + Math.max(v.equity, 0);
-      const mt = Math.max(at, rp, 1);
-      draggingRef.current = { handleId, startY, maxTotal: mt };
-
-      // tooltip position relative to container
-      const containerRect = containerRef.current?.getBoundingClientRect();
-      if (containerRect) {
-        setTooltip({ handleId, y: startY - containerRect.top - 30 });
-      }
-
-      const handleMove = (moveEvent) => {
-        if (!draggingRef.current) return;
-        if (moveEvent.cancelable) moveEvent.preventDefault();
-        const curY = getY(moveEvent);
-        const deltaY = curY - draggingRef.current.startY;
-        const vd = (deltaY / barHeight) * draggingRef.current.maxTotal;
-        const id = draggingRef.current.handleId;
-
-        // update tooltip position
-        const rect = containerRef.current?.getBoundingClientRect();
-        if (rect) {
-          setTooltip({ handleId: id, y: curY - rect.top - 30 });
-        }
-
-        setValues((prev) => {
-          const next = { ...prev };
-
-          if (id === "cash-others") {
-            next.cash = prev.cash + vd;
-            next.others = prev.others - vd;
-          } else if (id === "others-goodwill") {
-            next.others = prev.others + vd;
-            next.goodwill = prev.goodwill - vd;
-          } else if (id === "debt-otherliab") {
-            next.debt = prev.debt + vd;
-            next.otherLiab = prev.otherLiab - vd;
-          } else if (id === "otherliab-equity") {
-            next.otherLiab = prev.otherLiab + vd;
-            next.equity = prev.equity - vd;
-          } else if (id === "asset-total") {
-            next.goodwill = prev.goodwill + vd;
-          } else if (id === "right-total") {
-            next.debt = prev.debt + vd;
-          }
-
-          // cash, goodwill, others, debt, otherLiab >= 0
-          if (
-            next.cash < 0 ||
-            next.goodwill < 0 ||
-            next.others < 0 ||
-            next.debt < 0 ||
-            next.otherLiab < 0
-          ) {
-            vibrate(15);
-            return prev;
-          }
-
-          draggingRef.current.startY = curY;
-
-          // ドラッグ感度を現在の総額に合わせて更新 (膨張/収縮に対応)
-          const newAt = next.cash + next.goodwill + next.others;
-          const newRp = next.debt + next.otherLiab + Math.max(next.equity, 0);
-          draggingRef.current.maxTotal = Math.max(newAt, newRp, 1);
-
-          return next;
-        });
-      };
-
-      const handleEnd = () => {
-        draggingRef.current = null;
-        setActiveHandle(null);
-        setTooltip(null);
-        window.removeEventListener("mousemove", handleMove);
-        window.removeEventListener("mouseup", handleEnd);
-        window.removeEventListener("touchmove", handleMove);
-        window.removeEventListener("touchend", handleEnd);
-      };
-
-      window.addEventListener("mousemove", handleMove);
-      window.addEventListener("mouseup", handleEnd);
-      window.addEventListener("touchmove", handleMove, { passive: false });
-      window.addEventListener("touchend", handleEnd);
-    },
-    [barHeight, getY]
-  );
-
-  // ---- sub-components ----
-  const isActive = (id) => activeHandle === id;
-
-  // Draggable block: each colored section is itself a drag zone
-  const DragBlock = ({ handleId, style, className = "", children }) => (
-    <div
-      className={`w-full flex items-center justify-center text-xs font-bold select-none shrink-0 cursor-row-resize ${className}`}
-      style={style}
-      onMouseDown={(e) => handleDragStart(handleId, e)}
-      onTouchStart={(e) => handleDragStart(handleId, e)}
-    >
-      {children}
-    </div>
-  );
-
-  const InternalHandle = ({ handleId }) => (
-    <div
-      className="w-full h-6 cursor-row-resize flex items-center justify-center z-10 group relative touch-none"
-      style={{ marginTop: -12, marginBottom: -12 }}
-      onMouseDown={(e) => handleDragStart(handleId, e)}
-      onTouchStart={(e) => handleDragStart(handleId, e)}
-    >
-      <div
-        className={`w-3/4 rounded-full transition-all ${
-          isActive(handleId)
-            ? "h-2 bg-yellow-300 shadow-[0_0_8px_rgba(250,204,21,0.6)]"
-            : "h-1 bg-white/60 group-hover:bg-white group-hover:h-1.5 group-active:bg-yellow-300"
-        }`}
-      />
-      <div className="absolute -top-3 -bottom-3 left-0 right-0" />
-    </div>
-  );
-
-  const BottomHandle = ({ handleId }) => (
-    <div
-      className="w-full h-7 cursor-row-resize flex items-center justify-center group touch-none"
-      onMouseDown={(e) => handleDragStart(handleId, e)}
-      onTouchStart={(e) => handleDragStart(handleId, e)}
-    >
-      <div
-        className={`w-full rounded-b transition-all flex items-center justify-center ${
-          isActive(handleId)
-            ? "h-3 bg-yellow-400 shadow-[0_0_8px_rgba(250,204,21,0.5)]"
-            : "h-2 bg-orange-400/50 group-hover:bg-orange-400 group-active:bg-yellow-300"
-        }`}
-      >
-        <span
-          className={`text-[8px] pointer-events-none select-none ${
-            isActive(handleId)
-              ? "text-gray-900 font-bold"
-              : "text-orange-200/70 group-hover:text-white"
-          }`}
-        >
-          ▲▼
-        </span>
-      </div>
-    </div>
-  );
-
-  // ---- pixel heights ----
-  const rightPositive = values.debt + values.otherLiab + Math.max(values.equity, 0);
-  const maxPositive = Math.max(assetTotal, rightPositive, 1);
-  const scale = barHeight / maxPositive;
-
-  const cashH = values.cash * scale;
-  const gwH = values.goodwill * scale;
-  const othersH = values.others * scale;
-  const assetColH = assetTotal * scale;
-
-  const debtH = values.debt * scale;
-  const otherLiabH = values.otherLiab * scale;
-  const equityH = isNeg ? 0 : values.equity * scale;
-  const negEquityH = isNeg ? absEquity * scale : 0;
-  const rightPosH = rightPositive * scale;
+  }, [cash, goodwill, others, debt, otherLiab, equity, onDataChange]);
 
   const r = (v) => Math.round(v * 10) / 10;
 
-  // tooltip content
-  const tooltipValues = useCallback((handleId) => {
-    const v = valuesRef.current;
-    const labels = HANDLE_LABELS[handleId];
-    if (!labels) return "";
-    if (handleId === "cash-others") return `${labels[0]} ${r(v.cash)} / ${labels[1]} ${r(v.others)}`;
-    if (handleId === "others-goodwill") return `${labels[0]} ${r(v.others)} / ${labels[1]} ${r(v.goodwill)}`;
-    if (handleId === "debt-otherliab") return `${labels[0]} ${r(v.debt)} / ${labels[1]} ${r(v.otherLiab)}`;
-    if (handleId === "otherliab-equity") return `${labels[0]} ${r(v.otherLiab)} / ${labels[1]} ${r(v.equity)}`;
-    if (handleId === "asset-total") return `${labels[0]} ${r(v.cash + v.goodwill + v.others)}`;
-    if (handleId === "right-total") return `${labels[0]} ${r(v.debt + v.otherLiab)}`;
-    return "";
-  }, []);
+  // ---- Visual bar heights ----
+  const visualBarHeight = Math.min(barHeight * 0.55, 260);
+  const rightPositive = debt + otherLiab + Math.max(equity, 0);
+  const maxPositive = Math.max(assetTotal, rightPositive, 1);
+  const scale = visualBarHeight / maxPositive;
+
+  const cashH = cash * scale;
+  const othersH = others * scale;
+  const gwH = goodwill * scale;
+  const debtH = debt * scale;
+  const otherLiabH = otherLiab * scale;
+  const equityH = isNeg ? 0 : equity * scale;
+  const negEquityH = isNeg ? absEquity * scale : 0;
+
+  const SLIDER_ITEMS = [
+    { key: "cash", label: "現金", color: COLORS.cash, value: cash, setter: setCash, group: "asset" },
+    { key: "others", label: "その他資産", color: COLORS.others, value: others, setter: setOthers, group: "asset" },
+    { key: "goodwill", label: "のれん", color: COLORS.goodwill, value: goodwill, setter: setGoodwill, group: "asset" },
+    { key: "debt", label: "有利子負債", color: COLORS.debt, value: debt, setter: setDebt, group: "liab" },
+    { key: "otherLiab", label: "その他負債", color: COLORS.otherLiab, value: otherLiab, setter: setOtherLiab, group: "liab" },
+  ];
+
+  const assetSliders = SLIDER_ITEMS.filter((s) => s.group === "asset");
+  const liabSliders = SLIDER_ITEMS.filter((s) => s.group === "liab");
 
   return (
-    <div className="flex flex-col items-center gap-2" ref={containerRef}>
+    <div className="flex flex-col items-center gap-2">
       <div className="text-sm font-bold text-yellow-300 tracking-wide">
         {label}
       </div>
@@ -295,45 +98,40 @@ export default function DraggableBSBar({
         <div className="text-lg font-black text-white">{year}年</div>
       )}
 
-      {/* ---- columns ---- */}
-      <div className="flex gap-1 items-start relative touch-none">
-        {/* === Assets === */}
-        <div className="flex flex-col items-center w-24">
+      {/* ---- Visual B/S bar (read-only) ---- */}
+      <div className="flex gap-1 items-start">
+        {/* Assets */}
+        <div className="flex flex-col items-center w-20">
           <div
-            className="flex flex-col w-full border-2 border-yellow-400/50 rounded-t bg-slate-800/50 relative"
-            style={{ height: assetColH, overflow: "visible" }}
+            className="flex flex-col w-full border-2 border-yellow-400/50 rounded-t bg-slate-800/50"
+            style={{ height: assetTotal * scale, overflow: "hidden" }}
           >
-            {/* 現金 — タッチで cash-others ハンドルを操作 */}
-            <DragBlock
-              handleId="cash-others"
+            <div
+              className="w-full flex items-center justify-center text-[10px] font-bold select-none shrink-0"
               style={{ height: cashH, backgroundColor: COLORS.cash }}
             >
-              {cashH > 26 && (
-                <span className="text-gray-900 text-center leading-tight px-1 pointer-events-none">
-                  現金<br />{r(values.cash)}
+              {cashH > 18 && (
+                <span className="text-gray-900 text-center leading-tight px-0.5 pointer-events-none">
+                  現金
+                  <br />
+                  {r(cash)}
                 </span>
               )}
-            </DragBlock>
-
-            <InternalHandle handleId="cash-others" />
-
-            {/* その他資産 — タッチで others-goodwill ハンドルを操作 */}
-            <DragBlock
-              handleId="others-goodwill"
+            </div>
+            <div
+              className="w-full flex items-center justify-center text-[10px] font-bold select-none shrink-0"
               style={{ height: othersH, backgroundColor: COLORS.others }}
             >
-              {othersH > 26 && (
-                <span className="text-gray-900 text-center leading-tight px-1 pointer-events-none">
-                  その他<br />{r(values.others)}
+              {othersH > 18 && (
+                <span className="text-gray-900 text-center leading-tight px-0.5 pointer-events-none">
+                  その他
+                  <br />
+                  {r(others)}
                 </span>
               )}
-            </DragBlock>
-
-            <InternalHandle handleId="others-goodwill" />
-
-            {/* のれん — タッチで others-goodwill ハンドルを操作 */}
-            <DragBlock
-              handleId="others-goodwill"
+            </div>
+            <div
+              className="w-full flex items-center justify-center text-[10px] font-bold select-none shrink-0"
               style={{
                 height: gwH,
                 backgroundColor: COLORS.goodwill,
@@ -341,94 +139,77 @@ export default function DraggableBSBar({
                   "repeating-linear-gradient(45deg, transparent, transparent 3px, rgba(0,0,0,0.1) 3px, rgba(0,0,0,0.1) 6px)",
               }}
             >
-              {gwH > 26 && (
-                <span className="text-gray-900 text-center leading-tight px-1 pointer-events-none">
-                  のれん<br />{r(values.goodwill)}
+              {gwH > 18 && (
+                <span className="text-gray-900 text-center leading-tight px-0.5 pointer-events-none">
+                  のれん
+                  <br />
+                  {r(goodwill)}
                 </span>
               )}
-            </DragBlock>
+            </div>
           </div>
-          <BottomHandle handleId="asset-total" />
-          <div className="text-[10px] text-slate-400 text-center">
+          <div className="text-[9px] text-slate-400 text-center mt-1">
             資産 {r(assetTotal)}
           </div>
         </div>
 
-        {/* === balance indicator === */}
-        <div className="flex flex-col items-center justify-center self-center gap-1 px-1 min-w-[36px]">
-          {isBalanced ? (
-            <span className="text-green-400 text-lg font-bold">=</span>
-          ) : (
-            <span className="text-red-400 text-lg font-bold">≠</span>
-          )}
-          {!isBalanced && (
-            <span className="text-[9px] text-red-400/80 text-center leading-tight">
-              差{diff > 0 ? "+" : ""}
-              {diff}
-            </span>
-          )}
+        {/* Balance indicator */}
+        <div className="flex flex-col items-center justify-center self-center px-1">
+          <span className="text-green-400 text-lg font-bold">=</span>
         </div>
 
-        {/* === Liabilities + Equity === */}
-        <div className="flex flex-col items-center w-24">
-          {/* 正の領域 */}
+        {/* Liabilities + Equity */}
+        <div className="flex flex-col items-center w-20">
           <div
             className="flex flex-col w-full border-2 border-yellow-400/50 rounded-t bg-slate-800/50"
-            style={{ height: rightPosH, overflow: "visible" }}
+            style={{ height: rightPositive * scale, overflow: "visible" }}
           >
-            {/* 有利子負債 — タッチで debt-otherliab ハンドルを操作 */}
-            <DragBlock
-              handleId="debt-otherliab"
+            <div
+              className="w-full flex items-center justify-center text-[10px] font-bold select-none shrink-0"
               style={{ height: debtH, backgroundColor: COLORS.debt }}
             >
-              {debtH > 38 && (
-                <span className="text-gray-900 text-center leading-tight px-1 pointer-events-none">
-                  有利子<br />負債<br />{r(values.debt)}
+              {debtH > 18 && (
+                <span className="text-gray-900 text-center leading-tight px-0.5 pointer-events-none">
+                  負債
+                  <br />
+                  {r(debt)}
                 </span>
               )}
-            </DragBlock>
-
-            <InternalHandle handleId="debt-otherliab" />
-
-            {/* その他負債 — タッチで otherliab-equity ハンドルを操作 */}
-            <DragBlock
-              handleId="otherliab-equity"
+            </div>
+            <div
+              className="w-full flex items-center justify-center text-[10px] font-bold select-none shrink-0"
               style={{ height: otherLiabH, backgroundColor: COLORS.otherLiab }}
             >
-              {otherLiabH > 26 && (
-                <span className="text-gray-900 text-center leading-tight px-1 pointer-events-none">
-                  その他<br />{r(values.otherLiab)}
+              {otherLiabH > 18 && (
+                <span className="text-gray-900 text-center leading-tight px-0.5 pointer-events-none">
+                  その他
+                  <br />
+                  {r(otherLiab)}
                 </span>
               )}
-            </DragBlock>
-
+            </div>
             {!isNeg && (
-              <>
-                <InternalHandle handleId="otherliab-equity" />
-
-                {/* 純資産 (正) — タッチで otherliab-equity ハンドルを操作 */}
-                <DragBlock
-                  handleId="otherliab-equity"
-                  style={{ height: equityH, backgroundColor: COLORS.equity }}
-                >
-                  {equityH > 26 && (
-                    <span className="text-gray-900 text-center leading-tight px-1 pointer-events-none">
-                      純資産<br />{r(values.equity)}
-                    </span>
-                  )}
-                </DragBlock>
-              </>
+              <div
+                className="w-full flex items-center justify-center text-[10px] font-bold select-none shrink-0"
+                style={{ height: equityH, backgroundColor: COLORS.equity }}
+              >
+                {equityH > 18 && (
+                  <span className="text-gray-900 text-center leading-tight px-0.5 pointer-events-none">
+                    純資産
+                    <br />
+                    {r(equity)}
+                  </span>
+                )}
+              </div>
             )}
           </div>
 
-          {/* 債務超過: 0ラインから下に突き抜け */}
+          {/* 債務超過 */}
           {isNeg && (
             <>
-              <InternalHandle handleId="otherliab-equity" />
               <div className="w-full border-t-2 border-dashed border-white/70" />
-              <DragBlock
-                handleId="otherliab-equity"
-                className="border-2 border-t-0 border-yellow-400/50 rounded-b"
+              <div
+                className="w-full flex items-center justify-center text-[10px] font-bold select-none border-2 border-t-0 border-yellow-400/50 rounded-b"
                 style={{
                   height: negEquityH,
                   backgroundColor: COLORS.equityNeg,
@@ -436,55 +217,111 @@ export default function DraggableBSBar({
                     "repeating-linear-gradient(-45deg, transparent, transparent 4px, rgba(0,0,0,0.15) 4px, rgba(0,0,0,0.15) 8px)",
                 }}
               >
-                {negEquityH > 20 && (
-                  <span className="text-white text-center leading-tight px-1 pointer-events-none drop-shadow-md">
-                    債務超過<br />{r(values.equity)}
+                {negEquityH > 14 && (
+                  <span className="text-white text-center leading-tight px-0.5 pointer-events-none drop-shadow-md">
+                    債務超過
+                    <br />
+                    {r(equity)}
                   </span>
                 )}
-              </DragBlock>
+              </div>
             </>
           )}
-
-          <BottomHandle handleId="right-total" />
-          <div className="text-[10px] text-slate-400 text-center">
+          <div className="text-[9px] text-slate-400 text-center mt-1">
             {isNeg ? (
               <>
-                負債 {r(values.debt + values.otherLiab)}
-                <br />
-                <span className="text-red-400">
-                  純資産 {r(values.equity)}
-                </span>
+                負債 {r(liabTotal)}{" "}
+                <span className="text-red-400">純資産 {r(equity)}</span>
               </>
             ) : (
-              <>負債+純資産 {r(rightAccounting)}</>
+              <>負債+純資産 {r(assetTotal)}</>
             )}
           </div>
         </div>
       </div>
 
-      {/* floating tooltip */}
-      {tooltip && activeHandle && (
-        <div
-          className="absolute left-1/2 -translate-x-1/2 px-2.5 py-1 bg-slate-900/90 border border-yellow-400/60 text-yellow-200 text-[10px] font-bold rounded-md whitespace-nowrap pointer-events-none z-50 shadow-lg backdrop-blur-sm"
-          style={{ top: Math.max(0, tooltip.y) }}
-        >
-          {tooltipValues(activeHandle)}
+      {/* ---- Range sliders ---- */}
+      <div className="w-full max-w-xs mt-2 space-y-1.5">
+        {/* Assets section */}
+        <div className="text-[10px] text-slate-500 font-bold border-b border-slate-700/50 pb-0.5">
+          資産
         </div>
-      )}
+        {assetSliders.map(({ key, label, color, value, setter }) => (
+          <div key={key} className="flex items-center gap-2">
+            <div
+              className="w-2.5 h-2.5 rounded-sm shrink-0"
+              style={{ backgroundColor: color }}
+            />
+            <span className="text-[10px] text-slate-300 w-14 shrink-0 leading-tight">
+              {label}
+            </span>
+            <input
+              type="range"
+              min={0}
+              max={sliderMax}
+              step={sliderStep}
+              value={value}
+              onChange={(e) => setter(parseFloat(e.target.value))}
+              className="bs-range flex-1"
+              style={{ "--thumb-color": color }}
+            />
+            <span className="text-[10px] text-slate-300 w-10 text-right tabular-nums font-mono">
+              {r(value)}
+            </span>
+          </div>
+        ))}
 
-      {/* controls */}
-      <div className="flex flex-col items-center gap-2 mt-1">
-        {!isBalanced && (
-          <button
-            onClick={handleAutoBalance}
-            className="px-4 py-1.5 text-xs font-bold rounded-lg border transition-colors cursor-pointer bg-orange-500/20 border-orange-400/50 text-orange-300 hover:bg-orange-500/40"
+        {/* Liabilities section */}
+        <div className="text-[10px] text-slate-500 font-bold border-b border-slate-700/50 pb-0.5 mt-2">
+          負債
+        </div>
+        {liabSliders.map(({ key, label, color, value, setter }) => (
+          <div key={key} className="flex items-center gap-2">
+            <div
+              className="w-2.5 h-2.5 rounded-sm shrink-0"
+              style={{ backgroundColor: color }}
+            />
+            <span className="text-[10px] text-slate-300 w-14 shrink-0 leading-tight">
+              {label}
+            </span>
+            <input
+              type="range"
+              min={0}
+              max={sliderMax}
+              step={sliderStep}
+              value={value}
+              onChange={(e) => setter(parseFloat(e.target.value))}
+              className="bs-range flex-1"
+              style={{ "--thumb-color": color }}
+            />
+            <span className="text-[10px] text-slate-300 w-10 text-right tabular-nums font-mono">
+              {r(value)}
+            </span>
+          </div>
+        ))}
+
+        {/* Equity display (auto-calculated) */}
+        <div className="flex items-center gap-2 pt-1.5 border-t border-slate-700/50">
+          <div
+            className="w-2.5 h-2.5 rounded-sm shrink-0"
+            style={{
+              backgroundColor: isNeg ? COLORS.equityNeg : COLORS.equity,
+            }}
+          />
+          <span className="text-[10px] text-slate-300 w-14 shrink-0">
+            純資産
+          </span>
+          <span className="flex-1 text-[9px] text-slate-600 italic">
+            自動計算
+          </span>
+          <span
+            className={`text-xs w-10 text-right tabular-nums font-mono font-bold ${
+              isNeg ? "text-red-400" : "text-yellow-300"
+            }`}
           >
-            自動バランス (純資産で調整)
-          </button>
-        )}
-        {isBalanced && (
-          <div className="text-xs text-green-400 font-bold">バランスOK</div>
-        )}
+            {r(equity)}
+          </span>
+        </div>
       </div>
     </div>
   );
