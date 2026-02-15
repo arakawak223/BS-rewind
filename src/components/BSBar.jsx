@@ -18,6 +18,8 @@ const COLORS = {
  *
  * maxTotal: 外部から与えるスケーリング基準値。複数バーの一貫性に使う。
  */
+const fmt = (v) => Math.round(v);
+
 export default function BSBar({
   data,
   barHeight = 400,
@@ -95,7 +97,7 @@ export default function BSBar({
             >
               {cashH > 24 && (
                 <span className="text-gray-900 drop-shadow-sm text-center leading-tight px-1">
-                  現金<br />{cash}
+                  現金<br />{fmt(cash)}
                 </span>
               )}
             </motion.div>
@@ -106,7 +108,7 @@ export default function BSBar({
             >
               {cashH > 24 && (
                 <span className="text-gray-900 drop-shadow-sm text-center leading-tight px-1">
-                  現金<br />{cash}
+                  現金<br />{fmt(cash)}
                 </span>
               )}
             </div>
@@ -123,7 +125,7 @@ export default function BSBar({
             >
               {othersH > 24 && (
                 <span className="text-gray-900 drop-shadow-sm text-center leading-tight px-1">
-                  その他<br />{others}
+                  その他<br />{fmt(others)}
                 </span>
               )}
             </motion.div>
@@ -134,7 +136,7 @@ export default function BSBar({
             >
               {othersH > 24 && (
                 <span className="text-gray-900 drop-shadow-sm text-center leading-tight px-1">
-                  その他<br />{others}
+                  その他<br />{fmt(others)}
                 </span>
               )}
             </div>
@@ -158,7 +160,7 @@ export default function BSBar({
               >
                 {gwH > 24 && (
                   <span className="text-gray-900 drop-shadow-sm text-center leading-tight px-1">
-                    のれん<br />{goodwill}
+                    のれん<br />{fmt(goodwill)}
                   </span>
                 )}
               </motion.div>
@@ -176,7 +178,7 @@ export default function BSBar({
               >
                 {gwH > 24 && (
                   <span className="text-gray-900 drop-shadow-sm text-center leading-tight px-1">
-                    のれん<br />{goodwill}
+                    のれん<br />{fmt(goodwill)}
                   </span>
                 )}
               </div>
@@ -202,7 +204,7 @@ export default function BSBar({
               >
                 {debtH > 36 && (
                   <span className="text-gray-900 drop-shadow-sm text-center leading-tight px-1">
-                    有利子<br />負債<br />{debt}
+                    有利子<br />負債<br />{fmt(debt)}
                   </span>
                 )}
               </motion.div>
@@ -213,7 +215,7 @@ export default function BSBar({
               >
                 {debtH > 36 && (
                   <span className="text-gray-900 drop-shadow-sm text-center leading-tight px-1">
-                    有利子<br />負債<br />{debt}
+                    有利子<br />負債<br />{fmt(debt)}
                   </span>
                 )}
               </div>
@@ -230,7 +232,7 @@ export default function BSBar({
               >
                 {otherLiabH > 24 && (
                   <span className="text-gray-900 drop-shadow-sm text-center leading-tight px-1">
-                    その他<br />{otherLiab}
+                    その他<br />{fmt(otherLiab)}
                   </span>
                 )}
               </motion.div>
@@ -241,7 +243,7 @@ export default function BSBar({
               >
                 {otherLiabH > 24 && (
                   <span className="text-gray-900 drop-shadow-sm text-center leading-tight px-1">
-                    その他<br />{otherLiab}
+                    その他<br />{fmt(otherLiab)}
                   </span>
                 )}
               </div>
@@ -259,7 +261,7 @@ export default function BSBar({
                 >
                   {equityH > 24 && (
                     <span className="text-gray-900 drop-shadow-sm text-center leading-tight px-1">
-                      純資産<br />{equity}
+                      純資産<br />{fmt(equity)}
                     </span>
                   )}
                 </motion.div>
@@ -270,7 +272,7 @@ export default function BSBar({
                 >
                   {equityH > 24 && (
                     <span className="text-gray-900 drop-shadow-sm text-center leading-tight px-1">
-                      純資産<br />{equity}
+                      純資産<br />{fmt(equity)}
                     </span>
                   )}
                 </div>
@@ -298,7 +300,7 @@ export default function BSBar({
                 >
                   {negEquityH > 20 && (
                     <span className="text-white drop-shadow-md text-center leading-tight px-1">
-                      債務超過<br />{equity}
+                      債務超過<br />{fmt(equity)}
                     </span>
                   )}
                 </motion.div>
@@ -316,7 +318,7 @@ export default function BSBar({
                 >
                   {negEquityH > 20 && (
                     <span className="text-white drop-shadow-md text-center leading-tight px-1">
-                      債務超過<br />{equity}
+                      債務超過<br />{fmt(equity)}
                     </span>
                   )}
                 </div>

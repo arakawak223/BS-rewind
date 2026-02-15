@@ -61,7 +61,7 @@ export default function DraggableBSBar({
     });
   }, [cash, goodwill, others, debt, otherLiab, equity, onDataChange]);
 
-  const r = (v) => Math.round(v * 10) / 10;
+  const r = (v) => Math.round(v);
 
   // Prediction data object for BSBar
   const predictionData = {
