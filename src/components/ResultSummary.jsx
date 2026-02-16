@@ -365,13 +365,15 @@ export default function ResultSummary({ prediction, actual, stage, postDeal, onR
 
   const r = (v) => Math.round((v || 0) * 10) / 10;
 
+  const yearDiff = stage.after_year - stage.before_year;
+
   const details = [
-    { label: "現金", pred: r(prediction.assets.cash), act: r(actual.assets.cash) },
-    { label: "その他資産", pred: r(prediction.assets.others), act: r(actual.assets.others) },
-    { label: "のれん", pred: r(prediction.assets.goodwill), act: r(actual.assets.goodwill) },
-    { label: "有利子負債", pred: r(prediction.liabilities.debt), act: r(actual.liabilities.debt) },
-    { label: "その他負債", pred: r(prediction.liabilities.others), act: r(actual.liabilities.others) },
-    { label: "純資産", pred: r(prediction.equity), act: r(actual.equity) },
+    { label: "現金", deal: r(postDeal.assets.cash), pred: r(prediction.assets.cash), act: r(actual.assets.cash) },
+    { label: "その他資産", deal: r(postDeal.assets.others), pred: r(prediction.assets.others), act: r(actual.assets.others) },
+    { label: "のれん", deal: r(postDeal.assets.goodwill), pred: r(prediction.assets.goodwill), act: r(actual.assets.goodwill) },
+    { label: "有利子負債", deal: r(postDeal.liabilities.debt), pred: r(prediction.liabilities.debt), act: r(actual.liabilities.debt) },
+    { label: "その他負債", deal: r(postDeal.liabilities.others), pred: r(prediction.liabilities.others), act: r(actual.liabilities.others) },
+    { label: "純資産", deal: r(postDeal.equity), pred: r(prediction.equity), act: r(actual.equity) },
   ];
 
   const history = postDeal
@@ -495,7 +497,7 @@ export default function ResultSummary({ prediction, actual, stage, postDeal, onR
         >
           <div className="mb-2">
             <span className="text-xs px-2 py-1 rounded bg-amber-600/40 text-amber-200 font-bold">
-              重要決算情報
+              監査法人
             </span>
           </div>
           <div className="text-sm text-amber-100 leading-relaxed space-y-1">
@@ -527,7 +529,17 @@ export default function ResultSummary({ prediction, actual, stage, postDeal, onR
         <table className="w-full text-sm">
           <thead>
             <tr className="text-slate-400">
-              <th className="text-left py-1">項目</th>
+              <th className="text-left py-1" rowSpan={2}>項目</th>
+              <th className="text-right py-1 border-b border-slate-700/50" rowSpan={2}>
+                <span className="text-slate-500 text-xs">Decision</span>
+                <br />
+                <span className="text-slate-400">実行直後</span>
+              </th>
+              <th className="text-center py-1 border-b border-slate-700/50" colSpan={3}>
+                <span className="text-orange-400 text-xs">{yearDiff}年後</span>
+              </th>
+            </tr>
+            <tr className="text-slate-400">
               <th className="text-right py-1">あなた</th>
               <th className="text-right py-1">実データ</th>
               <th className="text-right py-1">差</th>
@@ -539,6 +551,7 @@ export default function ResultSummary({ prediction, actual, stage, postDeal, onR
               return (
                 <tr key={d.label} className="border-t border-slate-700">
                   <td className="py-2 text-slate-300">{d.label}</td>
+                  <td className="py-2 text-right text-slate-400">{d.deal}</td>
                   <td className="py-2 text-right text-yellow-300">
                     {d.pred}
                   </td>

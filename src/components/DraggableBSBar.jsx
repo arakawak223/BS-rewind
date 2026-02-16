@@ -114,7 +114,7 @@ export default function DraggableBSBar({
             data={dealData}
             barHeight={barHeight}
             maxTotal={pairMaxTotal}
-            label="Deal直後"
+            label="Decision実行直後"
             year={dealYear}
             unit={unit}
           />
