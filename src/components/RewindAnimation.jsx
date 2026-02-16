@@ -632,24 +632,10 @@ export default function RewindAnimation({
         />
       )}
 
-      {/* Overlaid B/S bars */}
+      {/* Side-by-side B/S bars: Actual (left) + Prediction (right) */}
       <div className="relative">
-        {predictionBS && (
-          <div className="absolute inset-0 z-0">
-            <div className="flex flex-col items-center">
-              <div className="text-xs text-yellow-400/60 mb-1">あなたの予測</div>
-              <BSBarAnimated
-                data={predictionBS}
-                barHeight={barHeight}
-                maxTotal={rewindMax}
-                opacity={0.3}
-                borderColorHex="rgba(250, 204, 21, 0.3)"
-              />
-            </div>
-          </div>
-        )}
-
-        <div className="relative z-10">
+        <div className="flex items-end gap-6">
+          {/* Actual data */}
           <div className="flex flex-col items-center">
             <div className="text-xs text-slate-300 mb-1">実データ</div>
             <BSBarAnimated
@@ -661,6 +647,20 @@ export default function RewindAnimation({
               showSmoke={showSmoke}
             />
           </div>
+
+          {/* Player prediction */}
+          {predictionBS && (
+            <div className="flex flex-col items-center">
+              <div className="text-xs text-yellow-400 mb-1">あなたの予測</div>
+              <BSBarAnimated
+                data={predictionBS}
+                barHeight={barHeight}
+                maxTotal={rewindMax}
+                opacity={0.5}
+                borderColorHex="rgba(250, 204, 21, 0.4)"
+              />
+            </div>
+          )}
         </div>
 
         {/* Vital pulse overlay */}
