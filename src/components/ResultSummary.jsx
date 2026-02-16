@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { formatOku } from "../data/stages";
 
 const SERIES = [
   { key: "cash", label: "現金", color: "#4ade80", get: (d) => d.assets.cash || 0 },
@@ -730,8 +731,7 @@ export default function ResultSummary({ prediction, actual, stage, postDeal, onR
             className="text-4xl font-black text-red-400 text-center tabular-nums"
             style={{ textShadow: "0 0 20px rgba(248,113,113,0.5)" }}
           >
-            {(totalImpairment * 1000).toLocaleString()}
-            <span className="text-lg ml-1">億円</span>
+            {formatOku(totalImpairment * 1000)}
           </div>
         </motion.div>
       )}

@@ -987,3 +987,18 @@ export function getMaxTotal(stage) {
 export function getStage(id) {
   return stages.find((s) => s.stage_id === id);
 }
+
+/**
+ * 億円単位の金額を表示用にフォーマット。
+ * 10,000億円以上は「X兆Y,YYY億円」形式にする。
+ */
+export function formatOku(oku) {
+  const val = Math.round(oku);
+  if (val >= 10000) {
+    const cho = Math.floor(val / 10000);
+    const remainder = val % 10000;
+    if (remainder === 0) return `${cho}兆円`;
+    return `${cho}兆${remainder.toLocaleString()}億円`;
+  }
+  return `${val.toLocaleString()}億円`;
+}

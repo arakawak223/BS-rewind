@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { formatOku } from "../data/stages";
 
 const METHOD_LABELS = {
   debt_financed: "借入 (有利子負債)",
@@ -27,7 +28,7 @@ export default function InvestmentCard({ stage }) {
         </div>
         <div className="bg-red-900/50 px-3 py-1 rounded text-sm">
           <span className="text-slate-400">金額: </span>
-          <span className="text-red-300 font-bold">{inv.amount}千億円</span>
+          <span className="text-red-300 font-bold">{formatOku(inv.amount * 1000)}</span>
         </div>
       </div>
       <p className="text-sm text-slate-300 leading-relaxed">{description}</p>
