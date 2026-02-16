@@ -211,7 +211,7 @@ export const stages = [
         curve: "crash_early",
       },
       news: [
-        { year: 2010, type: "official", headline: "パナソニック、三洋電機を子会社化。電池事業を核に成長へ", isBreaking: true },
+        { year: 2010, type: "official", headline: "パナソニック、三洋電機を子会社化。電池事業を核に成長へ" },
         { year: 2012, type: "audit", headline: "監査法人：プラズマ及び三洋関連資産の減損を指摘。2年連続7000億超の赤字", isCritical: true },
         { year: 2013, type: "official", headline: "無配転落：創業以来の危機。金融機関が劣後ローンによる資本支援", isCritical: true },
       ],
@@ -254,7 +254,7 @@ export const stages = [
         curve: "crash_early",
       },
       news: [
-        { year: 2021, type: "financial", headline: "有利子負債が10兆円突破（銀行合算）。モバイル基地局投資が重荷に", isBreaking: true },
+        { year: 2021, type: "financial", headline: "有利子負債が10兆円突破（銀行合算）。モバイル基地局投資が重荷に" },
         { year: 2023, type: "official", subtype: "going_concern", headline: "継続企業の前提に関する重要な疑義注記（GC注記）を検討。楽天証券など子会社売却へ", isCritical: true },
         { year: 2024, type: "financial", headline: "ドル建て社債の借り換えを完了。金融機関とのコベナンツ調整が続く", isCritical: true },
       ],
@@ -297,7 +297,7 @@ export const stages = [
         curve: "crash_early",
       },
       news: [
-        { year: 2001, type: "official", headline: "AOLとタイム・ワーナー合併。時価総額3500億ドルの巨大メディア誕生", isBreaking: true },
+        { year: 2001, type: "official", headline: "AOLとタイム・ワーナー合併。時価総額3500億ドルの巨大メディア誕生" },
         { year: 2002, type: "audit", headline: "米会計基準変更。旧AOLの価値消失を認め、990億ドル（約12兆円）の巨額減損", isCritical: true },
         { year: 2003, type: "official", headline: "社名から『AOL』が消滅。合併は実質的な失敗と市場が判断", isCritical: true },
       ],
@@ -341,7 +341,7 @@ export const stages = [
       news: [
         { year: 2020, type: "official", headline: "WeWork上場撤回。ソフトバンクG、1兆円規模の追加支援と減損を迫られる", isCritical: true },
         { year: 2022, type: "official", headline: "ビジョンファンド、ハイテク株安で5兆円超の巨額損失。守りの経営へ", isCritical: true },
-        { year: 2023, type: "financial", headline: "英Arm上場で現金確保。LTV（保有資産負債比率）を死守し財務健全性を強調", isBreaking: true },
+        { year: 2023, type: "financial", headline: "英Arm上場で現金確保。LTV（保有資産負債比率）を死守し財務健全性を強調" },
       ],
       summary: { totalImpairment: 35.0 },
     },
@@ -384,7 +384,7 @@ export const stages = [
       news: [
         { year: 2013, type: "official", headline: "過去最大の赤字4500億円。平井新体制で『One Sony』掲げ構造改革へ", isCritical: true },
         { year: 2015, type: "audit", headline: "監査法人：継続企業の前提（GC）注記の検討から脱却。黒字化定着を確認" },
-        { year: 2021, type: "official", headline: "純利益1兆円突破。ハードからコンテンツと金融の融合B/Sへ完全転換", isBreaking: true },
+        { year: 2021, type: "official", headline: "純利益1兆円突破。ハードからコンテンツと金融の融合B/Sへ完全転換" },
       ],
       summary: { totalImpairment: 8.0 },
     },
@@ -426,8 +426,8 @@ export const stages = [
       },
       news: [
         { year: 2016, type: "financial", headline: "巨額の現金を持ちながら社債発行。超低金利を活かしたレバレッジ経営" },
-        { year: 2018, type: "official", headline: "『ネット・キャッシュ・ニュートラル』目標を発表。現金を株主還元へ集中", isBreaking: true },
-        { year: 2023, type: "official", headline: "時価総額3兆ドル突破。自社株買いにより純資産が極めて薄い筋肉質なB/Sへ", isBreaking: true },
+        { year: 2018, type: "official", headline: "『ネット・キャッシュ・ニュートラル』目標を発表。現金を株主還元へ集中" },
+        { year: 2023, type: "official", headline: "時価総額3兆ドル突破。自社株買いにより純資産が極めて薄い筋肉質なB/Sへ" },
       ],
       summary: { totalImpairment: 0.0 },
     },
@@ -470,7 +470,7 @@ export const stages = [
       news: [
         { year: 2010, type: "audit", subtype: "going_concern", headline: "会社更生法適用を申請。1兆2165億円の債務超過、株価は1円へ", isCritical: true },
         { year: 2011, type: "financial", headline: "更生計画に基づき、銀行団が5215億円の債権放棄を完了", isCritical: true },
-        { year: 2012, type: "official", headline: "奇跡の再上場。高収益体質に生まれ変わり、純資産が劇的に回復", isBreaking: true },
+        { year: 2012, type: "official", headline: "奇跡の再上場。高収益体質に生まれ変わり、純資産が劇的に回復" },
       ],
       summary: { totalImpairment: 8.0 },
     },
@@ -511,9 +511,9 @@ export const stages = [
         curve: "surge_early",
       },
       news: [
-        { year: 1999, type: "financial", headline: "ルノーが6430億円を出資。資本提携により現金を確保", isBreaking: true },
+        { year: 1999, type: "financial", headline: "ルノーが6430億円を出資。資本提携により現金を確保" },
         { year: 2000, type: "official", headline: "『日産リバイバル・プラン』始動。村山工場閉鎖などの聖域なきリストラ", isCritical: true },
-        { year: 2003, type: "official", headline: "有利子負債をゼロ（自動車部門）にする『コミットメント』達成。V字回復", isBreaking: true },
+        { year: 2003, type: "official", headline: "有利子負債をゼロ（自動車部門）にする『コミットメント』達成。V字回復" },
       ],
       summary: { totalImpairment: 6.0 },
     },
@@ -556,7 +556,7 @@ export const stages = [
       news: [
         { year: 2011, type: "audit", headline: "監査法人：不明瞭な買収資金を指摘。1177億円の損失隠しが発覚", isCritical: true },
         { year: 2012, type: "official", headline: "上場廃止の危機を回避。ソニーとの資本提携により500億円の資金注入", isCritical: true },
-        { year: 2013, type: "official", headline: "医療機器事業の強みで再建。B/Sから過去の膿を完全に排出", isBreaking: true },
+        { year: 2013, type: "official", headline: "医療機器事業の強みで再建。B/Sから過去の膿を完全に排出" },
       ],
       summary: { totalImpairment: 1.8 },
     },
@@ -597,8 +597,9 @@ export const stages = [
         curve: "crash_early",
       },
       news: [
-        { year: 2007, type: "financial", headline: "サブプライム関連資産の暴落。レバレッジ30倍超のB/Sが限界に", isBreaking: true },
-        { year: 2008, type: "official", subtype: "going_concern", headline: "FRBによる救済を断念。米史上最大のチャプター11申請。全世界に金融恐慌が波及", isCritical: true },
+        { year: 2007, type: "financial", headline: "サブプライム関連資産の暴落。レバレッジ30倍超のB/Sが限界に", isCritical: true },
+        { year: 2008, type: "official", subtype: "going_concern", headline: "FRBによる救済を断念。米史上最大のチャプター11申請へ", isCritical: true },
+        { year: 2008, type: "audit", headline: "資産価値は事実上のゼロ。全世界に金融恐慌が波及", isCritical: true },
       ],
       summary: { totalImpairment: 60.0 },
     },
@@ -641,7 +642,7 @@ export const stages = [
       news: [
         { year: 2002, type: "financial", headline: "主力3行、5200億円の債権放棄を伴う再建支援を決定", isCritical: true },
         { year: 2004, type: "official", headline: "産業再生機構への支援を要請。創業者中内功氏の時代が終焉", isCritical: true },
-        { year: 2005, type: "audit", headline: "店舗網を大幅縮小。有利子負債を売却益で返済する決死のB/Sスリム化", isBreaking: true },
+        { year: 2005, type: "audit", headline: "店舗網を大幅縮小。有利子負債を売却益で返済する決死のB/Sスリム化" },
       ],
       summary: { totalImpairment: 12.0 },
     },
@@ -682,9 +683,9 @@ export const stages = [
         curve: "surge_early",
       },
       news: [
-        { year: 2019, type: "financial", headline: "稼いだ現金を全て自社株買いへ投入。会計上の純資産がマイナスに", isBreaking: true },
+        { year: 2019, type: "financial", headline: "稼いだ現金を全て自社株買いへ投入。会計上の純資産がマイナスに" },
         { year: 2020, type: "official", headline: "パンデミックで売上減も、ブランド力で低金利社債を発行。現金を維持" },
-        { year: 2023, type: "audit", headline: "『稼ぐ力』が強すぎて、マイナスの純資産でも決算は適正と判断", isBreaking: true },
+        { year: 2023, type: "audit", headline: "『稼ぐ力』が強すぎて、マイナスの純資産でも監査法人は適正と判断" },
       ],
       summary: { totalImpairment: 0.0 },
     },
@@ -726,8 +727,8 @@ export const stages = [
       },
       news: [
         { year: 2001, type: "audit", headline: "簿外債務の発覚。数百の特別目的会社(SPE)へ負債を飛ばしていたことが露呈", isCritical: true },
-        { year: 2001, type: "audit", headline: "アーサー・アンダーセン（会計事務所）による隠蔽協力の疑い。解体へ", isCritical: true },
-        { year: 2001, type: "official", subtype: "going_concern", headline: "米史上最大（当時）の経営破綻。B/Sへの信頼性が根本から揺らぐ", isCritical: true },
+        { year: 2001, type: "audit", headline: "アーサー・アンダーセン（監査法人）による隠蔽協力の疑い。解体へ", isCritical: true },
+        { year: 2001, type: "official", headline: "米史上最大（当時）の経営破綻。B/Sへの信頼性が根本から揺らぐ", isCritical: true },
       ],
       summary: { totalImpairment: 60.0 },
     },
@@ -768,9 +769,9 @@ export const stages = [
         curve: "surge_early",
       },
       news: [
-        { year: 2012, type: "official", headline: "3DS不振、Wii U苦戦で創業以来初の営業赤字。しかし無借金は維持", isBreaking: true },
+        { year: 2012, type: "official", headline: "3DS不振、Wii U苦戦で創業以来初の営業赤字。しかし無借金は維持" },
         { year: 2014, type: "financial", headline: "巨額の現金があるため、数年の赤字でもGC注記の気配すらなし" },
-        { year: 2017, type: "official", headline: "Nintendo Switch発売。溜め込んだ現金で次世代機を開発し、世界を席巻", isBreaking: true },
+        { year: 2017, type: "official", headline: "Nintendo Switch発売。溜め込んだ現金で次世代機を開発し、世界を席巻" },
       ],
       summary: { totalImpairment: 0.5 },
     },
@@ -811,7 +812,7 @@ export const stages = [
         curve: "crash_early",
       },
       news: [
-        { year: 2005, type: "official", headline: "ニッポン放送買収劇。株式分割を繰り返し、時価総額を意図的に膨張", isBreaking: true },
+        { year: 2005, type: "official", headline: "ニッポン放送買収劇。株式分割を繰り返し、時価総額を意図的に膨張" },
         { year: 2006, type: "audit", headline: "検察による強制捜査。架空売上の計上と粉飾決算が露呈", isCritical: true },
         { year: 2006, type: "official", headline: "ライブドア・ショック発生。東証が取引停止、後に上場廃止へ", isCritical: true },
       ],
@@ -856,7 +857,7 @@ export const stages = [
       news: [
         { year: 2019, type: "official", headline: "米国事業での苦戦続く。年間400億円の広告宣伝費でキャッシュを焼く" },
         { year: 2021, type: "financial", headline: "国内事業の黒字で米国赤字を補填。借入による資金繰りも安定化" },
-        { year: 2023, type: "official", headline: "悲願の黒字化達成。B/Sの健全性を維持しつつ米国展開を継続", isBreaking: true },
+        { year: 2023, type: "official", headline: "悲願の黒字化達成。B/Sの健全性を維持しつつ米国展開を継続" },
       ],
       summary: { totalImpairment: 0.0 },
     },
