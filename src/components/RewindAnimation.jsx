@@ -549,8 +549,8 @@ export default function RewindAnimation({
       setTimeout(() => {
         setShowNoise(false);
         setCurrentNews(null);
-        intervalRef.current = setInterval(tick, 1000);
-      }, 2500);
+        intervalRef.current = setInterval(tick, 2000);
+      }, 5000);
       return;
     }
 
@@ -560,8 +560,8 @@ export default function RewindAnimation({
       intervalRef.current = null;
       setTimeout(() => {
         setCurrentNews(null);
-        intervalRef.current = setInterval(tick, 1000);
-      }, 1800);
+        intervalRef.current = setInterval(tick, 2000);
+      }, 4000);
     }
   }, [before_year, after_year, totalYears, startBS, actualAfter, sp, newsItems]);
 
@@ -569,7 +569,7 @@ export default function RewindAnimation({
     if (phase !== "counting") return;
 
     yearRef.current = before_year;
-    intervalRef.current = setInterval(tick, 1000);
+    intervalRef.current = setInterval(tick, 2000);
 
     return () => {
       if (intervalRef.current) {

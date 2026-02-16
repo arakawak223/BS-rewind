@@ -37,8 +37,8 @@ export const stages = [
         { year: 2006, headline: "東芝、米原発大手WHを6600億円で買収", isBreaking: true },
         { year: 2011, headline: "福島原発事故発生。世界の原子力政策が転換", isBreaking: false },
         { year: 2015, headline: "東芝、不正会計が発覚。利益水増し7年間", isBreaking: false },
-        { year: 2016, type: "official", headline: "重要決算情報：過年度決算の訂正を要求。利益水増し1,562億円", isCritical: true },
-        { year: 2017, type: "audit_warning", subtype: "going_concern", headline: "重要決算情報：『継続企業の前提に関する重要な疑義』を注記", severity: "high", isCritical: true },
+        { year: 2016, type: "official", headline: "監査法人：過年度決算の訂正を要求。利益水増し1,562億円", isCritical: true },
+        { year: 2017, type: "audit_warning", subtype: "going_concern", headline: "監査法人：『継続企業の前提に関する重要な疑義』を注記", severity: "high", isCritical: true },
         { year: 2017, type: "financial", headline: "メインバンク：融資維持の条件として半導体事業の売却を要求" },
         { year: 2017, headline: "東芝、債務超過で上場廃止の瀬戸際", isBreaking: true },
       ],
@@ -82,8 +82,8 @@ export const stages = [
       news: [
         { year: 2009, headline: "シャープ、堺に世界最大の液晶工場建設", isBreaking: true },
         { year: 2012, headline: "液晶パネル価格崩落。シャープ、過去最大の赤字", isBreaking: false },
-        { year: 2013, type: "official", headline: "重要決算情報：継続企業の前提に重要な疑義を記載", isCritical: true },
-        { year: 2015, type: "audit_warning", subtype: "going_concern", headline: "重要決算情報：『継続企業の前提に関する重要な疑義』— 2期連続注記", severity: "high", isCritical: true },
+        { year: 2013, type: "official", headline: "監査法人：継続企業の前提に重要な疑義を記載", isCritical: true },
+        { year: 2015, type: "audit_warning", subtype: "going_concern", headline: "監査法人：『継続企業の前提に関する重要な疑義』— 2期連続注記", severity: "high", isCritical: true },
         { year: 2015, type: "financial", headline: "メインバンク：追加融資の条件として大規模リストラを要求" },
         { year: 2016, headline: "シャープ、鴻海傘下に。日本の液晶神話が終焉", isBreaking: true },
       ],
@@ -212,7 +212,7 @@ export const stages = [
       },
       news: [
         { year: 2010, type: "official", headline: "パナソニック、三洋電機を子会社化。電池事業を核に成長へ", isBreaking: true },
-        { year: 2012, type: "audit", headline: "重要決算情報：プラズマ及び三洋関連資産の減損を指摘。2年連続7000億超の赤字", isCritical: true },
+        { year: 2012, type: "audit", headline: "監査法人：プラズマ及び三洋関連資産の減損を指摘。2年連続7000億超の赤字", isCritical: true },
         { year: 2013, type: "official", headline: "無配転落：創業以来の危機。金融機関が劣後ローンによる資本支援", isCritical: true },
       ],
       summary: { totalImpairment: 15.0 },
@@ -383,7 +383,7 @@ export const stages = [
       },
       news: [
         { year: 2013, type: "official", headline: "過去最大の赤字4500億円。平井新体制で『One Sony』掲げ構造改革へ", isCritical: true },
-        { year: 2015, type: "audit", headline: "重要決算情報：継続企業の前提（GC）注記の検討から脱却。黒字化定着を確認" },
+        { year: 2015, type: "audit", headline: "監査法人：継続企業の前提（GC）注記の検討から脱却。黒字化定着を確認" },
         { year: 2021, type: "official", headline: "純利益1兆円突破。ハードからコンテンツと金融の融合B/Sへ完全転換", isBreaking: true },
       ],
       summary: { totalImpairment: 8.0 },
@@ -554,7 +554,7 @@ export const stages = [
         curve: "surge_early",
       },
       news: [
-        { year: 2011, type: "audit", headline: "重要決算情報：不明瞭な買収資金を指摘。1177億円の損失隠しが発覚", isCritical: true },
+        { year: 2011, type: "audit", headline: "監査法人：不明瞭な買収資金を指摘。1177億円の損失隠しが発覚", isCritical: true },
         { year: 2012, type: "official", headline: "上場廃止の危機を回避。ソニーとの資本提携により500億円の資金注入", isCritical: true },
         { year: 2013, type: "official", headline: "医療機器事業の強みで再建。B/Sから過去の膿を完全に排出", isBreaking: true },
       ],

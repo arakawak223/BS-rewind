@@ -225,17 +225,6 @@ function App() {
 
                 {/* Deal + Prediction side by side */}
                 <div className="flex flex-col items-center">
-                  {stage.data.stockPrice && (
-                    <div className="mb-2">
-                      <StockPriceTicker
-                        price={stage.data.stockPrice.deal}
-                        previousPrice={stage.data.stockPrice.before}
-                        unit={stage.data.stockPrice.unit}
-                        label={`${stage.company_name} 株価`}
-                        animate={false}
-                      />
-                    </div>
-                  )}
                   <DraggableBSBar
                     initialData={postDeal}
                     dealData={postDeal}
@@ -244,6 +233,8 @@ function App() {
                     year={stage.after_year}
                     dealYear={stage.before_year}
                     unit={stage.unit}
+                    stockPrice={stage.data.stockPrice}
+                    companyName={stage.company_name}
                   />
                   <div className="text-[10px] text-slate-500 mt-1">
                     スライダーで予測B/Sを作成

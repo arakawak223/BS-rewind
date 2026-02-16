@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import BSBar from "./BSBar";
+import StockPriceTicker from "./StockPriceTicker";
 
 const COLORS = {
   cash: "#4ade80",
@@ -23,6 +24,8 @@ export default function DraggableBSBar({
   year,
   dealYear,
   unit,
+  stockPrice,
+  companyName,
 }) {
   const initCash = initialData.assets.cash || 0;
   const initGoodwill = initialData.assets.goodwill || 0;
@@ -95,14 +98,27 @@ export default function DraggableBSBar({
     <div className="flex flex-col items-center gap-3">
       {/* Side-by-side Deal + Prediction bars */}
       <div className="flex items-end gap-0.5">
-        <BSBar
-          data={dealData}
-          barHeight={barHeight}
-          maxTotal={pairMaxTotal}
-          label="Deal直後"
-          year={dealYear}
-          unit={unit}
-        />
+        <div className="flex flex-col items-center">
+          {stockPrice && (
+            <div className="mb-2">
+              <StockPriceTicker
+                price={stockPrice.deal}
+                previousPrice={stockPrice.before}
+                unit={stockPrice.unit}
+                label={`${companyName} 株価`}
+                animate={false}
+              />
+            </div>
+          )}
+          <BSBar
+            data={dealData}
+            barHeight={barHeight}
+            maxTotal={pairMaxTotal}
+            label="Deal直後"
+            year={dealYear}
+            unit={unit}
+          />
+        </div>
 
         {/* Arrow between bars */}
         <div className="flex flex-col items-center justify-center px-0.5 pb-8">

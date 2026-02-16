@@ -108,7 +108,7 @@ function CriticalOverlay({ headline, year, type, subtype }) {
     badgeText = "継続企業の前提";
     badgeClass = "bg-red-700 shadow-red-700/40";
   } else if (type === "official") {
-    badgeText = "重要決算情報";
+    badgeText = "監査法人";
     badgeClass = "bg-amber-600 shadow-amber-600/40";
   } else {
     badgeText = "銀行通告";
