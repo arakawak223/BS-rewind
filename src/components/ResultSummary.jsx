@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
 
 const SERIES = [
@@ -8,6 +9,176 @@ const SERIES = [
   { key: "otherLiab", label: "その他負債", color: "#fb923c", get: (d) => d.liabilities.others || 0 },
   { key: "equity", label: "純資産", color: "#facc15", get: (d) => d.equity },
 ];
+
+const INSOLVENCY_COLOR = "#ef4444";
+
+/**
+ * SVG-based B/S comparison chart: Deal (left) vs Actual (right) with dotted connectors.
+ */
+function BSComparisonChart({ dealData, actualData }) {
+  const W = 480;
+  const H = 300;
+  const BAR_W = 50;
+  const GAP = 16;
+  const PAD = { top: 30, bottom: 30, left: 40, right: 40 };
+
+  const assetSeries = [
+    { key: "cash", label: "現金", color: "#4ade80", get: (d) => d.assets.cash || 0 },
+    { key: "others", label: "その他", color: "#60a5fa", get: (d) => d.assets.others || 0 },
+    { key: "goodwill", label: "のれん", color: "#c084fc", get: (d) => d.assets.goodwill || 0 },
+  ];
+  const liabSeries = [
+    { key: "debt", label: "有利子負債", color: "#f87171", get: (d) => d.liabilities.debt || 0 },
+    { key: "otherLiab", label: "その他負債", color: "#fb923c", get: (d) => d.liabilities.others || 0 },
+    { key: "equity", label: "純資産", color: "#facc15", get: (d) => d.equity },
+  ];
+
+  const totalAssets = (d) => assetSeries.reduce((s, sr) => s + Math.abs(sr.get(d)), 0);
+  const totalLE = (d) => liabSeries.reduce((s, sr) => s + Math.abs(sr.get(d)), 0);
+  const maxVal = Math.max(totalAssets(dealData), totalLE(dealData), totalAssets(actualData), totalLE(actualData), 1);
+
+  const plotH = H - PAD.top - PAD.bottom;
+  const scale = plotH / maxVal;
+
+  // Group positions: Deal left, Actual right
+  const dealAssetsX = PAD.left;
+  const dealLEX = dealAssetsX + BAR_W + GAP;
+  const actualAssetsX = W - PAD.right - BAR_W * 2 - GAP;
+  const actualLEX = W - PAD.right - BAR_W;
+
+  function buildStack(data, series) {
+    const segments = [];
+    let cumY = 0;
+    for (const sr of series) {
+      const val = sr.get(data);
+      const h = Math.abs(val) * scale;
+      segments.push({ ...sr, val, h, y: cumY, isNeg: val < 0 });
+      cumY += h;
+    }
+    return segments;
+  }
+
+  const dealAssetStack = buildStack(dealData, assetSeries);
+  const dealLEStack = buildStack(dealData, liabSeries);
+  const actualAssetStack = buildStack(actualData, assetSeries);
+  const actualLEStack = buildStack(actualData, liabSeries);
+
+  const baseY = H - PAD.bottom;
+
+  function renderBar(stack, x) {
+    return stack.map((seg) => (
+      <rect
+        key={seg.key}
+        x={x}
+        y={baseY - seg.y - seg.h}
+        width={BAR_W}
+        height={Math.max(seg.h, 1)}
+        fill={seg.isNeg ? INSOLVENCY_COLOR : seg.color}
+        opacity={seg.isNeg ? 0.7 : 1}
+        rx={2}
+      />
+    ));
+  }
+
+  // Dotted connectors between Deal L+E and Actual Assets (boundary points)
+  function buildConnectors(leftStack, rightStack, leftX, rightX) {
+    const lines = [];
+    // Connect top of each segment
+    let cumLeft = 0;
+    let cumRight = 0;
+    const len = Math.min(leftStack.length, rightStack.length);
+    // Bottom connector
+    lines.push({ y1: baseY, y2: baseY, key: "bottom" });
+    for (let i = 0; i < len; i++) {
+      cumLeft += leftStack[i].h;
+      cumRight += rightStack[i].h;
+      lines.push({
+        y1: baseY - cumLeft,
+        y2: baseY - cumRight,
+        key: `seg-${i}`,
+      });
+    }
+    return lines.map((l) => (
+      <line
+        key={l.key}
+        x1={leftX + BAR_W}
+        y1={l.y1}
+        x2={rightX}
+        y2={l.y2}
+        stroke="#94a3b8"
+        strokeWidth={1}
+        strokeDasharray="4 3"
+        opacity={0.5}
+      />
+    ));
+  }
+
+  // Connect Deal Assets ↔ Actual Assets and Deal L+E ↔ Actual L+E
+  const assetConnectors = buildConnectors(dealAssetStack, actualAssetStack, dealAssetsX, actualAssetsX);
+  const leConnectors = buildConnectors(dealLEStack, actualLEStack, dealLEX, actualLEX);
+
+  // Labels
+  function renderValues(stack, x) {
+    return stack.map((seg) => {
+      if (seg.h < 8) return null;
+      return (
+        <text
+          key={`v-${seg.key}`}
+          x={x + BAR_W / 2}
+          y={baseY - seg.y - seg.h / 2 + 3}
+          textAnchor="middle"
+          fill="white"
+          fontSize={9}
+          fontWeight="bold"
+        >
+          {Math.round(seg.val * 10) / 10}
+        </text>
+      );
+    });
+  }
+
+  return (
+    <div className="w-full overflow-x-auto">
+      <svg viewBox={`0 0 ${W} ${H}`} className="w-full max-w-[480px] mx-auto" style={{ minWidth: 320 }}>
+        {/* Labels */}
+        <text x={dealAssetsX + BAR_W + GAP / 2} y={16} textAnchor="middle" fill="#94a3b8" fontSize={11} fontWeight="bold">Deal直後</text>
+        <text x={actualAssetsX + BAR_W + GAP / 2} y={16} textAnchor="middle" fill="#94a3b8" fontSize={11} fontWeight="bold">実データ</text>
+
+        {/* Column sub-labels */}
+        <text x={dealAssetsX + BAR_W / 2} y={H - 10} textAnchor="middle" fill="#64748b" fontSize={8}>資産</text>
+        <text x={dealLEX + BAR_W / 2} y={H - 10} textAnchor="middle" fill="#64748b" fontSize={8}>負債+純資産</text>
+        <text x={actualAssetsX + BAR_W / 2} y={H - 10} textAnchor="middle" fill="#64748b" fontSize={8}>資産</text>
+        <text x={actualLEX + BAR_W / 2} y={H - 10} textAnchor="middle" fill="#64748b" fontSize={8}>負債+純資産</text>
+
+        {/* Bars */}
+        {renderBar(dealAssetStack, dealAssetsX)}
+        {renderBar(dealLEStack, dealLEX)}
+        {renderBar(actualAssetStack, actualAssetsX)}
+        {renderBar(actualLEStack, actualLEX)}
+
+        {/* Values */}
+        {renderValues(dealAssetStack, dealAssetsX)}
+        {renderValues(dealLEStack, dealLEX)}
+        {renderValues(actualAssetStack, actualAssetsX)}
+        {renderValues(actualLEStack, actualLEX)}
+
+        {/* Connectors */}
+        {assetConnectors}
+        {leConnectors}
+      </svg>
+
+      {/* Legend */}
+      <div className="flex flex-wrap justify-center gap-x-3 gap-y-1 mt-2">
+        {[...assetSeries, ...liabSeries].map((s) => (
+          <div key={s.key} className="flex items-center gap-1">
+            <div className="w-3 h-2 rounded-sm" style={{ backgroundColor: s.color }} />
+            <span className="text-[10px] text-slate-400">{s.label}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 /**
  * Non-linear interpolation for stock price (same as RewindAnimation).
@@ -358,7 +529,64 @@ function getRank(rate) {
   return { label: "D", color: "text-red-400", desc: "歴史は予想外の展開に..." };
 }
 
+/**
+ * Scanline noise overlay + "特設注意市場銘柄" stamp for olympus_part1.
+ */
+function NoiseStampOverlay() {
+  return (
+    <>
+      {/* Scanline noise — fades out after 3s */}
+      <motion.div
+        initial={{ opacity: 0.35 }}
+        animate={{ opacity: 0 }}
+        transition={{ duration: 2.5, delay: 1.5 }}
+        className="absolute inset-0 pointer-events-none z-10 rounded-xl overflow-hidden"
+      >
+        <motion.div
+          animate={{ opacity: [0.06, 0.18, 0.06] }}
+          transition={{ duration: 0.12, repeat: Infinity, ease: "linear" }}
+          className="w-full h-full"
+          style={{
+            background:
+              "repeating-linear-gradient(0deg, transparent 0px, transparent 2px, rgba(0,255,100,0.07) 2px, rgba(0,255,100,0.07) 4px)",
+          }}
+        />
+      </motion.div>
+
+      {/* Color glitch flash */}
+      <motion.div
+        initial={{ opacity: 0.3 }}
+        animate={{ opacity: 0 }}
+        transition={{ duration: 0.8, delay: 0.5 }}
+        className="absolute inset-0 pointer-events-none z-10 rounded-xl"
+        style={{ background: "linear-gradient(180deg, rgba(239,68,68,0.08) 0%, transparent 50%, rgba(239,68,68,0.05) 100%)" }}
+      />
+
+      {/* Stamp: 特設注意市場銘柄 */}
+      <motion.div
+        initial={{ scale: 4, opacity: 0, rotate: -15 }}
+        animate={{ scale: 1, opacity: 1, rotate: -12 }}
+        transition={{ delay: 1.2, duration: 0.25, type: "spring", stiffness: 300, damping: 20 }}
+        className="absolute top-[28%] left-1/2 -translate-x-1/2 z-20 pointer-events-none"
+      >
+        <div
+          className="border-[3px] border-red-500 px-5 py-2.5 font-black text-lg whitespace-nowrap tracking-wider"
+          style={{
+            color: "#ef4444",
+            textShadow: "0 0 12px rgba(239,68,68,0.6)",
+            boxShadow: "0 0 20px rgba(239,68,68,0.3), inset 0 0 20px rgba(239,68,68,0.1)",
+          }}
+        >
+          特設注意市場銘柄
+        </div>
+      </motion.div>
+    </>
+  );
+}
+
 export default function ResultSummary({ prediction, actual, stage, postDeal, onRetry, onSelectStage }) {
+  const [showChart, setShowChart] = useState(false);
+  const isOlympusPart1 = stage.stage_id === "olympus_part1";
   const syncRate = calcSyncRate(prediction, actual, stage);
   const rank = getRank(syncRate);
   const isFailure = actual.equity < 0;
@@ -397,8 +625,11 @@ export default function ResultSummary({ prediction, actual, stage, postDeal, onR
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
-      className="flex flex-col items-center gap-6 max-w-lg mx-auto"
+      className="flex flex-col items-center gap-6 max-w-lg mx-auto relative"
     >
+      {/* Olympus Part1: noise + stamp overlay */}
+      {isOlympusPart1 && <NoiseStampOverlay />}
+
       {/* Sync Rate */}
       <div className="text-center">
         <div className="text-sm text-slate-400 mb-2">シンクロ率</div>
@@ -518,6 +749,39 @@ export default function ResultSummary({ prediction, actual, stage, postDeal, onR
           </div>
         </motion.div>
       )}
+
+      {/* Chart toggle + comparison chart */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1 + impairmentDelay }}
+        className="w-full"
+      >
+        <div className="flex justify-end mb-2">
+          <button
+            onClick={() => setShowChart((v) => !v)}
+            className={`text-xs font-bold px-3 py-1.5 rounded-lg border transition-colors cursor-pointer ${
+              showChart
+                ? "bg-yellow-500/20 border-yellow-500/60 text-yellow-300"
+                : "bg-slate-800/60 border-slate-600 text-slate-400 hover:border-slate-500 hover:text-slate-300"
+            }`}
+          >
+            {showChart ? "テーブル表示" : "チャート表示"}
+          </button>
+        </div>
+
+        {showChart && (
+          <div className="w-full bg-slate-800/80 rounded-xl p-4 border border-slate-600 mb-4">
+            <div className="text-sm font-bold text-slate-300 mb-3">
+              B/S比較チャート (Deal直後 vs 実データ)
+            </div>
+            <BSComparisonChart dealData={postDeal} actualData={actual} />
+            <div className="text-[10px] text-slate-500 mt-2 text-right">
+              単位: {stage.unit}
+            </div>
+          </div>
+        )}
+      </motion.div>
 
       {/* Detail table */}
       <motion.div

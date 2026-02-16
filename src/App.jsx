@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import BSBar from "./components/BSBar";
 import DraggableBSBar from "./components/DraggableBSBar";
@@ -11,11 +11,156 @@ import { stages, bsTotal } from "./data/stages";
 
 const BAR_HEIGHT = 320;
 
+const CATEGORY_COLORS = {
+  "買収": { bg: "bg-blue-900/60", text: "text-blue-300" },
+  "設備投資": { bg: "bg-cyan-900/60", text: "text-cyan-300" },
+  "構造改革": { bg: "bg-purple-900/60", text: "text-purple-300" },
+  "資本政策": { bg: "bg-emerald-900/60", text: "text-emerald-300" },
+  "事業進出": { bg: "bg-orange-900/60", text: "text-orange-300" },
+  "投資": { bg: "bg-pink-900/60", text: "text-pink-300" },
+  "利益操作": { bg: "bg-amber-900/60", text: "text-amber-300" },
+};
+
+const CATEGORIES = ["all", ...Object.keys(CATEGORY_COLORS)];
+
+/**
+ * Intro animation for olympus_part2: Sony equity injection.
+ */
+function OlympusIntro({ onComplete }) {
+  useEffect(() => {
+    const timer = setTimeout(onComplete, 5500);
+    return () => clearTimeout(timer);
+  }, [onComplete]);
+
+  // Bar proportions based on olympus_part1 after_actual (the devastated state)
+  // Total assets = 9.6, debt = 6.5, othersLiab = 3.1, equity = 0.0
+  const BAR_H = 200;
+  const debtPct = 67.7; // 6.5 / 9.6
+  const othLiabPct = 32.3; // 3.1 / 9.6
+  const equityTarget = 5.1; // 0.5 / 9.9 * 100 ≈ after injection
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="flex flex-col items-center justify-center py-16 gap-8 cursor-pointer"
+      onClick={onComplete}
+    >
+      {/* Title */}
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3 }}
+        className="text-center"
+      >
+        <div className="text-xs text-slate-500 mb-1">2012年</div>
+        <div className="text-xl font-bold text-slate-300">
+          上場廃止の瀬戸際
+        </div>
+        <div className="text-sm text-red-400 mt-1">純資産 = 0</div>
+      </motion.div>
+
+      {/* B/S + Sony injection visualization */}
+      <div className="relative flex items-end justify-center gap-6" style={{ height: BAR_H + 40 }}>
+        {/* Assets bar */}
+        <div className="flex flex-col items-center">
+          <motion.div
+            className="w-16 rounded-t overflow-hidden flex flex-col justify-end"
+            initial={{ height: 0 }}
+            animate={{ height: BAR_H }}
+            transition={{ duration: 0.8, delay: 0.5 }}
+          >
+            <div className="bg-[#4ade80]/60" style={{ height: "17%" }} />
+            <div className="bg-[#60a5fa]/60" style={{ height: "78%" }} />
+            <div className="bg-[#c084fc]/60" style={{ height: "5%" }} />
+          </motion.div>
+          <div className="text-[10px] text-slate-500 mt-2">資産</div>
+        </div>
+
+        {/* L+E bar */}
+        <div className="flex flex-col items-center">
+          <div className="relative">
+            <motion.div
+              className="w-16 rounded-t overflow-hidden flex flex-col justify-end"
+              initial={{ height: 0 }}
+              animate={{ height: BAR_H }}
+              transition={{ duration: 0.8, delay: 0.5 }}
+            >
+              <div className="bg-[#f87171]/60" style={{ height: `${debtPct}%` }} />
+              <div className="bg-[#fb923c]/60" style={{ height: `${othLiabPct}%` }} />
+            </motion.div>
+
+            {/* Equity injection block */}
+            <motion.div
+              className="absolute bottom-0 left-0 w-16 rounded-b"
+              initial={{ height: 0 }}
+              animate={{ height: `${equityTarget}%` }}
+              transition={{ delay: 3.0, duration: 1.0, ease: "easeOut" }}
+              style={{
+                background: "#facc15",
+                boxShadow: "0 0 24px rgba(250,204,21,0.7), 0 0 48px rgba(250,204,21,0.3)",
+                transform: "translateY(100%)",
+              }}
+            />
+          </div>
+          <div className="text-[10px] text-slate-500 mt-2">負債+純資産</div>
+        </div>
+
+        {/* SONY label with arrow */}
+        <motion.div
+          initial={{ opacity: 0, x: 40 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 2.0, duration: 0.6, ease: "easeOut" }}
+          className="absolute -right-4 bottom-12 flex flex-col items-center"
+        >
+          <div
+            className="text-2xl font-black text-white tracking-widest"
+            style={{ textShadow: "0 0 20px rgba(250,204,21,0.6)" }}
+          >
+            SONY
+          </div>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 2.8 }}
+            className="text-[11px] text-yellow-300 font-bold mt-1"
+          >
+            500億円出資
+          </motion.div>
+          {/* Arrow pointing to equity */}
+          <motion.svg
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 0.6 }}
+            transition={{ delay: 2.5 }}
+            width="40" height="20" viewBox="0 0 40 20" className="mt-1"
+          >
+            <line x1="30" y1="10" x2="5" y2="10" stroke="#facc15" strokeWidth="2" />
+            <polygon points="5,5 5,15 0,10" fill="#facc15" />
+          </motion.svg>
+        </motion.div>
+      </div>
+
+      {/* Narrative */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 3.8 }}
+        className="text-center"
+      >
+        <div className="text-yellow-300 font-bold text-lg mb-1">純資産の注入</div>
+        <div className="text-slate-500 text-xs">タップして予測を開始</div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
 function App() {
-  const [phase, setPhase] = useState("select"); // select | build | rewind | result
+  const [phase, setPhase] = useState("select"); // select | intro | build | rewind | result
   const [stage, setStage] = useState(null);
   const [prediction, setPrediction] = useState(null);
   const [showGuide, setShowGuide] = useState(true);
+  const [categoryFilter, setCategoryFilter] = useState("all");
 
   const postDeal = stage?.data.deal ?? null;
 
@@ -25,8 +170,16 @@ function App() {
   const handleStageSelect = (s) => {
     setStage(s);
     setPrediction(null);
-    setPhase("build");
+    if (s.stage_id === "olympus_part2") {
+      setPhase("intro");
+    } else {
+      setPhase("build");
+    }
   };
+
+  const handleIntroComplete = useCallback(() => {
+    setPhase("build");
+  }, []);
 
   const handleDataChange = useCallback((data) => {
     setPrediction(data);
@@ -113,8 +266,25 @@ function App() {
                 </motion.p>
               </div>
 
+              {/* Category filter */}
+              <div className="flex flex-wrap justify-center gap-2 mb-6 max-w-4xl mx-auto">
+                {CATEGORIES.map((cat) => (
+                  <button
+                    key={cat}
+                    onClick={() => setCategoryFilter(cat)}
+                    className={`text-xs font-bold px-3 py-1.5 rounded-full border transition-colors cursor-pointer ${
+                      categoryFilter === cat
+                        ? "bg-yellow-500/20 border-yellow-500/60 text-yellow-300"
+                        : "bg-slate-800/60 border-slate-600/50 text-slate-400 hover:border-slate-500 hover:text-slate-300"
+                    }`}
+                  >
+                    {cat === "all" ? "全表示" : cat}
+                  </button>
+                ))}
+              </div>
+
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-4xl mx-auto">
-                {stages.map((s, i) => {
+                {stages.filter((s) => categoryFilter === "all" || s.category === categoryFilter).map((s, i) => {
                   const isFailure = s.data.after_actual.equity < 0;
                   return (
                     <motion.button
@@ -141,6 +311,13 @@ function App() {
                         >
                           {s.before_year}-{s.after_year}
                         </span>
+                        {s.category && CATEGORY_COLORS[s.category] && (
+                          <span
+                            className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${CATEGORY_COLORS[s.category].bg} ${CATEGORY_COLORS[s.category].text}`}
+                          >
+                            {s.category}
+                          </span>
+                        )}
                       </div>
                       <div className="text-lg font-bold text-white mb-1">
                         {s.stage_name}
@@ -152,6 +329,19 @@ function App() {
                   );
                 })}
               </div>
+            </motion.div>
+          )}
+
+          {/* ====== INTRO PHASE (Olympus Part 2) ====== */}
+          {phase === "intro" && stage && (
+            <motion.div
+              key="intro"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.4 }}
+            >
+              <OlympusIntro onComplete={handleIntroComplete} />
             </motion.div>
           )}
 

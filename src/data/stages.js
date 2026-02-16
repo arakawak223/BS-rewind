@@ -2,6 +2,7 @@ export const stages = [
   {
     stage_id: "toshiba_2006",
     company_name: "東芝",
+    category: "買収",
     stage_name: "東芝 (原発買収の激震)",
     investment_target: "米ウエスチングハウス買収",
     before_year: 2006,
@@ -48,6 +49,7 @@ export const stages = [
   {
     stage_id: "sharp_2009",
     company_name: "シャープ",
+    category: "設備投資",
     stage_name: "シャープ (液晶投資の光と影)",
     investment_target: "堺液晶工場建設",
     before_year: 2009,
@@ -93,6 +95,7 @@ export const stages = [
   {
     stage_id: "google_2006",
     company_name: "Google",
+    category: "買収",
     stage_name: "Google (YouTube買収の伝説)",
     investment_target: "YouTube買収",
     before_year: 2006,
@@ -135,6 +138,7 @@ export const stages = [
   {
     stage_id: "tesla_2014",
     company_name: "Tesla",
+    category: "設備投資",
     stage_name: "Tesla (ギガファクトリーの賭け)",
     investment_target: "ギガファクトリー建設",
     before_year: 2014,
@@ -179,6 +183,7 @@ export const stages = [
   {
     stage_id: "panasonic_2009",
     company_name: "パナソニック",
+    category: "買収",
     stage_name: "パナソニック (聖域なき減損)",
     investment_target: "三洋電機買収",
     before_year: 2009,
@@ -222,6 +227,7 @@ export const stages = [
   {
     stage_id: "rakuten_2019",
     company_name: "楽天グループ",
+    category: "事業進出",
     stage_name: "楽天グループ (モバイルへの巨額投資)",
     investment_target: "モバイル事業参入",
     before_year: 2019,
@@ -265,6 +271,7 @@ export const stages = [
   {
     stage_id: "aol_2000",
     company_name: "AOL",
+    category: "買収",
     stage_name: "AOLタイム・ワーナー (史上最大の減損)",
     investment_target: "タイム・ワーナーとの合併",
     before_year: 2000,
@@ -308,6 +315,7 @@ export const stages = [
   {
     stage_id: "softbank_2019",
     company_name: "ソフトバンクG",
+    category: "投資",
     stage_name: "ソフトバンクグループ (投資の光と影)",
     investment_target: "ビジョンファンド投資",
     before_year: 2019,
@@ -350,6 +358,7 @@ export const stages = [
   {
     stage_id: "sony_2012",
     company_name: "ソニー",
+    category: "構造改革",
     stage_name: "ソニー (復活の構造改革)",
     investment_target: "構造改革・エンタメ転換",
     before_year: 2012,
@@ -393,6 +402,7 @@ export const stages = [
   {
     stage_id: "apple_2015",
     company_name: "Apple",
+    category: "資本政策",
     stage_name: "Apple (資本効率の極致)",
     investment_target: "自社株買い・資本戦略",
     before_year: 2015,
@@ -436,6 +446,7 @@ export const stages = [
   {
     stage_id: "jal_2010",
     company_name: "日本航空",
+    category: "構造改革",
     stage_name: "日本航空 (1.2兆円の債務超過からの翼)",
     investment_target: "会社更生法・法的整理",
     before_year: 2009,
@@ -479,6 +490,7 @@ export const stages = [
   {
     stage_id: "nissan_1999",
     company_name: "日産自動車",
+    category: "構造改革",
     stage_name: "日産自動車 (リバイバル・プラン)",
     investment_target: "ルノー資本提携",
     before_year: 1998,
@@ -518,53 +530,100 @@ export const stages = [
       summary: { totalImpairment: 6.0 },
     },
   },
-  // ── オリンパス ──
+  // ── オリンパス① ──
   {
-    stage_id: "olympus_2011",
+    stage_id: "olympus_part1",
     company_name: "オリンパス",
-    stage_name: "オリンパス (消えた損失の行方)",
-    investment_target: "損失隠蔽・粉飾発覚",
-    before_year: 2010,
-    after_year: 2014,
+    category: "利益操作",
+    stage_name: "オリンパス① (巨額損失隠しの破綻)",
+    investment_target: "不透明なM&A買収",
+    before_year: 2000,
+    after_year: 2011,
     unit: "1,000億円",
     description:
-      "「のれん」を隠れ蓑にして過去の損失を隠蔽した、B/Sミステリーの代表格。2011年にウッドフォード社長が不正を告発し、1,177億円の損失隠しが発覚。ソニーとの資本提携を経て、医療機器事業の強みで再建を果たした。",
+      "バブル期の「飛ばし」による損失を、不透明なM&Aの「のれん」で覆い隠そうとしたフェーズ。2008年に英ジャイラス社買収で1,900億円ののれんを計上したが、2011年にウッドフォード社長の告発で1,177億円の損失隠しが露呈。純資産はゼロに毀損し、東証から「特設注意市場銘柄」に指定された。",
     data: {
       before: {
-        assets: { cash: 1.5, goodwill: 1.0, others: 8.5 },
-        liabilities: { debt: 6.0, others: 3.0 },
-        equity: 2.0,
+        assets: { cash: 1.8, goodwill: 0.0, others: 3.5 },
+        liabilities: { debt: 1.5, others: 2.2 },
+        equity: 1.6,
       },
       deal: {
-        assets: { cash: 1.0, goodwill: 2.0, others: 7.0 },
-        liabilities: { debt: 7.5, others: 3.5 },
-        equity: -1.0,
-      },
-      investment: { amount: 2.0, method: "mixed" },
-      after_actual: {
-        assets: { cash: 2.0, goodwill: 0.2, others: 7.5 },
-        liabilities: { debt: 5.0, others: 2.7 },
+        assets: { cash: 1.6, goodwill: 1.9, others: 7.5 },
+        liabilities: { debt: 6.5, others: 2.5 },
         equity: 2.0,
+      },
+      investment: { amount: 1.9, method: "off_balance" },
+      after_actual: {
+        assets: { cash: 1.9, goodwill: 0.2, others: 7.5 },
+        liabilities: { debt: 6.5, others: 3.1 },
+        equity: 0.0,
       },
       stockPrice: {
         before: 2500,
-        deal: 500,
-        after: 3000,
+        deal: 2500,
+        after: 500,
+        unit: "円",
+        curve: "crash_early",
+      },
+      news: [
+        { year: 2000, headline: "財テク失敗の含み損を特別目的会社に移管。「飛ばし」スキーム始動", isBreaking: true },
+        { year: 2008, headline: "英ジャイラス社買収で不透明な660億円のアドバイザリー費用が発生" },
+        { year: 2011, type: "audit", headline: "ウッドフォード社長が不正を告発。1,177億円の損失隠しが発覚", isCritical: true },
+        { year: 2011, type: "official", headline: "東証が「特設注意市場銘柄」に指定。上場廃止の瀬戸際に", isCritical: true },
+      ],
+      summary: { totalImpairment: 1.2 },
+    },
+  },
+  // ── オリンパス② ──
+  {
+    stage_id: "olympus_part2",
+    company_name: "オリンパス",
+    category: "構造改革",
+    stage_name: "オリンパス② (ソニー提携と外科の王道)",
+    investment_target: "ソニー資本提携",
+    before_year: 2012,
+    after_year: 2015,
+    unit: "1,000億円",
+    description:
+      "崩壊したB/Sをソニーからの500億円の出資で立て直し、内視鏡事業の圧倒的シェアを武器に復活するフェーズ。特設注意市場銘柄の指定解除を勝ち取り、内視鏡世界シェア7割を誇る医療機器メーカーとして完全復活を遂げた。",
+    data: {
+      before: {
+        assets: { cash: 1.6, goodwill: 0.2, others: 7.6 },
+        liabilities: { debt: 6.5, others: 2.9 },
+        equity: 0.0,
+      },
+      deal: {
+        assets: { cash: 2.1, goodwill: 0.2, others: 7.6 },
+        liabilities: { debt: 6.5, others: 2.9 },
+        equity: 0.5,
+      },
+      investment: { amount: 0.5, method: "equity_financed" },
+      after_actual: {
+        assets: { cash: 2.5, goodwill: 0.5, others: 8.5 },
+        liabilities: { debt: 4.0, others: 3.5 },
+        equity: 4.0,
+      },
+      stockPrice: {
+        before: 500,
+        deal: 1200,
+        after: 4000,
         unit: "円",
         curve: "surge_early",
       },
       news: [
-        { year: 2011, type: "audit", headline: "監査法人：不明瞭な買収資金を指摘。1177億円の損失隠しが発覚", isCritical: true },
-        { year: 2012, type: "official", headline: "上場廃止の危機を回避。ソニーとの資本提携により500億円の資金注入", isCritical: true },
-        { year: 2013, type: "official", headline: "医療機器事業の強みで再建。B/Sから過去の膿を完全に排出" },
+        { year: 2012, type: "official", headline: "ソニーが500億円を出資。医療機器事業の技術提携を締結", isBreaking: true },
+        { year: 2013, type: "official", headline: "特設注意市場銘柄の指定解除。内部管理体制の改善が認められる" },
+        { year: 2015, headline: "内視鏡世界シェア7割。医療機器メーカーとして完全復活", isBreaking: true },
       ],
-      summary: { totalImpairment: 1.8 },
+      summary: { totalImpairment: 0 },
     },
   },
   // ── リーマン・ブラザーズ ──
   {
     stage_id: "lehman_2008",
     company_name: "リーマン",
+    category: "投資",
     stage_name: "リーマン・ブラザーズ (投資銀行の終焉)",
     investment_target: "サブプライム関連投資",
     before_year: 2006,
@@ -608,6 +667,7 @@ export const stages = [
   {
     stage_id: "daiei_2002",
     company_name: "ダイエー",
+    category: "設備投資",
     stage_name: "ダイエー (土地神話の崩壊)",
     investment_target: "店舗拡大・不動産投資",
     before_year: 1995,
@@ -651,6 +711,7 @@ export const stages = [
   {
     stage_id: "starbucks_2019",
     company_name: "スターバックス",
+    category: "資本政策",
     stage_name: "スターバックス (あえての債務超過)",
     investment_target: "自社株買い戦略",
     before_year: 2018,
@@ -694,6 +755,7 @@ export const stages = [
   {
     stage_id: "enron_2001",
     company_name: "エンロン",
+    category: "利益操作",
     stage_name: "エンロン (消された負債の逆襲)",
     investment_target: "簿外取引・SPEスキーム",
     before_year: 2000,
@@ -737,6 +799,7 @@ export const stages = [
   {
     stage_id: "nintendo_2012",
     company_name: "任天堂",
+    category: "構造改革",
     stage_name: "任天堂 (圧倒的キャッシュの守備力)",
     investment_target: "ゲーム機事業立て直し",
     before_year: 2011,
@@ -780,6 +843,7 @@ export const stages = [
   {
     stage_id: "livedoor_2006",
     company_name: "ライブドア",
+    category: "利益操作",
     stage_name: "ライブドア (虚飾のB/Sバブル)",
     investment_target: "IT企業買収・株式分割",
     before_year: 2004,
@@ -823,6 +887,7 @@ export const stages = [
   {
     stage_id: "mercari_2018",
     company_name: "メルカリ",
+    category: "事業進出",
     stage_name: "メルカリ (赤字覚悟の米国侵攻)",
     investment_target: "米国事業展開",
     before_year: 2018,
