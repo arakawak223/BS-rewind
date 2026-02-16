@@ -445,9 +445,17 @@ function App() {
               transition={{ duration: 0.4 }}
             >
               <div className="text-center mb-10">
+                <motion.p
+                  initial={{ y: -20, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  className="text-sm text-slate-400 mb-1"
+                >
+                  B/S変化予測シミュレーション
+                </motion.p>
                 <motion.h2
                   initial={{ y: -20, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
+                  transition={{ delay: 0.05 }}
                   className="text-3xl font-black text-white mb-3"
                 >
                   One Decision
@@ -458,7 +466,7 @@ function App() {
                   transition={{ delay: 0.1 }}
                   className="text-slate-400"
                 >
-                  歴史的な投資判断のその後を予測せよ
+                  歴史的な経営判断のその後を予測せよ
                 </motion.p>
               </div>
 
