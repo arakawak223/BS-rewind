@@ -567,7 +567,7 @@ function NoiseStampOverlay() {
         initial={{ scale: 4, opacity: 0, rotate: -15 }}
         animate={{ scale: 1, opacity: 1, rotate: -12 }}
         transition={{ delay: 1.2, duration: 0.25, type: "spring", stiffness: 300, damping: 20 }}
-        className="absolute top-[28%] left-1/2 -translate-x-1/2 z-20 pointer-events-none"
+        className="absolute top-[8%] left-1/2 -translate-x-1/2 z-20 pointer-events-none"
       >
         <div
           className="border-[3px] border-red-500 px-5 py-2.5 font-black text-lg whitespace-nowrap tracking-wider"
