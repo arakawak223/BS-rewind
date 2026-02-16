@@ -164,7 +164,7 @@ export default function DraggableBSBar({
               value={value}
               onChange={(e) => setter(parseFloat(e.target.value))}
               className="bs-range flex-1"
-              style={{ "--thumb-color": color }}
+              style={{ "--thumb-color": color, touchAction: "none" }}
             />
             <span className="text-[10px] text-slate-300 w-10 text-right tabular-nums font-mono">
               {r(value)}
@@ -193,7 +193,7 @@ export default function DraggableBSBar({
               value={value}
               onChange={(e) => setter(parseFloat(e.target.value))}
               className="bs-range flex-1"
-              style={{ "--thumb-color": color }}
+              style={{ "--thumb-color": color, touchAction: "none" }}
             />
             <span className="text-[10px] text-slate-300 w-10 text-right tabular-nums font-mono">
               {r(value)}

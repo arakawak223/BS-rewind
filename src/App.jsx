@@ -23,6 +23,15 @@ const CATEGORY_COLORS = {
 
 const CATEGORIES = ["all", ...Object.keys(CATEGORY_COLORS)];
 
+const TAG_CONFIG = {
+  "復活":   { bg: "bg-emerald-800/60", text: "text-emerald-300" },
+  "崩壊":   { bg: "bg-red-800/60",     text: "text-red-300" },
+  "超成長": { bg: "bg-violet-800/60",  text: "text-violet-300" },
+  "筋肉質": { bg: "bg-sky-800/60",     text: "text-sky-300" },
+};
+
+const TAGS = ["all", ...Object.keys(TAG_CONFIG)];
+
 /**
  * Intro animation for jal_part2: Inamori + debt shatter.
  * Shows the devastated JAL B/S from Part 1, then debt blocks shatter
@@ -357,6 +366,7 @@ function App() {
   const [prediction, setPrediction] = useState(null);
   const [showGuide, setShowGuide] = useState(true);
   const [categoryFilter, setCategoryFilter] = useState("all");
+  const [tagFilter, setTagFilter] = useState("all");
 
   const postDeal = stage?.data.deal ?? null;
 
@@ -471,7 +481,7 @@ function App() {
               </div>
 
               {/* Category filter */}
-              <div className="flex flex-wrap justify-center gap-2 mb-6 max-w-4xl mx-auto">
+              <div className="flex flex-wrap justify-center gap-2 mb-3 max-w-4xl mx-auto">
                 {CATEGORIES.map((cat) => (
                   <button
                     key={cat}
@@ -487,15 +497,41 @@ function App() {
                 ))}
               </div>
 
+              {/* Tag filter */}
+              <div className="flex flex-wrap justify-center gap-2 mb-6 max-w-4xl mx-auto">
+                {TAGS.map((tag) => {
+                  const cfg = TAG_CONFIG[tag];
+                  return (
+                    <button
+                      key={tag}
+                      onClick={() => setTagFilter(tag)}
+                      className={`text-xs font-bold px-3 py-1.5 rounded-full border transition-colors cursor-pointer ${
+                        tagFilter === tag
+                          ? cfg
+                            ? `${cfg.bg} border-current ${cfg.text}`
+                            : "bg-yellow-500/20 border-yellow-500/60 text-yellow-300"
+                          : "bg-slate-800/60 border-slate-600/50 text-slate-400 hover:border-slate-500 hover:text-slate-300"
+                      }`}
+                    >
+                      {tag === "all" ? "タグ: 全て" : `#${tag}`}
+                    </button>
+                  );
+                })}
+              </div>
+
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-4xl mx-auto">
-                {stages.filter((s) => categoryFilter === "all" || s.category === categoryFilter).map((s, i) => {
+                {stages
+                  .filter((s) => categoryFilter === "all" || s.category === categoryFilter)
+                  .filter((s) => tagFilter === "all" || s.tag === tagFilter)
+                  .map((s, i) => {
                   const isFailure = s.data.after_actual.equity < 0;
+                  const tagCfg = s.tag && TAG_CONFIG[s.tag];
                   return (
                     <motion.button
                       key={s.stage_id}
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: i * 0.1 }}
+                      transition={{ delay: i * 0.05 }}
                       whileHover={{ scale: 1.03 }}
                       whileTap={{ scale: 0.97 }}
                       onClick={() => handleStageSelect(s)}
@@ -505,7 +541,7 @@ function App() {
                           : "bg-green-950/30 border-green-800/50 hover:bg-green-950/50 hover:border-green-700/70"
                       }`}
                     >
-                      <div className="flex items-center gap-2 mb-1">
+                      <div className="flex items-center gap-2 mb-1 flex-wrap">
                         <span
                           className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${
                             isFailure
@@ -520,6 +556,13 @@ function App() {
                             className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${CATEGORY_COLORS[s.category].bg} ${CATEGORY_COLORS[s.category].text}`}
                           >
                             {s.category}
+                          </span>
+                        )}
+                        {tagCfg && (
+                          <span
+                            className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${tagCfg.bg} ${tagCfg.text}`}
+                          >
+                            #{s.tag}
                           </span>
                         )}
                       </div>

@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { bsTotal } from "../data/stages";
 import StockPriceTicker from "./StockPriceTicker";
 import NewsTicker from "./NewsTicker";
+import { playWarningBeep } from "../utils/audio";
 
 const COLORS = {
   cash: "#4ade80",
@@ -183,6 +184,26 @@ function VoiceLayer({ voices }) {
         </motion.div>
       ))}
     </AnimatePresence>
+  );
+}
+
+/** Cash Runway Overlay for Tesla effect */
+function CashRunwayOverlay({ daysRemaining, critical }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className={`absolute top-2 left-2 z-40 px-3 py-2 rounded-lg text-xs font-bold ${
+        critical
+          ? "bg-red-900/80 text-red-300 cash-runway-pulse"
+          : "bg-emerald-900/60 text-emerald-300"
+      }`}
+    >
+      <div className="text-[10px] opacity-70">Cash Runway</div>
+      <div className="text-lg tabular-nums">
+        {daysRemaining < 0 ? "---" : `${daysRemaining}日`}
+      </div>
+    </motion.div>
   );
 }
 
@@ -437,6 +458,15 @@ export default function RewindAnimation({
   const [voices, setVoices] = useState([]);
   const voiceIdRef = useRef(0);
 
+  // Special effects states
+  const [cashRunwayDays, setCashRunwayDays] = useState(null);
+  const [showGCCrisis, setShowGCCrisis] = useState(false);
+  const [showDebtExplosion, setShowDebtExplosion] = useState(false);
+  const [showScreenShake, setShowScreenShake] = useState(false);
+  const [glowIntensity, setGlowIntensity] = useState(0);
+  const [showEvergrandeShatter, setShowEvergrandeShatter] = useState(false);
+  const [shatterParticles, setShatterParticles] = useState([]);
+
   const intervalRef = useRef(null);
   const yearRef = useRef(before_year);
   const onCompleteRef = useRef(onComplete);
@@ -471,6 +501,26 @@ export default function RewindAnimation({
     const totalLiab = (newBS.liabilities.debt || 0) + (newBS.liabilities.others || 0);
     const equityRatio = totalAssets > 0 ? newBS.equity / totalAssets : 0;
     setVitalCritical(cashRatio < 0.10 || equityRatio < 0.05);
+
+    // ── Tesla: Cash Runway countdown ──
+    if (stage.effects?.cashRundown) {
+      const cashVal = newBS.assets.cash || 0;
+      const prevCash = prevBSRef.current?.assets?.cash || cashVal;
+      const burnRate = prevCash - cashVal;
+      if (burnRate > 0 && cashVal > 0) {
+        const days = Math.round((cashVal / burnRate) * 365);
+        setCashRunwayDays(days);
+      } else if (cashVal <= 0) {
+        setCashRunwayDays(0);
+      } else {
+        setCashRunwayDays(cashVal > prevCash ? 9999 : cashRunwayDays);
+      }
+    }
+
+    // ── NVIDIA: AI circuit glow ──
+    if (stage.effects?.aiCircuitGlow) {
+      setGlowIntensity(t);
+    }
 
     // ── Particles: compare with previous B/S ──
     if (prevBSRef.current && totalAssets > 0) {
@@ -531,8 +581,28 @@ export default function RewindAnimation({
       setVitalCritical(false);
       setParticles([]);
       setVoices([]);
+      setCashRunwayDays(null);
       setPhase("done");
-      setTimeout(() => onCompleteRef.current?.(), 1500);
+
+      // Evergrande shatter effect
+      if (stage.effects?.evergrandeShatter) {
+        setShowEvergrandeShatter(true);
+        // Spawn shatter particles
+        const sParticles = Array.from({ length: 35 }, (_, i) => ({
+          id: i,
+          x: (Math.random() - 0.5) * 300,
+          y: (Math.random() - 0.5) * 200,
+          rot: Math.random() * 720 - 360,
+          size: 4 + Math.random() * 10,
+          color: ["#f87171", "#fb923c", "#facc15", "#60a5fa", "#c084fc"][Math.floor(Math.random() * 5)],
+          delay: Math.random() * 0.5,
+        }));
+        setShatterParticles(sParticles);
+        // 1.5s explode + 1s fade + 1s hold = 3.5s additional
+        setTimeout(() => onCompleteRef.current?.(), 3500);
+      } else {
+        setTimeout(() => onCompleteRef.current?.(), 1500);
+      }
       return;
     }
 
@@ -542,10 +612,25 @@ export default function RewindAnimation({
       intervalRef.current = null;
       setShowNoise(true);
       setShowCrack(true); // permanent
+
+      // GC crisis mode
       if (newsHit.subtype === "going_concern") {
         setShowCaution(true); // permanent
         setShowSmoke(true);   // permanent
+        setShowGCCrisis(true);
+        playWarningBeep(120, 3);
       }
+
+      // Skymark debt explosion
+      if (stage.effects?.debtExplosion) {
+        setShowDebtExplosion(true);
+        setShowScreenShake(true);
+        setTimeout(() => {
+          setShowDebtExplosion(false);
+          setShowScreenShake(false);
+        }, 800);
+      }
+
       setTimeout(() => {
         setShowNoise(false);
         setCurrentNews(null);
@@ -563,7 +648,7 @@ export default function RewindAnimation({
         intervalRef.current = setInterval(tick, 2000);
       }, 4000);
     }
-  }, [before_year, after_year, totalYears, startBS, actualAfter, sp, newsItems]);
+  }, [before_year, after_year, totalYears, startBS, actualAfter, sp, newsItems, stage, cashRunwayDays]);
 
   useEffect(() => {
     if (phase !== "counting") return;
@@ -601,8 +686,16 @@ export default function RewindAnimation({
 
   return (
     <motion.div
-      className="flex flex-col items-center gap-6 p-8 rounded-2xl relative"
-      style={{ backgroundColor: bgColor, transition: "background-color 1s ease" }}
+      className={`flex flex-col items-center gap-6 p-8 rounded-2xl relative ${
+        showGCCrisis ? "gc-flash-border" : ""
+      } ${showScreenShake ? "screen-shake" : ""} ${
+        stage.effects?.aiCircuitGlow ? "ai-circuit-glow" : ""
+      }`}
+      style={{
+        backgroundColor: bgColor,
+        transition: "background-color 1s ease",
+        "--glow-intensity": glowIntensity,
+      }}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
     >
@@ -634,7 +727,7 @@ export default function RewindAnimation({
 
       {/* Side-by-side B/S bars: Actual (left) + Prediction (right) */}
       <div className="relative">
-        <div className="flex items-end gap-6">
+        <div className={`flex items-end gap-6 ${showEvergrandeShatter ? "bs-explode" : ""}`}>
           {/* Player prediction (left) */}
           {predictionBS && (
             <div className="flex flex-col items-center">
@@ -650,7 +743,7 @@ export default function RewindAnimation({
           )}
 
           {/* Actual data (right) */}
-          <div className="flex flex-col items-center">
+          <div className={`flex flex-col items-center ${showDebtExplosion ? "debt-explosion" : ""}`}>
             <div className="text-xs text-slate-300 mb-1">実データ</div>
             <BSBarAnimated
               data={currentBS}
@@ -663,6 +756,11 @@ export default function RewindAnimation({
             />
           </div>
         </div>
+
+        {/* Cash Runway overlay (Tesla) */}
+        {stage.effects?.cashRundown && cashRunwayDays !== null && phase === "counting" && (
+          <CashRunwayOverlay daysRemaining={cashRunwayDays} critical={cashRunwayDays < 90} />
+        )}
 
         {/* Vital pulse overlay */}
         {vitalCritical && phase === "counting" && <div className="vital-pulse-overlay" />}
@@ -712,7 +810,7 @@ export default function RewindAnimation({
 
       {/* Flash effect */}
       <AnimatePresence>
-        {phase === "done" && (
+        {phase === "done" && !showEvergrandeShatter && (
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -724,6 +822,44 @@ export default function RewindAnimation({
           />
         )}
       </AnimatePresence>
+
+      {/* Evergrande shatter particles + blackout */}
+      {showEvergrandeShatter && (
+        <>
+          {shatterParticles.map((p) => (
+            <motion.div
+              key={`shatter-${p.id}`}
+              className="absolute pointer-events-none z-50"
+              style={{
+                width: p.size,
+                height: p.size,
+                backgroundColor: p.color,
+                borderRadius: 2,
+                left: "50%",
+                top: "50%",
+              }}
+              initial={{ x: 0, y: 0, opacity: 1, rotate: 0 }}
+              animate={{
+                x: p.x,
+                y: p.y,
+                opacity: 0,
+                rotate: p.rot,
+              }}
+              transition={{
+                duration: 1.2,
+                delay: p.delay,
+                ease: "easeOut",
+              }}
+            />
+          ))}
+          <motion.div
+            className="absolute inset-0 rounded-2xl bg-black z-40 pointer-events-none"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.5, duration: 1.0 }}
+          />
+        </>
+      )}
     </motion.div>
   );
 }

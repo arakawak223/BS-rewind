@@ -1,6 +1,7 @@
 export const stages = [
   {
     stage_id: "toshiba_2006",
+    tag: null,
     company_name: "東芝",
     category: "買収",
     stage_name: "東芝 (原発買収の激震)",
@@ -48,6 +49,7 @@ export const stages = [
   },
   {
     stage_id: "sharp_2009",
+    tag: null,
     company_name: "シャープ",
     category: "設備投資",
     stage_name: "シャープ (液晶投資の光と影)",
@@ -94,6 +96,7 @@ export const stages = [
   },
   {
     stage_id: "google_2006",
+    tag: null,
     company_name: "Google",
     category: "買収",
     stage_name: "Google (YouTube買収の伝説)",
@@ -137,6 +140,7 @@ export const stages = [
   },
   {
     stage_id: "tesla_2014",
+    tag: null,
     company_name: "Tesla",
     category: "設備投資",
     stage_name: "Tesla (ギガファクトリーの賭け)",
@@ -182,6 +186,7 @@ export const stages = [
   // ── パナソニック ──
   {
     stage_id: "panasonic_2009",
+    tag: null,
     company_name: "パナソニック",
     category: "買収",
     stage_name: "パナソニック (聖域なき減損)",
@@ -226,6 +231,7 @@ export const stages = [
   // ── 楽天グループ ──
   {
     stage_id: "rakuten_2019",
+    tag: null,
     company_name: "楽天グループ",
     category: "事業進出",
     stage_name: "楽天グループ (モバイルへの巨額投資)",
@@ -270,6 +276,7 @@ export const stages = [
   // ── AOLタイム・ワーナー ──
   {
     stage_id: "aol_2000",
+    tag: null,
     company_name: "AOL",
     category: "買収",
     stage_name: "AOLタイム・ワーナー (史上最大の減損)",
@@ -314,6 +321,7 @@ export const stages = [
   // ── ソフトバンクグループ ──
   {
     stage_id: "softbank_2019",
+    tag: null,
     company_name: "ソフトバンクG",
     category: "投資",
     stage_name: "ソフトバンクグループ (投資の光と影)",
@@ -357,6 +365,7 @@ export const stages = [
   // ── ソニー ──
   {
     stage_id: "sony_2012",
+    tag: "復活",
     company_name: "ソニー",
     category: "構造改革",
     stage_name: "ソニー (復活の構造改革)",
@@ -401,6 +410,7 @@ export const stages = [
   // ── Apple ──
   {
     stage_id: "apple_2015",
+    tag: "筋肉質",
     company_name: "Apple",
     category: "資本政策",
     stage_name: "Apple (資本効率の極致)",
@@ -445,6 +455,7 @@ export const stages = [
   // ── JAL① ──
   {
     stage_id: "jal_part1",
+    tag: null,
     company_name: "日本航空",
     category: "設備投資",
     stage_name: "JAL① (放漫経営と墜落)",
@@ -489,6 +500,7 @@ export const stages = [
   // ── JAL② ──
   {
     stage_id: "jal_part2",
+    tag: "復活",
     company_name: "日本航空",
     category: "構造改革",
     stage_name: "JAL② (稲盛和夫の再生)",
@@ -533,6 +545,7 @@ export const stages = [
   // ── 日産自動車 ──
   {
     stage_id: "nissan_1999",
+    tag: "復活",
     company_name: "日産自動車",
     category: "構造改革",
     stage_name: "日産自動車 (リバイバル・プラン)",
@@ -577,6 +590,7 @@ export const stages = [
   // ── オリンパス① ──
   {
     stage_id: "olympus_part1",
+    tag: null,
     company_name: "オリンパス",
     category: "利益操作",
     stage_name: "オリンパス① (巨額損失隠しの破綻)",
@@ -622,6 +636,7 @@ export const stages = [
   // ── オリンパス② ──
   {
     stage_id: "olympus_part2",
+    tag: null,
     company_name: "オリンパス",
     category: "構造改革",
     stage_name: "オリンパス② (ソニー提携と外科の王道)",
@@ -666,6 +681,7 @@ export const stages = [
   // ── リーマン・ブラザーズ ──
   {
     stage_id: "lehman_2008",
+    tag: "崩壊",
     company_name: "リーマン",
     category: "投資",
     stage_name: "リーマン・ブラザーズ (投資銀行の終焉)",
@@ -710,6 +726,7 @@ export const stages = [
   // ── ダイエー ──
   {
     stage_id: "daiei_2002",
+    tag: null,
     company_name: "ダイエー",
     category: "設備投資",
     stage_name: "ダイエー (土地神話の崩壊)",
@@ -754,6 +771,7 @@ export const stages = [
   // ── スターバックス ──
   {
     stage_id: "starbucks_2019",
+    tag: null,
     company_name: "スターバックス",
     category: "資本政策",
     stage_name: "スターバックス (あえての債務超過)",
@@ -798,6 +816,7 @@ export const stages = [
   // ── エンロン ──
   {
     stage_id: "enron_2001",
+    tag: "崩壊",
     company_name: "エンロン",
     category: "利益操作",
     stage_name: "エンロン (消された負債の逆襲)",
@@ -842,6 +861,7 @@ export const stages = [
   // ── 任天堂 ──
   {
     stage_id: "nintendo_2012",
+    tag: null,
     company_name: "任天堂",
     category: "構造改革",
     stage_name: "任天堂 (圧倒的キャッシュの守備力)",
@@ -886,6 +906,7 @@ export const stages = [
   // ── ライブドア ──
   {
     stage_id: "livedoor_2006",
+    tag: null,
     company_name: "ライブドア",
     category: "利益操作",
     stage_name: "ライブドア (虚飾のB/Sバブル)",
@@ -930,6 +951,7 @@ export const stages = [
   // ── メルカリ ──
   {
     stage_id: "mercari_2018",
+    tag: null,
     company_name: "メルカリ",
     category: "事業進出",
     stage_name: "メルカリ (赤字覚悟の米国侵攻)",
@@ -969,6 +991,465 @@ export const stages = [
         { year: 2023, type: "official", headline: "悲願の黒字化達成。B/Sの健全性を維持しつつ米国展開を継続" },
       ],
       summary: { totalImpairment: 0.0 },
+    },
+  },
+  // ── テスラ (Model 3 生産地獄) ──
+  {
+    stage_id: "tesla_2017",
+    tag: "超成長",
+    company_name: "Tesla",
+    category: "事業進出",
+    stage_name: "Tesla (Model 3 生産地獄)",
+    investment_target: "Model 3量産投資",
+    before_year: 2017,
+    after_year: 2023,
+    unit: "10億ドル",
+    description:
+      "2017年、TeslaはModel 3の量産を開始したが、生産ラインの過度な自動化に失敗し「生産地獄」に突入。手元現金は急速に減少し、イーロン・マスクCEOが破産の可能性に言及するほど追い込まれた。しかし2019年以降、生産体制の確立とEV需要の爆発により世界最大のEVメーカーへと成長した。",
+    effects: { cashRundown: true },
+    data: {
+      before: {
+        assets: { cash: 3.5, goodwill: 0, others: 25.0 },
+        liabilities: { debt: 10.0, others: 14.5 },
+        equity: 4.0,
+      },
+      deal: {
+        assets: { cash: 2.0, goodwill: 0, others: 28.0 },
+        liabilities: { debt: 12.0, others: 14.0 },
+        equity: 4.0,
+      },
+      investment: { amount: 10.0, method: "debt_financed" },
+      after_actual: {
+        assets: { cash: 16.0, goodwill: 0.2, others: 90.0 },
+        liabilities: { debt: 5.0, others: 58.0 },
+        equity: 43.2,
+      },
+      stockPrice: {
+        before: 22,
+        deal: 12,
+        after: 250,
+        unit: "$",
+        curve: "surge_early",
+      },
+      news: [
+        { year: 2017, headline: "Tesla、Model 3量産開始も「生産地獄」に突入。週5,000台目標に遠く及ばず", isBreaking: true },
+        { year: 2018, type: "financial", headline: "手元現金が急減。イーロン・マスクCEOが「破産まであと数週間だった」と後に告白", isCritical: true },
+        { year: 2020, headline: "Tesla株が年初来8倍。S&P500に採用、時価総額がトヨタを超える", isBreaking: true },
+        { year: 2023, headline: "世界EV販売トップを維持。営業利益率は自動車業界最高水準に" },
+      ],
+      summary: { totalImpairment: 0 },
+    },
+  },
+  // ── スカイマーク ──
+  {
+    stage_id: "skymark_2011",
+    tag: null,
+    company_name: "スカイマーク",
+    category: "設備投資",
+    stage_name: "スカイマーク (A380の巨大な賭け)",
+    investment_target: "超大型機A380発注",
+    before_year: 2011,
+    after_year: 2015,
+    unit: "100億円",
+    description:
+      "LCCの先駆けとして躍進していたスカイマークは、超大型機エアバスA380を6機（約1,900億円）発注するという大胆な賭けに出た。しかし円安・燃油高に加え国内線市場の縮小が直撃。A380キャンセルで巨額違約金を抱え、2015年に民事再生法を申請した。",
+    effects: { debtExplosion: true },
+    data: {
+      before: {
+        assets: { cash: 3.0, goodwill: 0, others: 5.0 },
+        liabilities: { debt: 1.0, others: 2.0 },
+        equity: 5.0,
+      },
+      deal: {
+        assets: { cash: 1.5, goodwill: 0, others: 8.0 },
+        liabilities: { debt: 4.0, others: 2.5 },
+        equity: 3.0,
+      },
+      investment: { amount: 6.0, method: "debt_financed" },
+      after_actual: {
+        assets: { cash: 0.3, goodwill: 0, others: 3.0 },
+        liabilities: { debt: 7.0, others: 4.0 },
+        equity: -7.7,
+      },
+      stockPrice: {
+        before: 1200,
+        deal: 800,
+        after: 0,
+        unit: "円",
+        curve: "crash_early",
+      },
+      news: [
+        { year: 2011, headline: "スカイマーク、超大型機A380を6機発注。約1,900億円の巨額投資", isBreaking: true },
+        { year: 2013, headline: "円安と燃油高で業績悪化。A380の違約金リスクが浮上" },
+        { year: 2014, type: "official", headline: "A380発注をキャンセル。エアバスから約700億円の違約金を請求される", isCritical: true },
+        { year: 2015, type: "audit_warning", subtype: "going_concern", headline: "民事再生法を申請。負債総額約710億円。全株式が無価値に", severity: "high", isCritical: true },
+      ],
+      summary: { totalImpairment: 8.0 },
+    },
+  },
+  // ── Netflix ──
+  {
+    stage_id: "netflix_2017",
+    tag: "超成長",
+    company_name: "Netflix",
+    category: "事業進出",
+    stage_name: "Netflix (コンテンツ軍拡競争)",
+    investment_target: "オリジナルコンテンツ投資",
+    before_year: 2017,
+    after_year: 2024,
+    unit: "10億ドル",
+    description:
+      "2017年、Netflixはオリジナルコンテンツへの年間投資を60億ドル超に拡大。巨額の社債を発行してフリーキャッシュフローは大幅マイナスが続いた。2022年の会員数初減少で株価は暴落したが、広告付きプランとパスワード共有対策で反転。会員数2.8億人を突破し黒字体質へ転換した。",
+    data: {
+      before: {
+        assets: { cash: 2.0, goodwill: 0.5, others: 16.5 },
+        liabilities: { debt: 5.0, others: 5.0 },
+        equity: 9.0,
+      },
+      deal: {
+        assets: { cash: 3.0, goodwill: 0.5, others: 21.5 },
+        liabilities: { debt: 10.0, others: 6.0 },
+        equity: 9.0,
+      },
+      investment: { amount: 8.0, method: "debt_financed" },
+      after_actual: {
+        assets: { cash: 7.0, goodwill: 0.5, others: 42.5 },
+        liabilities: { debt: 14.0, others: 12.0 },
+        equity: 24.0,
+      },
+      stockPrice: {
+        before: 50,
+        deal: 55,
+        after: 700,
+        unit: "$",
+        curve: "surge_early",
+      },
+      news: [
+        { year: 2017, headline: "Netflix、オリジナルコンテンツに年間60億ドル超を投資。社債での資金調達が続く", isBreaking: true },
+        { year: 2019, headline: "有料会員1.5億人突破。しかしフリーキャッシュフローは大幅マイナスが続く" },
+        { year: 2022, type: "official", headline: "会員数が初の減少。株価が約70%下落。広告付きプランの導入を決定", isCritical: true },
+        { year: 2024, headline: "会員数2.8億人突破。フリーCF黒字化を達成し、コンテンツ投資が実を結ぶ", isBreaking: true },
+      ],
+      summary: { totalImpairment: 0 },
+    },
+  },
+  // ── NVIDIA ──
+  {
+    stage_id: "nvidia_2020",
+    tag: "超成長",
+    company_name: "NVIDIA",
+    category: "設備投資",
+    stage_name: "NVIDIA (AI半導体の覇者)",
+    investment_target: "AI・データセンター投資",
+    before_year: 2020,
+    after_year: 2024,
+    unit: "10億ドル",
+    description:
+      "2020年、NVIDIAのデータセンター向けGPU売上がゲーミングを初めて上回り、AI半導体メーカーへの転換が始まった。2022年の仮想通貨バブル崩壊とArm買収断念で株価は下落したが、ChatGPTブームでAI向け半導体需要が爆発。時価総額3兆ドルを突破し世界最大の半導体企業となった。",
+    effects: { aiCircuitGlow: true },
+    data: {
+      before: {
+        assets: { cash: 11.0, goodwill: 4.0, others: 22.0 },
+        liabilities: { debt: 6.0, others: 6.0 },
+        equity: 25.0,
+      },
+      deal: {
+        assets: { cash: 8.0, goodwill: 4.0, others: 28.0 },
+        liabilities: { debt: 11.0, others: 6.0 },
+        equity: 23.0,
+      },
+      investment: { amount: 10.0, method: "mixed" },
+      after_actual: {
+        assets: { cash: 32.0, goodwill: 25.0, others: 40.0 },
+        liabilities: { debt: 9.0, others: 22.0 },
+        equity: 66.0,
+      },
+      stockPrice: {
+        before: 15,
+        deal: 12,
+        after: 130,
+        unit: "$",
+        curve: "surge_early",
+      },
+      news: [
+        { year: 2020, headline: "NVIDIA、データセンター売上がゲーミングを初めて上回る。AI時代の幕開け", isBreaking: true },
+        { year: 2022, type: "official", headline: "仮想通貨バブル崩壊でGPU在庫過剰。Arm買収を断念、株価40%下落", isCritical: true },
+        { year: 2023, headline: "ChatGPTブームでAI半導体の需要爆発。時価総額1兆ドル突破", isBreaking: true },
+        { year: 2024, headline: "時価総額3兆ドル。データセンター売上が前年比3倍に急伸" },
+      ],
+      summary: { totalImpairment: 0 },
+    },
+  },
+  // ── ニトリ ──
+  {
+    stage_id: "nitori_2015",
+    tag: "筋肉質",
+    company_name: "ニトリ",
+    category: "設備投資",
+    stage_name: "ニトリ (連続増益の鉄人)",
+    investment_target: "グローバル展開・物流投資",
+    before_year: 2015,
+    after_year: 2024,
+    unit: "1,000億円",
+    description:
+      "ニトリは「お、ねだん以上。」を掲げ、製造物流小売業（SPA）モデルで圧倒的なコスト競争力を構築。自社物流網への投資を続けながらも、実質無借金経営と連続増収増益を30期以上維持する筋肉質なB/Sで、家具業界の覇者となった。",
+    data: {
+      before: {
+        assets: { cash: 1.0, goodwill: 0, others: 4.0 },
+        liabilities: { debt: 0.3, others: 1.2 },
+        equity: 3.5,
+      },
+      deal: {
+        assets: { cash: 0.8, goodwill: 0.2, others: 5.5 },
+        liabilities: { debt: 0.5, others: 2.0 },
+        equity: 4.0,
+      },
+      investment: { amount: 2.0, method: "cash_to_capex" },
+      after_actual: {
+        assets: { cash: 1.5, goodwill: 0.3, others: 10.0 },
+        liabilities: { debt: 1.0, others: 3.5 },
+        equity: 7.3,
+      },
+      stockPrice: {
+        before: 8000,
+        deal: 10000,
+        after: 18000,
+        unit: "円",
+        curve: "surge_early",
+      },
+      news: [
+        { year: 2015, headline: "ニトリ、28期連続増収増益を達成。海外展開を本格化" },
+        { year: 2020, headline: "コロナ禍の巣ごもり需要で売上急増。自社物流網が強みに", isBreaking: true },
+        { year: 2024, headline: "37期連続増収増益。実質無借金を維持しグローバル1,000店舗に迫る", isBreaking: true },
+      ],
+      summary: { totalImpairment: 0 },
+    },
+  },
+  // ── ZOZO ──
+  {
+    stage_id: "zozo_2018",
+    tag: null,
+    company_name: "ZOZO",
+    category: "資本政策",
+    stage_name: "ZOZO (前澤時代の光と影)",
+    investment_target: "PB事業・ZOZOSUIT展開",
+    before_year: 2018,
+    after_year: 2023,
+    unit: "100億円",
+    description:
+      "2018年、ZOZOは前澤友作社長のもとPB（プライベートブランド）事業「ZOZOSUIT」に大きく賭けた。しかしPB事業は失敗に終わり前澤氏は退任。2019年にヤフー（現LINEヤフー）がTOBで子会社化し、安定経営路線へ転換。EC事業の強みを活かして取扱高は過去最高を更新した。",
+    data: {
+      before: {
+        assets: { cash: 4.0, goodwill: 0, others: 3.0 },
+        liabilities: { debt: 0.5, others: 3.0 },
+        equity: 3.5,
+      },
+      deal: {
+        assets: { cash: 2.0, goodwill: 0, others: 4.0 },
+        liabilities: { debt: 0.5, others: 2.5 },
+        equity: 3.0,
+      },
+      investment: { amount: 2.0, method: "cash_to_capex" },
+      after_actual: {
+        assets: { cash: 5.0, goodwill: 0, others: 5.0 },
+        liabilities: { debt: 1.0, others: 4.0 },
+        equity: 5.0,
+      },
+      stockPrice: {
+        before: 4500,
+        deal: 1500,
+        after: 3200,
+        unit: "円",
+        curve: "crash_early",
+      },
+      news: [
+        { year: 2018, headline: "ZOZO、PB事業「ZOZOSUIT」を大々的に展開。前澤社長が月旅行計画を発表", isBreaking: true },
+        { year: 2019, type: "official", headline: "PB事業撤退。前澤社長退任。ヤフーがTOBで子会社化を決定", isCritical: true },
+        { year: 2023, headline: "Yahoo/LINE傘下で安定成長。ZOZOTOWNの取扱高が過去最高を更新" },
+      ],
+      summary: { totalImpairment: 1.0 },
+    },
+  },
+  // ── 三菱自動車 ──
+  {
+    stage_id: "mitsubishi_motors_2013",
+    tag: null,
+    company_name: "三菱自動車",
+    category: "利益操作",
+    stage_name: "三菱自動車 (燃費不正25年)",
+    investment_target: "軽自動車事業拡大",
+    before_year: 2013,
+    after_year: 2017,
+    unit: "1,000億円",
+    description:
+      "三菱自動車は2000年代のリコール問題から復活し、軽自動車事業で業績を回復させていた。しかし2016年、軽自動車の燃費データを25年間にわたり不正に操作していたことが発覚。単独での再建が困難となり、日産自動車が2,370億円で34%の株式を取得し筆頭株主となった。",
+    data: {
+      before: {
+        assets: { cash: 4.0, goodwill: 0, others: 12.0 },
+        liabilities: { debt: 3.0, others: 7.0 },
+        equity: 6.0,
+      },
+      deal: {
+        assets: { cash: 5.0, goodwill: 0, others: 14.0 },
+        liabilities: { debt: 2.5, others: 8.0 },
+        equity: 8.5,
+      },
+      investment: { amount: 0, method: "mixed" },
+      after_actual: {
+        assets: { cash: 5.5, goodwill: 0, others: 11.0 },
+        liabilities: { debt: 2.0, others: 8.0 },
+        equity: 6.5,
+      },
+      stockPrice: {
+        before: 1100,
+        deal: 1200,
+        after: 700,
+        unit: "円",
+        curve: "crash_early",
+      },
+      news: [
+        { year: 2013, headline: "三菱自動車、リコール問題からの復活を宣言。軽自動車事業を拡大" },
+        { year: 2016, type: "audit", headline: "軽自動車の燃費データ不正が発覚。25年間にわたる組織的不正と判明", isCritical: true },
+        { year: 2016, type: "official", headline: "日産自動車が34%の株式を2,370億円で取得。筆頭株主として再建を主導", isBreaking: true },
+        { year: 2017, headline: "日産傘下で再建開始。燃費不正の補償費用を計上し、信頼回復へ" },
+      ],
+      summary: { totalImpairment: 1.5 },
+    },
+  },
+  // ── Lenovo ──
+  {
+    stage_id: "lenovo_2005",
+    tag: null,
+    company_name: "Lenovo",
+    category: "買収",
+    stage_name: "Lenovo (ThinkPadを継ぐ者)",
+    investment_target: "IBM PC事業買収",
+    before_year: 2005,
+    after_year: 2015,
+    unit: "10億ドル",
+    description:
+      "2005年、中国のLenovoはIBMのPC事業を17.5億ドルで買収し、一夜にして世界3位のPCメーカーとなった。「中国企業にThinkPadブランドは扱えない」との懐疑論が渦巻いたが、巧みなブランド統合でPC市場シェアを拡大。2014年には世界PC市場でシェア1位を獲得した。",
+    data: {
+      before: {
+        assets: { cash: 1.0, goodwill: 0, others: 2.0 },
+        liabilities: { debt: 0.5, others: 1.0 },
+        equity: 1.5,
+      },
+      deal: {
+        assets: { cash: 0.8, goodwill: 3.0, others: 4.0 },
+        liabilities: { debt: 2.5, others: 3.5 },
+        equity: 1.8,
+      },
+      investment: { amount: 1.75, method: "mixed" },
+      after_actual: {
+        assets: { cash: 2.5, goodwill: 5.5, others: 17.0 },
+        liabilities: { debt: 3.0, others: 15.0 },
+        equity: 7.0,
+      },
+      stockPrice: {
+        before: 2.5,
+        deal: 3.0,
+        after: 10.0,
+        unit: "HK$",
+        curve: "surge_early",
+      },
+      news: [
+        { year: 2005, headline: "中国Lenovo、IBMのPC事業を17.5億ドルで買収。世界3位のPCメーカーに", isBreaking: true },
+        { year: 2008, headline: "リーマンショックで業績悪化。PC需要急減も、ThinkPadブランドで耐える" },
+        { year: 2014, headline: "世界PC市場でシェア1位を獲得。IBM×Lenovoの統合が成功", isBreaking: true },
+      ],
+      summary: { totalImpairment: 0.5 },
+    },
+  },
+  // ── 中国恒大集団 ──
+  {
+    stage_id: "evergrande_2018",
+    tag: "崩壊",
+    company_name: "中国恒大集団",
+    category: "投資",
+    stage_name: "中国恒大集団 (不動産バブルの崩壊)",
+    investment_target: "不動産開発拡大",
+    before_year: 2018,
+    after_year: 2023,
+    unit: "100億元",
+    description:
+      "中国恒大集団は2018年に売上高5,000億元を突破し、世界最大級の不動産開発会社となった。しかし中国政府の「三条紅線」政策による不動産融資規制が直撃。2021年にドル建て社債のデフォルトが確定し、負債総額2.4兆元（約48兆円）という史上最大級の企業破綻へと向かった。",
+    effects: { evergrandeShatter: true },
+    data: {
+      before: {
+        assets: { cash: 15.0, goodwill: 0, others: 160.0 },
+        liabilities: { debt: 60.0, others: 95.0 },
+        equity: 20.0,
+      },
+      deal: {
+        assets: { cash: 10.0, goodwill: 0, others: 200.0 },
+        liabilities: { debt: 80.0, others: 115.0 },
+        equity: 15.0,
+      },
+      investment: { amount: 50.0, method: "debt_financed" },
+      after_actual: {
+        assets: { cash: 1.0, goodwill: 0, others: 100.0 },
+        liabilities: { debt: 90.0, others: 130.0 },
+        equity: -119.0,
+      },
+      stockPrice: {
+        before: 25,
+        deal: 20,
+        after: 0,
+        unit: "HK$",
+        curve: "crash_early",
+      },
+      news: [
+        { year: 2018, headline: "中国恒大集団、売上高5,000億元突破。世界最大級の不動産開発会社に", isBreaking: true },
+        { year: 2021, type: "official", subtype: "going_concern", headline: "ドル建て社債の利払い不能。債務不履行（デフォルト）が確定", isCritical: true },
+        { year: 2023, type: "audit", headline: "負債総額2.4兆元（約48兆円）。米国で破産法15条を申請", isCritical: true },
+      ],
+      summary: { totalImpairment: 100.0 },
+    },
+  },
+  // ── 任天堂 (DS/Wii黄金期) ──
+  {
+    stage_id: "nintendo_2005",
+    tag: "筋肉質",
+    company_name: "任天堂",
+    category: "設備投資",
+    stage_name: "任天堂 (ブルーオーシャンの創造)",
+    investment_target: "DS/Wii開発",
+    before_year: 2005,
+    after_year: 2011,
+    unit: "1,000億円",
+    description:
+      "2005年、任天堂はニンテンドーDSとWiiで「ブルーオーシャン戦略」を実行。高性能競争を避け、直感的な操作で非ゲーマー層を開拓した。巨額の現金を持つ無借金経営のB/Sで開発リスクを吸収し、Wiiは世界1億台を突破。「枯れた技術の水平思考」が大成功を収めた。",
+    data: {
+      before: {
+        assets: { cash: 7.0, goodwill: 0, others: 4.0 },
+        liabilities: { debt: 0, others: 1.5 },
+        equity: 9.5,
+      },
+      deal: {
+        assets: { cash: 6.0, goodwill: 0, others: 5.0 },
+        liabilities: { debt: 0, others: 2.0 },
+        equity: 9.0,
+      },
+      investment: { amount: 2.0, method: "cash_reserves" },
+      after_actual: {
+        assets: { cash: 8.5, goodwill: 0, others: 6.0 },
+        liabilities: { debt: 0, others: 1.5 },
+        equity: 13.0,
+      },
+      stockPrice: {
+        before: 12000,
+        deal: 15000,
+        after: 25000,
+        unit: "円",
+        curve: "surge_early",
+      },
+      news: [
+        { year: 2005, headline: "任天堂、ニンテンドーDSが世界的大ヒット。携帯ゲーム機市場を席巻", isBreaking: true },
+        { year: 2006, headline: "Wii発売。「ゲーム人口の拡大」を掲げ非ゲーマー層を開拓", isBreaking: true },
+        { year: 2009, headline: "Wii世界累計販売5,000万台突破。無借金経営を維持しつつ時価総額10兆円に" },
+      ],
+      summary: { totalImpairment: 0 },
     },
   },
 ];

@@ -531,6 +531,61 @@ function getRank(rate) {
 }
 
 /**
+ * Calculate management eye score (経営眼スコア).
+ * sync率(40%) + 方向性正解(30%) + 減損予測精度(30%)
+ */
+function calcManagementEyeScore(prediction, actual, stage, syncRate) {
+  // 1. Sync rate component (40%)
+  const syncComponent = syncRate * 0.4;
+
+  // 2. Direction component (30%): equity sign match
+  const predEquity = prediction.equity;
+  const actEquity = actual.equity;
+  const sameSign =
+    (predEquity >= 0 && actEquity >= 0) || (predEquity < 0 && actEquity < 0);
+  const directionScore = sameSign ? 100 : 20;
+  const directionComponent = directionScore * 0.3;
+
+  // 3. Impairment prediction accuracy (30%)
+  const totalImpairment = stage.data?.summary?.totalImpairment || 0;
+  if (totalImpairment === 0) {
+    // No impairment: check if player also predicted minimal asset loss
+    const dealGW = stage.data?.deal?.assets?.goodwill || 0;
+    const dealOthers = stage.data?.deal?.assets?.others || 0;
+    const predGWLoss = Math.max(0, dealGW - (prediction.assets.goodwill || 0));
+    const predOthersLoss = Math.max(0, dealOthers - (prediction.assets.others || 0));
+    const predTotalLoss = predGWLoss + predOthersLoss;
+    // Small loss predicted = good accuracy
+    const maxRef = Math.max(dealGW + dealOthers, 1);
+    const lossRatio = predTotalLoss / maxRef;
+    const impairmentAccuracy = lossRatio < 0.1 ? 100 : lossRatio < 0.3 ? 70 : 40;
+    return Math.round(syncComponent + directionComponent + impairmentAccuracy * 0.3);
+  }
+
+  // Calculate player's implied impairment from asset reduction
+  const dealGW = stage.data?.deal?.assets?.goodwill || 0;
+  const dealOthers = stage.data?.deal?.assets?.others || 0;
+  const predGWLoss = Math.max(0, dealGW - (prediction.assets.goodwill || 0));
+  const predOthersLoss = Math.max(0, dealOthers - (prediction.assets.others || 0));
+  const predImpairment = predGWLoss + predOthersLoss;
+
+  // How close is the predicted impairment to actual?
+  const diff = Math.abs(predImpairment - totalImpairment);
+  const ref = Math.max(totalImpairment, 1);
+  const ratio = diff / ref;
+  const impairmentAccuracy = ratio < 0.2 ? 100 : ratio < 0.5 ? 70 : ratio < 1.0 ? 40 : 20;
+
+  return Math.round(syncComponent + directionComponent + impairmentAccuracy * 0.3);
+}
+
+function getManagementEyeRank(score) {
+  if (score >= 70) return "S";
+  if (score >= 50) return "A";
+  if (score >= 30) return "B";
+  return "C";
+}
+
+/**
  * Reusable stamp component.
  */
 function StampMark({ text, delay = 1.2, rotate = -12, top = "8%", scale: initScale = 4 }) {
@@ -623,6 +678,8 @@ export default function ResultSummary({ prediction, actual, stage, postDeal, onR
 
   const totalImpairment = stage.data.summary?.totalImpairment || 0;
   const hasGC = stage.data.news?.some((n) => n.subtype === "going_concern");
+  const managementEyeScore = calcManagementEyeScore(prediction, actual, stage, syncRate);
+  const managementEyeRank = getManagementEyeRank(managementEyeScore);
 
   // Delay offset for impairment card
   const impairmentDelay = totalImpairment > 0 ? 0.3 : 0;
@@ -680,6 +737,35 @@ export default function ResultSummary({ prediction, actual, stage, postDeal, onR
           {rank.label}
         </div>
         <div className="text-lg text-slate-300 mt-2">{rank.desc}</div>
+      </motion.div>
+
+      {/* Management Eye Score */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.85 }}
+        className="w-full bg-slate-800/80 rounded-xl p-4 border border-slate-600"
+      >
+        <div className="text-sm font-bold text-slate-300 mb-2">経営眼スコア</div>
+        <div className="flex items-center justify-between">
+          <div
+            className="text-5xl font-black tabular-nums"
+            style={{
+              color: managementEyeScore >= 70 ? "#4ade80" : managementEyeScore >= 40 ? "#facc15" : "#f87171",
+              textShadow: `0 0 20px ${managementEyeScore >= 70 ? "rgba(74,222,128,0.5)" : managementEyeScore >= 40 ? "rgba(250,204,21,0.5)" : "rgba(248,113,113,0.5)"}`,
+            }}
+          >
+            {managementEyeScore}
+          </div>
+          <div
+            className="text-4xl font-black"
+            style={{
+              color: managementEyeScore >= 70 ? "#4ade80" : managementEyeScore >= 40 ? "#facc15" : "#f87171",
+            }}
+          >
+            {managementEyeRank}
+          </div>
+        </div>
       </motion.div>
 
       {/* Stock Price Change */}
