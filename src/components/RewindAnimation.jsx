@@ -618,8 +618,7 @@ export default function RewindAnimation({
       </motion.div>
 
       <div className="text-sm text-slate-400">
-        {phase === "counting" && "時を戻しています..."}
-        {phase === "done" && (actualAfter.equity < 0 ? "債務超過に転落..." : "投資成功!")}
+        {phase === "done" && actualAfter.equity < 0 && "債務超過に転落..."}
       </div>
 
       {/* Stock Price Ticker */}
