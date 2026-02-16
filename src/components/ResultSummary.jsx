@@ -610,14 +610,8 @@ export default function ResultSummary({ prediction, actual, stage, postDeal, onR
 
   const totalImpairment = stage.data.summary?.totalImpairment || 0;
   const hasGC = stage.data.news?.some((n) => n.subtype === "going_concern");
-  const gcPenaltyApplied = hasGC && prediction.equity > 0 && actual.equity < 0;
 
-  // Auditor feedback conditions
-  const goodwillDiff = Math.abs((prediction.assets.goodwill || 0) - (actual.assets.goodwill || 0));
-  const equityDiff = Math.abs(prediction.equity - actual.equity);
-  const showAuditorFeedback = totalImpairment > 0 && (goodwillDiff > 2.0 || equityDiff > 5.0);
-
-  // Delay offset for impairment/feedback cards
+  // Delay offset for impairment card
   const impairmentDelay = totalImpairment > 0 ? 0.3 : 0;
 
   return (
@@ -714,38 +708,6 @@ export default function ResultSummary({ prediction, actual, stage, postDeal, onR
           >
             {(totalImpairment * 1000).toLocaleString()}
             <span className="text-lg ml-1">億円</span>
-          </div>
-        </motion.div>
-      )}
-
-      {/* Auditor Feedback Card */}
-      {showAuditorFeedback && (
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.0 }}
-          className="w-full bg-amber-950/40 rounded-xl p-4 border border-amber-700/50"
-        >
-          <div className="mb-2">
-            <span className="text-xs px-2 py-1 rounded bg-amber-600/40 text-amber-200 font-bold">
-              監査法人
-            </span>
-          </div>
-          <div className="text-sm text-amber-100 leading-relaxed space-y-1">
-            {goodwillDiff > 2.0 && (
-              <p>のれんの減損リスクを見逃しています。</p>
-            )}
-            {equityDiff > 5.0 && (
-              <p>債務超過への転落を織り込めていません。</p>
-            )}
-            {gcPenaltyApplied && (
-              <p className="text-red-300 font-bold">
-                継続企業の前提に関する重大な疑義を見落としていました。（シンクロ率 30%減点）
-              </p>
-            )}
-            <p className="text-amber-400/70 text-xs mt-2">
-              ※ 減損テストの結果、回収可能価額は大幅に低下していました
-            </p>
           </div>
         </motion.div>
       )}
