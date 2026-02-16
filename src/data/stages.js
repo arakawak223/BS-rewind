@@ -308,7 +308,7 @@ export const stages = [
         { year: 2002, type: "audit", headline: "米会計基準変更。旧AOLの価値消失を認め、990億ドル（約12兆円）の巨額減損", isCritical: true },
         { year: 2003, type: "official", headline: "社名から『AOL』が消滅。合併は実質的な失敗と市場が判断", isCritical: true },
       ],
-      summary: { totalImpairment: 99.0 },
+      summary: { totalImpairment: 120.0 },
     },
   },
   // ── ソフトバンクグループ ──
