@@ -530,9 +530,35 @@ function getRank(rate) {
 }
 
 /**
- * Scanline noise overlay + "特設注意市場銘柄" stamp for olympus_part1.
+ * Reusable stamp component.
  */
-function NoiseStampOverlay() {
+function StampMark({ text, delay = 1.2, rotate = -12, top = "8%", scale: initScale = 4 }) {
+  return (
+    <motion.div
+      initial={{ scale: initScale, opacity: 0, rotate: rotate - 3 }}
+      animate={{ scale: 1, opacity: 1, rotate }}
+      transition={{ delay, duration: 0.25, type: "spring", stiffness: 300, damping: 20 }}
+      className="absolute left-1/2 -translate-x-1/2 z-20 pointer-events-none"
+      style={{ top }}
+    >
+      <div
+        className="border-[3px] border-red-500 px-5 py-2.5 font-black text-lg whitespace-nowrap tracking-wider"
+        style={{
+          color: "#ef4444",
+          textShadow: "0 0 12px rgba(239,68,68,0.6)",
+          boxShadow: "0 0 20px rgba(239,68,68,0.3), inset 0 0 20px rgba(239,68,68,0.1)",
+        }}
+      >
+        {text}
+      </div>
+    </motion.div>
+  );
+}
+
+/**
+ * Scanline noise overlay + stamp(s).
+ */
+function NoiseStampOverlay({ stamps }) {
   return (
     <>
       {/* Scanline noise — fades out after 3s */}
@@ -562,24 +588,9 @@ function NoiseStampOverlay() {
         style={{ background: "linear-gradient(180deg, rgba(239,68,68,0.08) 0%, transparent 50%, rgba(239,68,68,0.05) 100%)" }}
       />
 
-      {/* Stamp: 特設注意市場銘柄 */}
-      <motion.div
-        initial={{ scale: 4, opacity: 0, rotate: -15 }}
-        animate={{ scale: 1, opacity: 1, rotate: -12 }}
-        transition={{ delay: 1.2, duration: 0.25, type: "spring", stiffness: 300, damping: 20 }}
-        className="absolute top-[8%] left-1/2 -translate-x-1/2 z-20 pointer-events-none"
-      >
-        <div
-          className="border-[3px] border-red-500 px-5 py-2.5 font-black text-lg whitespace-nowrap tracking-wider"
-          style={{
-            color: "#ef4444",
-            textShadow: "0 0 12px rgba(239,68,68,0.6)",
-            boxShadow: "0 0 20px rgba(239,68,68,0.3), inset 0 0 20px rgba(239,68,68,0.1)",
-          }}
-        >
-          特設注意市場銘柄
-        </div>
-      </motion.div>
+      {stamps.map((s, i) => (
+        <StampMark key={i} {...s} />
+      ))}
     </>
   );
 }
@@ -587,6 +598,7 @@ function NoiseStampOverlay() {
 export default function ResultSummary({ prediction, actual, stage, postDeal, onRetry, onSelectStage }) {
   const [showChart, setShowChart] = useState(false);
   const isOlympusPart1 = stage.stage_id === "olympus_part1";
+  const isJalPart1 = stage.stage_id === "jal_part1";
   const syncRate = calcSyncRate(prediction, actual, stage);
   const rank = getRank(syncRate);
   const isFailure = actual.equity < 0;
@@ -622,7 +634,19 @@ export default function ResultSummary({ prediction, actual, stage, postDeal, onR
       className="flex flex-col items-center gap-6 max-w-lg mx-auto relative"
     >
       {/* Olympus Part1: noise + stamp overlay */}
-      {isOlympusPart1 && <NoiseStampOverlay />}
+      {isOlympusPart1 && (
+        <NoiseStampOverlay stamps={[{ text: "特設注意市場銘柄", top: "8%" }]} />
+      )}
+
+      {/* JAL Part1: GC + delisting stamps */}
+      {isJalPart1 && (
+        <NoiseStampOverlay
+          stamps={[
+            { text: "Going Concern注記", top: "6%", delay: 1.0, rotate: -8 },
+            { text: "上場廃止", top: "18%", delay: 1.5, rotate: 10 },
+          ]}
+        />
+      )}
 
       {/* Sync Rate */}
       <div className="text-center">

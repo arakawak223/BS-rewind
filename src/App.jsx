@@ -24,6 +24,202 @@ const CATEGORY_COLORS = {
 const CATEGORIES = ["all", ...Object.keys(CATEGORY_COLORS)];
 
 /**
+ * Intro animation for jal_part2: Inamori + debt shatter.
+ * Shows the devastated JAL B/S from Part 1, then debt blocks shatter
+ * and equity emerges from zero.
+ */
+function JALIntro({ onComplete }) {
+  useEffect(() => {
+    const timer = setTimeout(onComplete, 7000);
+    return () => clearTimeout(timer);
+  }, [onComplete]);
+
+  // JAL Part1 after_actual: cash=0.5, others=14.5, gw=0
+  // debt=9.0, othersLiab=18.0, equity=-12.0
+  // Total assets = 15.0, total liab = 27.0
+  const BAR_H = 200;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="flex flex-col items-center justify-center py-12 gap-6 cursor-pointer"
+      onClick={onComplete}
+    >
+      {/* Title */}
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3 }}
+        className="text-center"
+      >
+        <div className="text-xs text-slate-500 mb-1">2010年1月</div>
+        <div className="text-xl font-bold text-red-400">
+          会社更生法適用・上場廃止
+        </div>
+        <div className="text-sm text-slate-500 mt-1">負債総額 2兆7,000億円</div>
+      </motion.div>
+
+      {/* Devastated B/S → Debt shatter */}
+      <div className="relative flex items-end justify-center gap-8" style={{ height: BAR_H + 80 }}>
+        {/* Assets bar */}
+        <div className="flex flex-col items-center">
+          <motion.div
+            className="w-16 rounded-t overflow-hidden flex flex-col justify-end"
+            initial={{ height: 0 }}
+            animate={{ height: BAR_H * 0.55 }}
+            transition={{ duration: 0.8, delay: 0.5 }}
+          >
+            <div className="bg-[#4ade80]/60" style={{ height: "3%" }} />
+            <div className="bg-[#60a5fa]/60" style={{ height: "97%" }} />
+          </motion.div>
+          {/* Insolvency block */}
+          <motion.div
+            className="w-16 rounded-b overflow-hidden border-t-2 border-dashed border-white/70"
+            initial={{ height: 0 }}
+            animate={{ height: BAR_H * 0.44 }}
+            transition={{ duration: 0.6, delay: 1.0 }}
+            style={{
+              backgroundColor: "#ef4444",
+              backgroundImage: "repeating-linear-gradient(-45deg, transparent, transparent 4px, rgba(0,0,0,0.15) 4px, rgba(0,0,0,0.15) 8px)",
+            }}
+          >
+            <div className="text-xs text-white font-bold text-center mt-2">
+              債務超過<br />-12.0
+            </div>
+          </motion.div>
+          <div className="text-[10px] text-slate-500 mt-2">資産+債務超過</div>
+        </div>
+
+        {/* L+E bar — this shatters */}
+        <div className="flex flex-col items-center relative">
+          {/* Original debt bar — shatters at delay 3.5 */}
+          <motion.div
+            className="w-16 rounded-t overflow-hidden flex flex-col justify-end"
+            initial={{ height: 0 }}
+            animate={[
+              { height: BAR_H, transition: { duration: 0.8, delay: 0.5 } },
+            ]}
+          >
+            {/* Debt block */}
+            <motion.div
+              className="bg-[#f87171]/80 flex items-center justify-center relative"
+              style={{ height: "33%" }}
+              animate={{
+                opacity: [1, 1, 0],
+                scale: [1, 1, 1.3],
+                filter: ["blur(0px)", "blur(0px)", "blur(8px)"],
+              }}
+              transition={{ duration: 1.5, delay: 3.5, times: [0, 0.3, 1] }}
+            >
+              <span className="text-xs font-bold text-gray-900">有利子負債</span>
+            </motion.div>
+            {/* Other liabilities block */}
+            <motion.div
+              className="bg-[#fb923c]/80 flex items-center justify-center relative"
+              style={{ height: "67%" }}
+              animate={{
+                opacity: [1, 1, 0],
+                scale: [1, 1, 1.2],
+                filter: ["blur(0px)", "blur(0px)", "blur(6px)"],
+              }}
+              transition={{ duration: 1.2, delay: 3.8, times: [0, 0.3, 1] }}
+            >
+              <span className="text-xs font-bold text-gray-900">その他負債</span>
+            </motion.div>
+          </motion.div>
+
+          {/* New equity block — rises after shatter */}
+          <motion.div
+            className="absolute bottom-0 w-16 rounded-t overflow-hidden"
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: BAR_H * 0.6, opacity: 1 }}
+            transition={{ delay: 4.8, duration: 1.0, ease: "easeOut" }}
+            style={{
+              background: "linear-gradient(to top, #facc15, #fde68a)",
+              boxShadow: "0 0 30px rgba(250,204,21,0.6), 0 0 60px rgba(250,204,21,0.3)",
+            }}
+          >
+            <div className="text-xs font-bold text-gray-900 text-center mt-3">
+              純資産<br />8.0
+            </div>
+          </motion.div>
+
+          <div className="text-[10px] text-slate-500 mt-2">負債+純資産</div>
+        </div>
+
+        {/* Shatter particles */}
+        {Array.from({ length: 12 }).map((_, i) => (
+          <motion.div
+            key={`sp-${i}`}
+            className="absolute rounded"
+            style={{
+              width: 6 + Math.random() * 8,
+              height: 6 + Math.random() * 8,
+              backgroundColor: i % 2 === 0 ? "#f87171" : "#fb923c",
+              right: `${30 + Math.random() * 20}%`,
+              top: `${10 + Math.random() * 60}%`,
+            }}
+            initial={{ opacity: 0, scale: 0 }}
+            animate={{
+              opacity: [0, 1, 0],
+              scale: [0, 1.5, 0],
+              x: (Math.random() - 0.5) * 120,
+              y: (Math.random() - 0.5) * 100,
+              rotate: Math.random() * 360,
+            }}
+            transition={{
+              delay: 3.5 + Math.random() * 0.8,
+              duration: 0.8 + Math.random() * 0.5,
+            }}
+          />
+        ))}
+
+        {/* Inamori label */}
+        <motion.div
+          initial={{ opacity: 0, x: 50 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 2.5, duration: 0.6, ease: "easeOut" }}
+          className="absolute -right-6 top-4 flex flex-col items-center"
+        >
+          <div
+            className="text-lg font-black text-white tracking-wider"
+            style={{ textShadow: "0 0 16px rgba(250,204,21,0.6)" }}
+          >
+            稲盛和夫
+          </div>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 3.0 }}
+            className="text-[11px] text-yellow-300 font-bold mt-1"
+          >
+            会長就任
+          </motion.div>
+        </motion.div>
+      </div>
+
+      {/* Narrative */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 5.5 }}
+        className="text-center"
+      >
+        <div className="text-yellow-300 font-bold text-lg mb-1">
+          債権放棄 → 再生開始
+        </div>
+        <div className="text-slate-400 text-sm mb-1">
+          3,500億円の出資・債権放棄で再出発
+        </div>
+        <div className="text-slate-500 text-xs">タップして予測を開始</div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
+/**
  * Intro animation for olympus_part2: Sony equity injection.
  */
 function OlympusIntro({ onComplete }) {
@@ -170,7 +366,7 @@ function App() {
   const handleStageSelect = (s) => {
     setStage(s);
     setPrediction(null);
-    if (s.stage_id === "olympus_part2") {
+    if (s.stage_id === "olympus_part2" || s.stage_id === "jal_part2") {
       setPhase("intro");
     } else {
       setPhase("build");
@@ -332,7 +528,7 @@ function App() {
             </motion.div>
           )}
 
-          {/* ====== INTRO PHASE (Olympus Part 2) ====== */}
+          {/* ====== INTRO PHASE ====== */}
           {phase === "intro" && stage && (
             <motion.div
               key="intro"
@@ -341,7 +537,11 @@ function App() {
               exit={{ opacity: 0 }}
               transition={{ duration: 0.4 }}
             >
-              <OlympusIntro onComplete={handleIntroComplete} />
+              {stage.stage_id === "jal_part2" ? (
+                <JALIntro onComplete={handleIntroComplete} />
+              ) : (
+                <OlympusIntro onComplete={handleIntroComplete} />
+              )}
             </motion.div>
           )}
 

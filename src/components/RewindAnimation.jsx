@@ -215,7 +215,7 @@ function CrackSVG() {
 /**
  * Animated B/S bar with framer-motion dynamic scaling.
  */
-function BSBarAnimated({ data, barHeight, maxTotal, opacity = 1, borderColorHex = "#475569", showCrack, showSmoke }) {
+function BSBarAnimated({ data, barHeight, maxTotal, opacity = 1, borderColorHex = "#475569", showCrack, showSmoke, slimFactor = 1 }) {
   const cash = Math.abs(data.assets.cash || 0);
   const goodwill = Math.abs(data.assets.goodwill || 0);
   const others = Math.abs(data.assets.others || 0);
@@ -282,7 +282,7 @@ function BSBarAnimated({ data, barHeight, maxTotal, opacity = 1, borderColorHex 
         <motion.div
           className="w-full flex items-center justify-center text-xs font-bold select-none shrink-0 relative"
           style={{ backgroundColor: COLORS.others, opacity, minHeight: others > 0.1 ? 2 : 0 }}
-          animate={{ height: othersH }}
+          animate={{ height: othersH, scaleX: slimFactor }}
           transition={{ duration: 0.5, ease: "easeOut" }}
         >
           {othersH > 24 && (
@@ -344,7 +344,7 @@ function BSBarAnimated({ data, barHeight, maxTotal, opacity = 1, borderColorHex 
           <motion.div
             className="w-full flex items-center justify-center text-xs font-bold select-none shrink-0"
             style={{ backgroundColor: COLORS.otherLiab, opacity, minHeight: otherLiab > 0.1 ? 2 : 0 }}
-            animate={{ height: otherLiabH }}
+            animate={{ height: otherLiabH, scaleX: slimFactor }}
             transition={{ duration: 0.5, ease: "easeOut" }}
           >
             {otherLiabH > 24 && (
@@ -659,6 +659,7 @@ export default function RewindAnimation({
               opacity={0.85}
               showCrack={showCrack}
               showSmoke={showSmoke}
+              slimFactor={stage.stage_id === "jal_part2" ? 1 - ((currentYear - before_year) / Math.max(totalYears, 1)) * 0.25 : 1}
             />
           </div>
         </div>
