@@ -74,6 +74,29 @@ function spawnShatterParticles(idRef, blockType, count = 6) {
   return particles;
 }
 
+function spawnSandCrumbleParticles(idRef, count = 12) {
+  const particles = [];
+  for (let i = 0; i < count; i++) {
+    particles.push({
+      id: idRef.current++,
+      type: "sand",
+      color: ["#c084fc", "#a855f7", "#d8b4fe", "#9333ea"][Math.floor(Math.random() * 4)],
+      left: 5 + Math.random() * 30,
+      top: 70 + Math.random() * 15,
+      size: 2 + Math.random() * 3,
+      drift: (Math.random() - 0.5) * 20,
+      drift2: (Math.random() - 0.5) * 15,
+      drift3: (Math.random() - 0.5) * 10,
+      fall: 30 + Math.random() * 40,
+      fall2: 60 + Math.random() * 50,
+      delay: Math.random() * 0.4,
+      duration: 0.8 + Math.random() * 0.8,
+      born: Date.now(),
+    });
+  }
+  return particles;
+}
+
 function spawnGlowParticles(idRef, count = 5) {
   const particles = [];
   for (let i = 0; i < count; i++) {
@@ -132,7 +155,25 @@ function ParticleLayer({ particles }) {
   return (
     <>
       {particles.map((p) =>
-        p.type === "shatter" ? (
+        p.type === "sand" ? (
+          <div
+            key={p.id}
+            className="sand-particle"
+            style={{
+              left: `${p.left}%`,
+              top: `${p.top}%`,
+              backgroundColor: p.color,
+              "--size": `${p.size}px`,
+              "--drift": `${p.drift}px`,
+              "--drift2": `${p.drift2}px`,
+              "--drift3": `${p.drift3}px`,
+              "--fall": `${p.fall}px`,
+              "--fall2": `${p.fall2}px`,
+              "--delay": `${p.delay}s`,
+              "--duration": `${p.duration}s`,
+            }}
+          />
+        ) : p.type === "shatter" ? (
           <div
             key={p.id}
             className="shatter-particle"
@@ -531,7 +572,7 @@ export default function RewindAnimation({
       const threshold = totalAssets * 0.03;
 
       if (gwDrop > threshold) {
-        setParticles((p) => [...p, ...spawnShatterParticles(particleIdRef, "goodwill", 5)].slice(-20));
+        setParticles((p) => [...p, ...spawnSandCrumbleParticles(particleIdRef, 12)].slice(-30));
       }
       if (othersDrop > threshold) {
         setParticles((p) => [...p, ...spawnShatterParticles(particleIdRef, "others", 4)].slice(-20));

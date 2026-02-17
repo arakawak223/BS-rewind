@@ -1407,6 +1407,446 @@ export const stages = [
       summary: { totalImpairment: 100.0 },
     },
   },
+  // ── セブン＆アイ ──
+  {
+    stage_id: "seven_i_2023",
+    tag: "筋肉質",
+    company_name: "セブン＆アイ",
+    category: "構造改革",
+    stage_name: "セブン＆アイ (聖域なき事業分離)",
+    investment_target: "そごう・西武売却と事業再編",
+    before_year: 2021,
+    after_year: 2024,
+    unit: "1,000億円",
+    description:
+      "「百貨店」という巨大な重石を切り離し、コンビニ（CVS）に特化した筋肉質なB/Sへ作り替える過程。2021年に米コンビニ大手スピードウェイを2兆円超で買収し巨額ののれんが発生。2023年に物言う株主の要求を受けそごう・西武を売却し不採算資産を一掃した。",
+    data: {
+      before: {
+        assets: { cash: 15.0, goodwill: 10.0, others: 55.0 },
+        liabilities: { debt: 30.0, others: 25.0 },
+        equity: 25.0,
+      },
+      deal: {
+        assets: { cash: 18.0, goodwill: 30.0, others: 85.0 },
+        liabilities: { debt: 45.0, others: 53.0 },
+        equity: 35.0,
+      },
+      investment: { amount: 20.0, method: "debt_financed" },
+      after_actual: {
+        assets: { cash: 16.0, goodwill: 25.0, others: 75.0 },
+        liabilities: { debt: 38.0, others: 45.0 },
+        equity: 33.0,
+      },
+      stockPrice: {
+        before: 4500,
+        deal: 5500,
+        after: 6200,
+        unit: "円",
+        curve: "surge_early",
+      },
+      news: [
+        { year: 2021, type: "official", headline: "米コンビニ大手スピードウェイを2兆円超で買収。巨額ののれんが発生" },
+        { year: 2023, type: "official", headline: "物言う株主の要求を受け、そごう・西武を売却。不採算資産を一掃", isCritical: true },
+      ],
+      summary: { totalImpairment: 1.5 },
+    },
+  },
+  // ── 富士フイルム ──
+  {
+    stage_id: "fujifilm_2006",
+    tag: "復活",
+    company_name: "富士フイルム",
+    category: "構造改革",
+    stage_name: "富士フイルム (第2の創業)",
+    investment_target: "写真から医療への転換",
+    before_year: 2000,
+    after_year: 2012,
+    unit: "1,000億円",
+    description:
+      "本業（写真フィルム）の市場がゼロになるという絶望から、B/Sの中身を「化粧品・医療」へ完全に入れ替えた。2006年にフィルム需要激減を受け構造改革費用として数千億円を計上しB/Sを整理。2008年には富山化学工業を買収し医薬品へ転換するB/Sを構築した。",
+    data: {
+      before: {
+        assets: { cash: 4.5, goodwill: 0.0, others: 25.5 },
+        liabilities: { debt: 3.0, others: 10.0 },
+        equity: 17.0,
+      },
+      deal: {
+        assets: { cash: 3.5, goodwill: 1.5, others: 28.0 },
+        liabilities: { debt: 5.0, others: 10.0 },
+        equity: 18.0,
+      },
+      investment: { amount: 1.5, method: "mixed" },
+      after_actual: {
+        assets: { cash: 2.5, goodwill: 3.0, others: 29.5 },
+        liabilities: { debt: 6.0, others: 10.0 },
+        equity: 19.0,
+      },
+      stockPrice: {
+        before: 4000,
+        deal: 4500,
+        after: 3500,
+        unit: "円",
+        curve: "crash_early",
+      },
+      news: [
+        { year: 2006, type: "official", headline: "フィルム需要が激減。構造改革費用として数千億円を計上しB/Sを整理", isCritical: true },
+        { year: 2008, type: "official", headline: "富山化学工業を買収。写真の知見を医薬品へ転換するB/S構築" },
+      ],
+      summary: { totalImpairment: 2.5 },
+    },
+  },
+  // ── 東京電力 ──
+  {
+    stage_id: "tepco_2011",
+    tag: "崩壊",
+    company_name: "東京電力",
+    category: "構造改革",
+    stage_name: "東京電力 (国有化と賠償債務)",
+    investment_target: "原発事故の賠償対応",
+    before_year: 2010,
+    after_year: 2013,
+    unit: "1,000億円",
+    description:
+      "一瞬で賠償債務という「見えない巨大な負債」を背負い、事実上の国有化となった歴史的変容。2011年の福島第一原発事故で賠償債務により債務超過の危機に直面。原子力損害賠償支援機構により1兆円の公的資金が注入され事実上の国有化となった。",
+    data: {
+      before: {
+        assets: { cash: 3.0, goodwill: 0.0, others: 127.0 },
+        liabilities: { debt: 75.0, others: 30.0 },
+        equity: 25.0,
+      },
+      deal: {
+        assets: { cash: 15.0, goodwill: 0.0, others: 135.0 },
+        liabilities: { debt: 100.0, others: 50.0 },
+        equity: 0.0,
+      },
+      investment: { amount: 0, method: "restructuring" },
+      after_actual: {
+        assets: { cash: 12.0, goodwill: 0.0, others: 140.0 },
+        liabilities: { debt: 80.0, others: 65.0 },
+        equity: 7.0,
+      },
+      stockPrice: {
+        before: 2200,
+        deal: 200,
+        after: 500,
+        unit: "円",
+        curve: "crash_early",
+      },
+      news: [
+        { year: 2011, type: "official", subtype: "going_concern", headline: "福島第一原発事故発生。賠償債務により債務超過の危機に直面", isCritical: true },
+        { year: 2012, type: "financial", headline: "原子力損害賠償支援機構により1兆円の公的資金注入。事実上の国有化", isCritical: true },
+      ],
+      summary: { totalImpairment: 15.0 },
+    },
+  },
+  // ── Nokia ──
+  {
+    stage_id: "nokia_2013",
+    tag: "崩壊",
+    company_name: "Nokia",
+    category: "買収",
+    stage_name: "Nokia (王者の転落と減損)",
+    investment_target: "Microsoftによる携帯事業買収",
+    before_year: 2007,
+    after_year: 2015,
+    unit: "10億ドル",
+    description:
+      "スマホ王者の凋落と、マイクロソフトによる買収、そしてその後の「のれん全額減損」までの末路。2011年にエロップCEOが『燃え盛るプラットフォーム』を宣言しiPhone猛追に失敗。2015年にMSがノキア事業の大半（約9000億円）を減損しB/S上の価値が霧散した。",
+    data: {
+      before: {
+        assets: { cash: 11.0, goodwill: 0.0, others: 26.5 },
+        liabilities: { debt: 1.0, others: 20.0 },
+        equity: 16.5,
+      },
+      deal: {
+        assets: { cash: 9.0, goodwill: 0.0, others: 18.0 },
+        liabilities: { debt: 5.0, others: 14.0 },
+        equity: 8.0,
+      },
+      investment: { amount: 0, method: "mixed" },
+      after_actual: {
+        assets: { cash: 7.0, goodwill: 0.0, others: 15.0 },
+        liabilities: { debt: 2.0, others: 10.0 },
+        equity: 10.0,
+      },
+      stockPrice: {
+        before: 40,
+        deal: 5,
+        after: 6,
+        unit: "$",
+        curve: "crash_early",
+      },
+      news: [
+        { year: 2011, type: "official", headline: "エロップCEO『燃え盛るプラットフォーム』宣言。iPhone猛追に失敗", isCritical: true },
+        { year: 2015, type: "audit", headline: "MSがノキア事業の大半（約9000億円）を減損。B/S上の価値が霧散", isCritical: true },
+      ],
+      summary: { totalImpairment: 9.0 },
+    },
+  },
+  // ── RIZAP ──
+  {
+    stage_id: "rizap_2018",
+    tag: null,
+    company_name: "RIZAP",
+    category: "利益操作",
+    stage_name: "RIZAP (負ののれんの錬金術)",
+    investment_target: "大量M&Aと負ののれん",
+    before_year: 2016,
+    after_year: 2019,
+    unit: "1,000億円",
+    description:
+      "赤字企業を格安で買い、「負ののれん」で利益が出ているように見せる「B/S錬金術」の光と影。2017年にM&Aを連発し負ののれんにより利益が劇的に増加して見えたが、2018年に拡大路線を凍結。瀬戸社長が『負ののれんに頼りすぎた』と反省した。",
+    data: {
+      before: {
+        assets: { cash: 0.1, goodwill: 0.0, others: 0.4 },
+        liabilities: { debt: 0.1, others: 0.3 },
+        equity: 0.1,
+      },
+      deal: {
+        assets: { cash: 0.3, goodwill: 0.1, others: 1.2 },
+        liabilities: { debt: 0.6, others: 0.8 },
+        equity: 0.2,
+      },
+      investment: { amount: 0.1, method: "debt_financed" },
+      after_actual: {
+        assets: { cash: 0.2, goodwill: 0.3, others: 1.5 },
+        liabilities: { debt: 1.0, others: 0.9 },
+        equity: 0.1,
+      },
+      stockPrice: {
+        before: 200,
+        deal: 1500,
+        after: 200,
+        unit: "円",
+        curve: "crash_early",
+      },
+      news: [
+        { year: 2017, type: "official", headline: "M&Aを連発。『負ののれん』により利益が劇的に増加して見える魔法" },
+        { year: 2018, type: "official", headline: "拡大路線を凍結。瀬戸社長『負ののれんに頼りすぎた』と反省", isCritical: true },
+      ],
+      summary: { totalImpairment: 0.5 },
+    },
+  },
+  // ── ルネサス ──
+  {
+    stage_id: "renesas_2012",
+    tag: "復活",
+    company_name: "ルネサス",
+    category: "構造改革",
+    stage_name: "ルネサス (日の丸半導体の執念)",
+    investment_target: "産業革新機構による再生",
+    before_year: 2012,
+    after_year: 2023,
+    unit: "1,000億円",
+    description:
+      "巨額赤字から産業革新機構主導でB/Sをリセットし、現在は世界屈指の高収益企業へ。2013年に産業革新機構が1500億円出資し圧倒的資金で工場の統廃合に着手。2021年には英ダイアログを約6700億円で買収しM&Aによる資産の質的向上を実現した。",
+    data: {
+      before: {
+        assets: { cash: 0.8, goodwill: 0.0, others: 7.0 },
+        liabilities: { debt: 3.0, others: 3.0 },
+        equity: 1.8,
+      },
+      deal: {
+        assets: { cash: 2.3, goodwill: 0.0, others: 6.0 },
+        liabilities: { debt: 3.5, others: 3.3 },
+        equity: 1.5,
+      },
+      investment: { amount: 1.5, method: "equity_financed" },
+      after_actual: {
+        assets: { cash: 4.5, goodwill: 10.0, others: 16.0 },
+        liabilities: { debt: 9.0, others: 6.5 },
+        equity: 15.0,
+      },
+      stockPrice: {
+        before: 300,
+        deal: 400,
+        after: 2500,
+        unit: "円",
+        curve: "surge_early",
+      },
+      news: [
+        { year: 2013, type: "financial", headline: "産業革新機構が1500億円出資。圧倒的資金で工場の統廃合に着手", isCritical: true },
+        { year: 2021, type: "official", headline: "英ダイアログを約6700億円で買収。M&Aによる資産の質的向上" },
+      ],
+      summary: { totalImpairment: 1.0 },
+    },
+  },
+  // ── Wirecard ──
+  {
+    stage_id: "wirecard_2020",
+    tag: "崩壊",
+    company_name: "Wirecard",
+    category: "利益操作",
+    stage_name: "Wirecard (19億ユーロの幽霊資産)",
+    investment_target: "架空の現金・決済事業",
+    before_year: 2018,
+    after_year: 2020,
+    unit: "10億ドル",
+    description:
+      "B/Sに計上されていた「現金」が、実はフィリピンの銀行にもどこにも存在しなかった衝撃の不正。2020年にEY（監査法人）が現金19億ユーロの確認不能を報告し残高証明は偽造と判明。同年に破産申請し元CEOは逮捕。ドイツ株価指数(DAX)採用企業で初の破綻となった。",
+    data: {
+      before: {
+        assets: { cash: 3.0, goodwill: 1.0, others: 2.5 },
+        liabilities: { debt: 1.5, others: 3.0 },
+        equity: 2.0,
+      },
+      deal: {
+        assets: { cash: 4.5, goodwill: 1.5, others: 3.5 },
+        liabilities: { debt: 3.0, others: 4.0 },
+        equity: 2.5,
+      },
+      investment: { amount: 0, method: "off_balance" },
+      after_actual: {
+        assets: { cash: 0.0, goodwill: 0.0, others: 2.0 },
+        liabilities: { debt: 4.0, others: 3.0 },
+        equity: -5.0,
+      },
+      stockPrice: {
+        before: 150,
+        deal: 120,
+        after: 0,
+        unit: "€",
+        curve: "crash_early",
+      },
+      news: [
+        { year: 2020, type: "audit", headline: "EY（監査法人）、現金19億ユーロの確認不能を報告。残高証明は偽造", isCritical: true },
+        { year: 2020, type: "official", subtype: "going_concern", headline: "破産申請。元CEOは逮捕。ドイツ株価指数(DAX)採用企業で初の破綻", isCritical: true },
+      ],
+      summary: { totalImpairment: 25.0 },
+    },
+  },
+  // ── GM (ゼネラルモーターズ) ──
+  {
+    stage_id: "gm_2009",
+    tag: "復活",
+    company_name: "GM",
+    category: "構造改革",
+    stage_name: "GM (巨大戦艦の沈没と再浮上)",
+    investment_target: "チャプター11と政府再建",
+    before_year: 2007,
+    after_year: 2010,
+    unit: "10億ドル",
+    description:
+      "リーマンショックで資金繰りが停止し、米政府の介入により「旧GM」を切り捨てて再生した事例。2009年にチャプター11申請。負債1700億ドルの巨大倒産だったが政府出資により再建。2010年に再上場を達成し「新生GM」として高収益体質へ転換した。",
+    data: {
+      before: {
+        assets: { cash: 2.5, goodwill: 0.0, others: 12.0 },
+        liabilities: { debt: 14.0, others: 4.0 },
+        equity: -3.5,
+      },
+      deal: {
+        assets: { cash: 1.5, goodwill: 0.0, others: 8.0 },
+        liabilities: { debt: 17.0, others: 5.0 },
+        equity: -12.5,
+      },
+      investment: { amount: 0, method: "restructuring" },
+      after_actual: {
+        assets: { cash: 2.8, goodwill: 0.0, others: 11.0 },
+        liabilities: { debt: 1.5, others: 3.5 },
+        equity: 8.8,
+      },
+      stockPrice: {
+        before: 35,
+        deal: 1,
+        after: 33,
+        unit: "$",
+        curve: "surge_early",
+      },
+      news: [
+        { year: 2009, type: "official", subtype: "going_concern", headline: "チャプター11申請。負債1700億ドルの巨大倒産。政府出資により再建", isCritical: true },
+        { year: 2010, type: "official", headline: "再上場達成。負債を切り離した『新生GM』として高収益体質へ" },
+      ],
+      summary: { totalImpairment: 10.0 },
+    },
+  },
+  // ── あおぞら銀行 ──
+  {
+    stage_id: "aozora_2024",
+    tag: null,
+    company_name: "あおぞら銀行",
+    category: "投資",
+    stage_name: "あおぞら銀行 (オフィス融資の落とし穴)",
+    investment_target: "米不動産融資",
+    before_year: 2022,
+    after_year: 2024,
+    unit: "1,000億円",
+    description:
+      "米国のオフィス市況悪化により、引当金（その他負債）が急増し、長年の安定B/Sが崩れた事例。2024年に米不動産向け融資で巨額の引当金を計上し15年ぶりの最終赤字に転落。無配転落し、預金者の不安を抑えるため厚い自己資本の維持をアピールした。",
+    data: {
+      before: {
+        assets: { cash: 15.0, goodwill: 0.0, others: 45.0 },
+        liabilities: { debt: 10.0, others: 45.0 },
+        equity: 5.0,
+      },
+      deal: {
+        assets: { cash: 14.0, goodwill: 0.0, others: 48.0 },
+        liabilities: { debt: 12.0, others: 45.0 },
+        equity: 5.0,
+      },
+      investment: { amount: 0, method: "mixed" },
+      after_actual: {
+        assets: { cash: 12.0, goodwill: 0.0, others: 50.0 },
+        liabilities: { debt: 15.0, others: 43.0 },
+        equity: 4.0,
+      },
+      stockPrice: {
+        before: 2800,
+        deal: 3200,
+        after: 2100,
+        unit: "円",
+        curve: "crash_early",
+      },
+      news: [
+        { year: 2024, type: "official", headline: "米不動産向け融資で巨額の引当金を計上。15年ぶりの最終赤字へ", isCritical: true },
+        { year: 2024, type: "official", headline: "無配転落。預金者の不安を抑えるため、厚い自己資本の維持をアピール", isCritical: true },
+      ],
+      summary: { totalImpairment: 0.5 },
+    },
+  },
+  // ── Airbnb ──
+  {
+    stage_id: "airbnb_2020",
+    tag: "超成長",
+    company_name: "Airbnb",
+    category: "資本政策",
+    stage_name: "Airbnb (絶望の淵からの上場)",
+    investment_target: "コロナ禍での上場と資本調達",
+    before_year: 2019,
+    after_year: 2021,
+    unit: "10億ドル",
+    description:
+      "「観光終了」と思われたロックダウン下で、全資産を整理し、史上稀に見るタイミングで上場した奇跡。2020年にコロナ直撃で売上80%減。20億ドルの高金利ローンで延命したが、同年12月に上場し時価総額10兆円超。調達資金で負債を一掃した。",
+    data: {
+      before: {
+        assets: { cash: 3.0, goodwill: 0.0, others: 1.0 },
+        liabilities: { debt: 0.5, others: 3.0 },
+        equity: 0.5,
+      },
+      deal: {
+        assets: { cash: 1.5, goodwill: 0.0, others: 1.5 },
+        liabilities: { debt: 2.0, others: 3.5 },
+        equity: -2.5,
+      },
+      investment: { amount: 0, method: "equity_financed" },
+      after_actual: {
+        assets: { cash: 6.0, goodwill: 0.0, others: 4.0 },
+        liabilities: { debt: 2.0, others: 3.5 },
+        equity: 4.5,
+      },
+      stockPrice: {
+        before: 0,
+        deal: 0,
+        after: 150,
+        unit: "$",
+        curve: "surge_early",
+      },
+      news: [
+        { year: 2020, type: "financial", headline: "コロナ直撃。売上80%減。20億ドルの高金利ローンで延命", isCritical: true },
+        { year: 2020, type: "official", headline: "同年12月に上場。時価総額10兆円超。調達資金で負債を一掃" },
+      ],
+      summary: { totalImpairment: 0.0 },
+    },
+  },
   // ── 任天堂 (DS/Wii黄金期) ──
   {
     stage_id: "nintendo_2005",

@@ -30,6 +30,14 @@ const TAG_CONFIG = {
   "筋肉質": { bg: "bg-sky-800/60",     text: "text-sky-300" },
 };
 
+const INDUSTRY_ICONS = {
+  tepco_2011: "⚡️",
+  fujifilm_2006: "💊",
+  nokia_2013: "📱",
+  aozora_2024: "🏢",
+  evergrande_2018: "🏢",
+};
+
 const TAGS = ["all", ...Object.keys(TAG_CONFIG)];
 
 /**
@@ -542,6 +550,9 @@ function App() {
                       }`}
                     >
                       <div className="flex items-center gap-2 mb-1 flex-wrap">
+                        {INDUSTRY_ICONS[s.stage_id] && (
+                          <span className="text-base leading-none">{INDUSTRY_ICONS[s.stage_id]}</span>
+                        )}
                         <span
                           className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${
                             isFailure

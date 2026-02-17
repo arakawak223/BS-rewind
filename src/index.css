@@ -103,6 +103,21 @@ body {
   100% { transform: translate(var(--tx,30px), var(--ty,-40px)) rotate(var(--rot,180deg)) scale(0.2); opacity: 0; }
 }
 
+/* Sand-crumble particles (goodwill impairment) — z-index:30 */
+.sand-particle {
+  position: absolute; pointer-events: none; z-index: 30;
+  width: var(--size, 3px); height: var(--size, 3px);
+  border-radius: 50%;
+  animation: sand-fall var(--duration, 1.2s) ease-in forwards;
+  animation-delay: var(--delay, 0s);
+}
+@keyframes sand-fall {
+  0%   { transform: translate(0, 0) rotate(0deg) scale(1); opacity: 0.9; }
+  30%  { transform: translate(var(--drift, 5px), 10px) rotate(90deg) scale(0.9); opacity: 0.8; }
+  70%  { transform: translate(var(--drift2, -3px), var(--fall, 40px)) rotate(200deg) scale(0.5); opacity: 0.5; }
+  100% { transform: translate(var(--drift3, 2px), var(--fall2, 70px)) rotate(300deg) scale(0.1); opacity: 0; }
+}
+
 /* Glow particles (equity surge) — z-index:30 */
 .glow-particle {
   position: absolute; width: 4px; height: 4px;
