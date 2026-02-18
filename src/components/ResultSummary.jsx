@@ -593,7 +593,7 @@ function calcManagementEyeScore(prediction, actual, stage, syncRate) {
 function getManagementEyeRank(score) {
   if (score >= 80) return { label: "S", color: "text-yellow-300", desc: "卓越した経営眼!" };
   if (score >= 60) return { label: "A", color: "text-green-400", desc: "優れた分析力!" };
-  if (score >= 40) return { label: "B", color: "text-blue-400", desc: "筋は悪くない" };
+  if (score >= 40) return { label: "B", color: "text-blue-400", desc: "なかなかの分析力" };
   if (score >= 20) return { label: "C", color: "text-slate-300", desc: "もう少し!" };
   return { label: "D", color: "text-red-400", desc: "次はがんばろう!" };
 }
