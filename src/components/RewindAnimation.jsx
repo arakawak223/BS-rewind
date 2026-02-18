@@ -290,8 +290,10 @@ function BSBarAnimated({ data, barHeight, maxTotal, opacity = 1, borderColorHex 
   const absEquity = Math.abs(equity);
 
   const rightPositive = debt + otherLiab + Math.max(equity, 0);
-  const ownMax = Math.max(assetTotal, rightPositive, 1);
-  const referenceMax = maxTotal || ownMax;
+  const posMax = Math.max(assetTotal, rightPositive, 1);
+  const negRange = isNeg ? absEquity : 0;
+  const ownMax = posMax + negRange;
+  const referenceMax = Math.max(maxTotal || 0, ownMax, 1);
   const scale = barHeight / referenceMax;
 
   const cashH = cash * scale;
@@ -523,9 +525,9 @@ export default function RewindAnimation({
       }
     : null;
 
-  const dealTotal = bsTotal(startBS);
-  const afterTotal = bsTotal(actualAfter);
-  const predTotal = predictionBS ? bsTotal(predictionBS) : 0;
+  const dealTotal = bsTotal(startBS) + (startBS.equity < 0 ? Math.abs(startBS.equity) : 0);
+  const afterTotal = bsTotal(actualAfter) + (actualAfter.equity < 0 ? Math.abs(actualAfter.equity) : 0);
+  const predTotal = predictionBS ? bsTotal(predictionBS) + (predictionBS.equity < 0 ? Math.abs(predictionBS.equity) : 0) : 0;
   const rewindMax = Math.max(dealTotal, afterTotal, predTotal);
 
   const tick = useCallback(() => {

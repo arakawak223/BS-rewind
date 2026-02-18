@@ -102,7 +102,8 @@ export default function DraggableBSBar({
   const bsMax = (d) => {
     const a = (d.assets.cash || 0) + (d.assets.goodwill || 0) + (d.assets.others || 0);
     const rp = (d.liabilities.debt || 0) + (d.liabilities.others || 0) + Math.max(d.equity, 0);
-    return Math.max(a, rp);
+    const neg = d.equity < 0 ? Math.abs(d.equity) : 0;
+    return Math.max(a, rp) + neg;
   };
   const pairMaxTotal = Math.max(bsMax(dealData), bsMax(predictionData), 1);
 

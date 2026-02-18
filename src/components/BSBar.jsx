@@ -42,10 +42,12 @@ export default function BSBar({
   const isNeg = equity < 0;
   const absEquity = Math.abs(equity);
 
-  // 正の領域の最大値でスケーリング
+  // 正の領域 + 債務超過を含む全体でスケーリング（barHeight内に収める）
   const rightPositive = debt + otherLiab + Math.max(equity, 0);
-  const ownMax = Math.max(assetTotal, rightPositive, 1);
-  const referenceMax = maxTotal || ownMax;
+  const posMax = Math.max(assetTotal, rightPositive, 1);
+  const negRange = isNeg ? absEquity : 0;
+  const ownMax = posMax + negRange;
+  const referenceMax = Math.max(maxTotal || 0, ownMax, 1);
   const scale = barHeight / referenceMax;
 
   const cashH = cash * scale;

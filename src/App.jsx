@@ -9,7 +9,7 @@ import StockPriceTicker from "./components/StockPriceTicker";
 import HowToPlayGuide from "./components/HowToPlayGuide";
 import { stages, bsTotal } from "./data/stages";
 
-const BAR_HEIGHT = 320;
+const BAR_HEIGHT = 220;
 
 const CATEGORY_COLORS = {
   "買収": { bg: "bg-blue-900/60", text: "text-blue-300" },
@@ -378,8 +378,10 @@ function App() {
 
   const postDeal = stage?.data.deal ?? null;
 
-  // Build phase scale for Before bar
-  const beforeMaxTotal = stage ? bsTotal(stage.data.before) : 1;
+  // Build phase scale for Before bar (include negative equity for proper scaling)
+  const beforeMaxTotal = stage
+    ? bsTotal(stage.data.before) + (stage.data.before.equity < 0 ? Math.abs(stage.data.before.equity) : 0)
+    : 1;
 
   const handleStageSelect = (s) => {
     setStage(s);
@@ -779,6 +781,7 @@ function App() {
               key="result"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
               className="py-8"
             >
               <ResultSummary
