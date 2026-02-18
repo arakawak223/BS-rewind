@@ -120,7 +120,7 @@ export default function HowToPlayGuide({ visible, onDismiss, overlay = false }) 
               </div>
               <button
                 onClick={onDismiss}
-                className="text-[10px] text-slate-500 hover:text-slate-300 transition-colors cursor-pointer leading-none"
+                className="text-xl text-slate-400 hover:text-slate-200 transition-colors cursor-pointer leading-none px-1"
               >
                 ×
               </button>
