@@ -85,7 +85,7 @@ export default function BSBar({
         <div className="relative bs-col-3d">
         <Wrapper
           {...containerProps(assetColH)}
-          className="flex flex-col w-16 rounded-md overflow-hidden bg-slate-800/50 bs-col-inner"
+          className="flex flex-col w-16 rounded-md bg-slate-800/50 bs-col-inner"
         >
           {/* 現金 */}
           {animate ? (
@@ -93,8 +93,8 @@ export default function BSBar({
               initial={{ height: 0 }}
               animate={{ height: cashH }}
               transition={{ duration: 1.2, ease: "easeOut" }}
-              className="w-full flex items-center justify-center text-xs font-bold shrink-0"
-              style={{ backgroundColor: COLORS.cash.bg, opacity, minHeight: cash > 0 ? 2 : 0 }}
+              className="w-full flex items-center justify-center text-xs font-bold shrink-0 bs-seg"
+              style={{ backgroundColor: COLORS.cash.bg, '--seg-color': COLORS.cash.bg, opacity, minHeight: cash > 0 ? 2 : 0 }}
             >
               {cashH > 24 && (
                 <span className="text-gray-900 drop-shadow-sm text-center leading-tight px-1">
@@ -104,8 +104,8 @@ export default function BSBar({
             </motion.div>
           ) : (
             <div
-              className="w-full flex items-center justify-center text-xs font-bold shrink-0"
-              style={{ height: cashH, backgroundColor: COLORS.cash.bg, opacity, minHeight: cash > 0 ? 2 : 0 }}
+              className="w-full flex items-center justify-center text-xs font-bold shrink-0 bs-seg"
+              style={{ height: cashH, backgroundColor: COLORS.cash.bg, '--seg-color': COLORS.cash.bg, opacity, minHeight: cash > 0 ? 2 : 0 }}
             >
               {cashH > 24 && (
                 <span className="text-gray-900 drop-shadow-sm text-center leading-tight px-1">
@@ -121,8 +121,8 @@ export default function BSBar({
               initial={{ height: 0 }}
               animate={{ height: othersH }}
               transition={{ duration: 1.2, ease: "easeOut" }}
-              className="w-full flex items-center justify-center text-xs font-bold shrink-0"
-              style={{ backgroundColor: COLORS.others.bg, opacity, minHeight: others > 0 ? 2 : 0 }}
+              className="w-full flex items-center justify-center text-xs font-bold shrink-0 bs-seg"
+              style={{ backgroundColor: COLORS.others.bg, '--seg-color': COLORS.others.bg, opacity, minHeight: others > 0 ? 2 : 0 }}
             >
               {othersH > 24 && (
                 <span className="text-gray-900 drop-shadow-sm text-center leading-tight px-1">
@@ -132,8 +132,8 @@ export default function BSBar({
             </motion.div>
           ) : (
             <div
-              className="w-full flex items-center justify-center text-xs font-bold shrink-0"
-              style={{ height: othersH, backgroundColor: COLORS.others.bg, opacity, minHeight: others > 0 ? 2 : 0 }}
+              className="w-full flex items-center justify-center text-xs font-bold shrink-0 bs-seg"
+              style={{ height: othersH, backgroundColor: COLORS.others.bg, '--seg-color': COLORS.others.bg, opacity, minHeight: others > 0 ? 2 : 0 }}
             >
               {othersH > 24 && (
                 <span className="text-gray-900 drop-shadow-sm text-center leading-tight px-1">
@@ -150,9 +150,10 @@ export default function BSBar({
                 initial={{ height: 0 }}
                 animate={{ height: gwH }}
                 transition={{ duration: 1.2, ease: "easeOut" }}
-                className="w-full flex items-center justify-center text-xs font-bold shrink-0"
+                className="w-full flex items-center justify-center text-xs font-bold shrink-0 bs-seg"
                 style={{
                   backgroundColor: COLORS.goodwill.bg,
+                  '--seg-color': COLORS.goodwill.bg,
                   opacity,
                   minHeight: 2,
                   backgroundImage:
@@ -167,10 +168,11 @@ export default function BSBar({
               </motion.div>
             ) : (
               <div
-                className="w-full flex items-center justify-center text-xs font-bold shrink-0"
+                className="w-full flex items-center justify-center text-xs font-bold shrink-0 bs-seg"
                 style={{
                   height: gwH,
                   backgroundColor: COLORS.goodwill.bg,
+                  '--seg-color': COLORS.goodwill.bg,
                   opacity,
                   minHeight: 2,
                   backgroundImage:
@@ -194,7 +196,7 @@ export default function BSBar({
           <div className="relative bs-col-3d">
           <Wrapper
             {...containerProps(rightPosH)}
-            className="flex flex-col w-full rounded-t-md overflow-hidden bg-slate-800/50 bs-col-inner"
+            className="flex flex-col w-full rounded-t-md bg-slate-800/50 bs-col-inner"
           >
             {/* 有利子負債 */}
             {animate ? (
@@ -202,8 +204,8 @@ export default function BSBar({
                 initial={{ height: 0 }}
                 animate={{ height: debtH }}
                 transition={{ duration: 1.2, ease: "easeOut" }}
-                className="w-full flex items-center justify-center text-xs font-bold shrink-0"
-                style={{ backgroundColor: COLORS.debt.bg, opacity, minHeight: debt > 0 ? 2 : 0 }}
+                className="w-full flex items-center justify-center text-xs font-bold shrink-0 bs-seg"
+                style={{ backgroundColor: COLORS.debt.bg, '--seg-color': COLORS.debt.bg, opacity, minHeight: debt > 0 ? 2 : 0 }}
               >
                 {debtH > 36 && (
                   <span className="text-gray-900 drop-shadow-sm text-center leading-tight px-1">
@@ -213,8 +215,8 @@ export default function BSBar({
               </motion.div>
             ) : (
               <div
-                className="w-full flex items-center justify-center text-xs font-bold shrink-0"
-                style={{ height: debtH, backgroundColor: COLORS.debt.bg, opacity, minHeight: debt > 0 ? 2 : 0 }}
+                className="w-full flex items-center justify-center text-xs font-bold shrink-0 bs-seg"
+                style={{ height: debtH, backgroundColor: COLORS.debt.bg, '--seg-color': COLORS.debt.bg, opacity, minHeight: debt > 0 ? 2 : 0 }}
               >
                 {debtH > 36 && (
                   <span className="text-gray-900 drop-shadow-sm text-center leading-tight px-1">
@@ -230,8 +232,8 @@ export default function BSBar({
                 initial={{ height: 0 }}
                 animate={{ height: otherLiabH }}
                 transition={{ duration: 1.2, ease: "easeOut" }}
-                className="w-full flex items-center justify-center text-xs font-bold shrink-0"
-                style={{ backgroundColor: COLORS.otherLiab.bg, opacity, minHeight: otherLiab > 0 ? 2 : 0 }}
+                className="w-full flex items-center justify-center text-xs font-bold shrink-0 bs-seg"
+                style={{ backgroundColor: COLORS.otherLiab.bg, '--seg-color': COLORS.otherLiab.bg, opacity, minHeight: otherLiab > 0 ? 2 : 0 }}
               >
                 {otherLiabH > 24 && (
                   <span className="text-gray-900 drop-shadow-sm text-center leading-tight px-1">
@@ -241,8 +243,8 @@ export default function BSBar({
               </motion.div>
             ) : (
               <div
-                className="w-full flex items-center justify-center text-xs font-bold shrink-0"
-                style={{ height: otherLiabH, backgroundColor: COLORS.otherLiab.bg, opacity, minHeight: otherLiab > 0 ? 2 : 0 }}
+                className="w-full flex items-center justify-center text-xs font-bold shrink-0 bs-seg"
+                style={{ height: otherLiabH, backgroundColor: COLORS.otherLiab.bg, '--seg-color': COLORS.otherLiab.bg, opacity, minHeight: otherLiab > 0 ? 2 : 0 }}
               >
                 {otherLiabH > 24 && (
                   <span className="text-gray-900 drop-shadow-sm text-center leading-tight px-1">
@@ -259,8 +261,8 @@ export default function BSBar({
                   initial={{ height: 0 }}
                   animate={{ height: equityH }}
                   transition={{ duration: 1.2, ease: "easeOut" }}
-                  className="w-full flex items-center justify-center text-xs font-bold shrink-0"
-                  style={{ backgroundColor: COLORS.equity.bg, opacity, minHeight: equity > 0 ? 2 : 0 }}
+                  className="w-full flex items-center justify-center text-xs font-bold shrink-0 bs-seg"
+                  style={{ backgroundColor: COLORS.equity.bg, '--seg-color': COLORS.equity.bg, opacity, minHeight: equity > 0 ? 2 : 0 }}
                 >
                   {equityH > 24 && (
                     <span className="text-gray-900 drop-shadow-sm text-center leading-tight px-1">
@@ -270,8 +272,8 @@ export default function BSBar({
                 </motion.div>
               ) : (
                 <div
-                  className="w-full flex items-center justify-center text-xs font-bold shrink-0"
-                  style={{ height: equityH, backgroundColor: COLORS.equity.bg, opacity, minHeight: equity > 0 ? 2 : 0 }}
+                  className="w-full flex items-center justify-center text-xs font-bold shrink-0 bs-seg"
+                  style={{ height: equityH, backgroundColor: COLORS.equity.bg, '--seg-color': COLORS.equity.bg, opacity, minHeight: equity > 0 ? 2 : 0 }}
                 >
                   {equityH > 24 && (
                     <span className="text-gray-900 drop-shadow-sm text-center leading-tight px-1">
@@ -293,9 +295,10 @@ export default function BSBar({
                   initial={{ height: 0 }}
                   animate={{ height: negEquityH }}
                   transition={{ duration: 1.2, ease: "easeOut" }}
-                  className="w-full flex items-center justify-center text-xs font-bold border border-t-0 border-slate-600 rounded-b"
+                  className="w-full flex items-center justify-center text-xs font-bold border border-t-0 border-slate-600 rounded-b bs-seg"
                   style={{
                     backgroundColor: COLORS.equityNeg.bg,
+                    '--seg-color': COLORS.equityNeg.bg,
                     opacity,
                     minHeight: 2,
                     backgroundImage:
@@ -310,10 +313,11 @@ export default function BSBar({
                 </motion.div>
               ) : (
                 <div
-                  className="w-full flex items-center justify-center text-xs font-bold border border-t-0 border-slate-600 rounded-b"
+                  className="w-full flex items-center justify-center text-xs font-bold border border-t-0 border-slate-600 rounded-b bs-seg"
                   style={{
                     height: negEquityH,
                     backgroundColor: COLORS.equityNeg.bg,
+                    '--seg-color': COLORS.equityNeg.bg,
                     opacity,
                     minHeight: 2,
                     backgroundImage:
