@@ -1,4 +1,4 @@
-const CACHE_NAME = "one-decision-v1";
+const CACHE_NAME = "one-decision-v2";
 const BASE = "/BS-rewind/";
 
 const PRECACHE_URLS = [
