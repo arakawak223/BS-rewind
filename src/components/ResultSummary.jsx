@@ -452,8 +452,8 @@ function TimeSeriesChart({ history, stockPriceUnit }) {
         {hasStock && (
           <div className="flex items-center gap-1">
             <div
-              className="w-3 h-1 rounded-full"
-              style={{ backgroundColor: STOCK_COLOR }}
+              className="w-4 h-0 border-t-2 border-dashed"
+              style={{ borderColor: STOCK_COLOR }}
             />
             <span className="text-[10px]" style={{ color: STOCK_COLOR }}>
               株価({stockPriceUnit})
@@ -532,57 +532,61 @@ function getRank(rate) {
 
 /**
  * Calculate management eye score (経営眼スコア).
- * sync率(40%) + 方向性正解(30%) + 減損予測精度(30%)
+ * ①純資産予測精度(30%) + ②シンクロ率(30%) + ③方向性(20%) + ④減損予測精度(20%)
  */
 function calcManagementEyeScore(prediction, actual, stage, syncRate) {
-  // 1. Sync rate component (40%)
-  const syncComponent = syncRate * 0.4;
-
-  // 2. Direction component (30%): equity sign match
+  // 1. Equity prediction accuracy (30%)
   const predEquity = prediction.equity;
   const actEquity = actual.equity;
+  const equityDiff = Math.abs(predEquity - actEquity);
+  const equityRef = Math.max(Math.abs(actEquity), 1);
+  const equityRatio = equityDiff / equityRef;
+  const equityAccuracy = equityRatio < 0.15 ? 100 : equityRatio < 0.3 ? 80 : equityRatio < 0.5 ? 60 : equityRatio < 1.0 ? 30 : 10;
+  const equityComponent = equityAccuracy * 0.3;
+
+  // 2. Sync rate component (30%)
+  const syncComponent = syncRate * 0.3;
+
+  // 3. Direction component (20%): equity sign match
   const sameSign =
     (predEquity >= 0 && actEquity >= 0) || (predEquity < 0 && actEquity < 0);
   const directionScore = sameSign ? 100 : 20;
-  const directionComponent = directionScore * 0.3;
+  const directionComponent = directionScore * 0.2;
 
-  // 3. Impairment prediction accuracy (30%)
+  // 4. Impairment prediction accuracy (20%)
   const totalImpairment = stage.data?.summary?.totalImpairment || 0;
   if (totalImpairment === 0) {
-    // No impairment: check if player also predicted minimal asset loss
     const dealGW = stage.data?.deal?.assets?.goodwill || 0;
     const dealOthers = stage.data?.deal?.assets?.others || 0;
     const predGWLoss = Math.max(0, dealGW - (prediction.assets.goodwill || 0));
     const predOthersLoss = Math.max(0, dealOthers - (prediction.assets.others || 0));
     const predTotalLoss = predGWLoss + predOthersLoss;
-    // Small loss predicted = good accuracy
     const maxRef = Math.max(dealGW + dealOthers, 1);
     const lossRatio = predTotalLoss / maxRef;
     const impairmentAccuracy = lossRatio < 0.1 ? 100 : lossRatio < 0.3 ? 70 : 40;
-    return Math.round(syncComponent + directionComponent + impairmentAccuracy * 0.3);
+    return Math.round(equityComponent + syncComponent + directionComponent + impairmentAccuracy * 0.2);
   }
 
-  // Calculate player's implied impairment from asset reduction
   const dealGW = stage.data?.deal?.assets?.goodwill || 0;
   const dealOthers = stage.data?.deal?.assets?.others || 0;
   const predGWLoss = Math.max(0, dealGW - (prediction.assets.goodwill || 0));
   const predOthersLoss = Math.max(0, dealOthers - (prediction.assets.others || 0));
   const predImpairment = predGWLoss + predOthersLoss;
 
-  // How close is the predicted impairment to actual?
   const diff = Math.abs(predImpairment - totalImpairment);
   const ref = Math.max(totalImpairment, 1);
   const ratio = diff / ref;
   const impairmentAccuracy = ratio < 0.2 ? 100 : ratio < 0.5 ? 70 : ratio < 1.0 ? 40 : 20;
 
-  return Math.round(syncComponent + directionComponent + impairmentAccuracy * 0.3);
+  return Math.round(equityComponent + syncComponent + directionComponent + impairmentAccuracy * 0.2);
 }
 
 function getManagementEyeRank(score) {
-  if (score >= 70) return { label: "S", color: "text-yellow-300", desc: "卓越した経営眼!" };
-  if (score >= 50) return { label: "A", color: "text-green-400", desc: "優れた分析力!" };
-  if (score >= 30) return { label: "B", color: "text-blue-400", desc: "基礎は押さえている" };
-  return { label: "C", color: "text-red-400", desc: "まだ伸びしろあり" };
+  if (score >= 90) return { label: "S", color: "text-yellow-300", desc: "卓越した経営眼!" };
+  if (score >= 75) return { label: "A", color: "text-green-400", desc: "優れた分析力!" };
+  if (score >= 50) return { label: "B", color: "text-blue-400", desc: "基礎は押さえている" };
+  if (score >= 30) return { label: "C", color: "text-slate-300", desc: "まだまだこれから" };
+  return { label: "D", color: "text-red-400", desc: "まだ伸びしろあり" };
 }
 
 /**
@@ -715,8 +719,8 @@ export default function ResultSummary({ prediction, actual, stage, postDeal, onR
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.3 }}
           style={{
-            color: managementEyeScore >= 70 ? "#4ade80" : managementEyeScore >= 40 ? "#facc15" : "#f87171",
-            textShadow: `0 0 24px ${managementEyeScore >= 70 ? "rgba(74,222,128,0.5)" : managementEyeScore >= 40 ? "rgba(250,204,21,0.5)" : "rgba(248,113,113,0.5)"}`,
+            color: managementEyeScore >= 75 ? "#4ade80" : managementEyeScore >= 50 ? "#facc15" : "#f87171",
+            textShadow: `0 0 24px ${managementEyeScore >= 75 ? "rgba(74,222,128,0.5)" : managementEyeScore >= 50 ? "rgba(250,204,21,0.5)" : "rgba(248,113,113,0.5)"}`,
           }}
         >
           {managementEyeScore}
@@ -750,22 +754,13 @@ export default function ResultSummary({ prediction, actual, stage, postDeal, onR
         <div className="text-[11px] text-slate-500 mb-1.5">参考指標</div>
         <div className="flex items-center justify-between">
           <div className="text-sm text-slate-400">シンクロ率</div>
-          <div className="flex items-center gap-3">
-            <span
-              className="text-3xl font-black tabular-nums"
-              style={{ color: syncRate >= 60 ? "#4ade80" : "#f87171" }}
-            >
-              {syncRate}<span className="text-lg">%</span>
-            </span>
-            <span
-              className={`text-2xl font-black ${rank.color}`}
-              style={{ textShadow: "0 0 12px currentColor" }}
-            >
-              {rank.label}
-            </span>
-          </div>
+          <span
+            className="text-3xl font-black tabular-nums"
+            style={{ color: syncRate >= 60 ? "#4ade80" : "#f87171" }}
+          >
+            {syncRate}<span className="text-lg">%</span>
+          </span>
         </div>
-        <div className="text-[10px] text-slate-500 mt-1">{rank.desc}</div>
       </motion.div>
 
       {/* Scoring Formula Explainer (collapsible) */}
@@ -785,7 +780,7 @@ export default function ResultSummary({ prediction, actual, stage, postDeal, onR
           <div className="px-4 pb-3 pt-1 text-[10px] leading-relaxed text-slate-400 space-y-3 border-t border-slate-700/40">
             {/* Sync Rate */}
             <div>
-              <div className="text-slate-300 font-bold mb-0.5">シンクロ率</div>
+              <div className="text-slate-300 font-bold mb-0.5">シンクロ率（参考指標）</div>
               <div className="bg-slate-900/50 rounded px-2 py-1.5 font-mono text-[9px] space-y-0.5">
                 <div>各科目(現金,その他資産,のれん,有利子負債,その他負債,純資産)について:</div>
                 <div className="pl-2 text-yellow-300/80">overlap += min(予測値, 実績値)</div>
@@ -795,41 +790,34 @@ export default function ResultSummary({ prediction, actual, stage, postDeal, onR
               </div>
             </div>
 
-            {/* SABC Rank */}
-            <div>
-              <div className="text-slate-300 font-bold mb-0.5">シンクロ率 SABC評価</div>
-              <div className="flex gap-2 flex-wrap text-[9px]">
-                <span className="text-yellow-300">S: ≥90%</span>
-                <span className="text-green-400">A: ≥75%</span>
-                <span className="text-blue-400">B: ≥60%</span>
-                <span className="text-slate-300">C: ≥40%</span>
-                <span className="text-red-400">D: &lt;40%</span>
-              </div>
-            </div>
-
             {/* Management Eye Score */}
             <div>
               <div className="text-slate-300 font-bold mb-0.5">経営眼スコア (0〜100)</div>
               <div className="bg-slate-900/50 rounded px-2 py-1.5 font-mono text-[9px] space-y-1">
-                <div className="text-cyan-300/80">① シンクロ率 × <span className="text-white font-bold">40%</span></div>
-                <div className="text-cyan-300/80">② 方向性スコア × <span className="text-white font-bold">30%</span></div>
+                <div className="text-cyan-300/80">① 純資産予測精度 × <span className="text-white font-bold">30%</span></div>
+                <div className="pl-3 text-slate-500">
+                  誤差率&lt;15%→100 / &lt;30%→80 / &lt;50%→60 / &lt;100%→30 / else→10
+                </div>
+                <div className="text-cyan-300/80">② シンクロ率 × <span className="text-white font-bold">30%</span></div>
+                <div className="text-cyan-300/80">③ 方向性スコア × <span className="text-white font-bold">20%</span></div>
                 <div className="pl-3 text-slate-500">純資産の符号が一致 → 100点 / 不一致 → 20点</div>
-                <div className="text-cyan-300/80">③ 減損予測精度 × <span className="text-white font-bold">30%</span></div>
+                <div className="text-cyan-300/80">④ 減損予測精度 × <span className="text-white font-bold">20%</span></div>
                 <div className="pl-3 text-slate-500">
                   予測減損 ≒ 実績: 誤差率&lt;20%→100 / &lt;50%→70 / &lt;100%→40 / else→20
                 </div>
-                <div className="mt-1 text-green-300/80 font-bold">経営眼 = ① + ② + ③</div>
+                <div className="mt-1 text-green-300/80 font-bold">経営眼 = ① + ② + ③ + ④</div>
               </div>
             </div>
 
             {/* Management Eye Rank */}
             <div>
-              <div className="text-slate-300 font-bold mb-0.5">経営眼 SABC評価</div>
+              <div className="text-slate-300 font-bold mb-0.5">経営眼 SABCD評価</div>
               <div className="flex gap-3 text-[9px]">
-                <span className="text-yellow-300">S: ≥70</span>
-                <span className="text-green-400">A: ≥50</span>
-                <span className="text-blue-400">B: ≥30</span>
-                <span className="text-slate-300">C: &lt;30</span>
+                <span className="text-yellow-300">S: ≥90</span>
+                <span className="text-green-400">A: ≥75</span>
+                <span className="text-blue-400">B: ≥50</span>
+                <span className="text-slate-300">C: ≥30</span>
+                <span className="text-red-400">D: &lt;30</span>
               </div>
             </div>
           </div>
