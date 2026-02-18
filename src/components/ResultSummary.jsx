@@ -579,10 +579,10 @@ function calcManagementEyeScore(prediction, actual, stage, syncRate) {
 }
 
 function getManagementEyeRank(score) {
-  if (score >= 70) return "S";
-  if (score >= 50) return "A";
-  if (score >= 30) return "B";
-  return "C";
+  if (score >= 70) return { label: "S", color: "text-yellow-300", desc: "卓越した経営眼!" };
+  if (score >= 50) return { label: "A", color: "text-green-400", desc: "優れた分析力!" };
+  if (score >= 30) return { label: "B", color: "text-blue-400", desc: "基礎は押さえている" };
+  return { label: "C", color: "text-red-400", desc: "まだ伸びしろあり" };
 }
 
 /**
@@ -706,24 +706,25 @@ export default function ResultSummary({ prediction, actual, stage, postDeal, onR
         />
       )}
 
-      {/* Sync Rate */}
+      {/* === Primary: Management Eye Score === */}
       <div className="text-center">
-        <div className="text-sm text-slate-400 mb-2">シンクロ率</div>
+        <div className="text-sm text-slate-400 mb-2">経営眼スコア</div>
         <motion.div
           className="text-7xl font-black tabular-nums"
           initial={{ scale: 0.5, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.3 }}
           style={{
-            color: syncRate >= 60 ? "#4ade80" : "#f87171",
+            color: managementEyeScore >= 70 ? "#4ade80" : managementEyeScore >= 40 ? "#facc15" : "#f87171",
+            textShadow: `0 0 24px ${managementEyeScore >= 70 ? "rgba(74,222,128,0.5)" : managementEyeScore >= 40 ? "rgba(250,204,21,0.5)" : "rgba(248,113,113,0.5)"}`,
           }}
         >
-          {syncRate}
-          <span className="text-3xl">%</span>
+          {managementEyeScore}
+          <span className="text-3xl text-slate-400">/100</span>
         </motion.div>
       </div>
 
-      {/* Rank */}
+      {/* Management Eye Rank (hero) */}
       <motion.div
         initial={{ scale: 0, rotate: -20 }}
         animate={{ scale: 1, rotate: 0 }}
@@ -731,41 +732,108 @@ export default function ResultSummary({ prediction, actual, stage, postDeal, onR
         className="text-center"
       >
         <div
-          className={`text-8xl font-black ${rank.color}`}
+          className={`text-8xl font-black ${managementEyeRank.color}`}
           style={{ textShadow: "0 0 30px currentColor" }}
         >
-          {rank.label}
+          {managementEyeRank.label}
         </div>
-        <div className="text-lg text-slate-300 mt-2">{rank.desc}</div>
+        <div className="text-lg text-slate-300 mt-2">{managementEyeRank.desc}</div>
       </motion.div>
 
-      {/* Management Eye Score */}
+      {/* === Secondary: Sync Rate (compact card) === */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.85 }}
         className="w-full bg-slate-800/80 rounded-xl p-4 border border-slate-600"
       >
-        <div className="text-sm font-bold text-slate-300 mb-2">経営眼スコア</div>
+        <div className="text-[11px] text-slate-500 mb-1.5">参考指標</div>
         <div className="flex items-center justify-between">
-          <div
-            className="text-5xl font-black tabular-nums"
-            style={{
-              color: managementEyeScore >= 70 ? "#4ade80" : managementEyeScore >= 40 ? "#facc15" : "#f87171",
-              textShadow: `0 0 20px ${managementEyeScore >= 70 ? "rgba(74,222,128,0.5)" : managementEyeScore >= 40 ? "rgba(250,204,21,0.5)" : "rgba(248,113,113,0.5)"}`,
-            }}
-          >
-            {managementEyeScore}
-          </div>
-          <div
-            className="text-4xl font-black"
-            style={{
-              color: managementEyeScore >= 70 ? "#4ade80" : managementEyeScore >= 40 ? "#facc15" : "#f87171",
-            }}
-          >
-            {managementEyeRank}
+          <div className="text-sm text-slate-400">シンクロ率</div>
+          <div className="flex items-center gap-3">
+            <span
+              className="text-3xl font-black tabular-nums"
+              style={{ color: syncRate >= 60 ? "#4ade80" : "#f87171" }}
+            >
+              {syncRate}<span className="text-lg">%</span>
+            </span>
+            <span
+              className={`text-2xl font-black ${rank.color}`}
+              style={{ textShadow: "0 0 12px currentColor" }}
+            >
+              {rank.label}
+            </span>
           </div>
         </div>
+        <div className="text-[10px] text-slate-500 mt-1">{rank.desc}</div>
+      </motion.div>
+
+      {/* Scoring Formula Explainer (collapsible) */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.95 }}
+        className="w-full"
+      >
+        <details className="group bg-slate-800/60 rounded-xl border border-slate-700/50">
+          <summary className="px-4 py-2.5 cursor-pointer text-[11px] text-slate-400 hover:text-slate-300 transition-colors select-none flex items-center gap-1.5">
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor" className="transition-transform group-open:rotate-90 shrink-0">
+              <polygon points="2,0 10,5 2,10" />
+            </svg>
+            スコア計算式
+          </summary>
+          <div className="px-4 pb-3 pt-1 text-[10px] leading-relaxed text-slate-400 space-y-3 border-t border-slate-700/40">
+            {/* Sync Rate */}
+            <div>
+              <div className="text-slate-300 font-bold mb-0.5">シンクロ率</div>
+              <div className="bg-slate-900/50 rounded px-2 py-1.5 font-mono text-[9px] space-y-0.5">
+                <div>各科目(現金,その他資産,のれん,有利子負債,その他負債,純資産)について:</div>
+                <div className="pl-2 text-yellow-300/80">overlap += min(予測値, 実績値)</div>
+                <div className="pl-2 text-yellow-300/80">max &nbsp;&nbsp;&nbsp;+= max(予測値, 実績値)</div>
+                <div className="mt-1 text-green-300/80 font-bold">シンクロ率 = (overlap / max) × 100%</div>
+                <div className="mt-0.5 text-red-300/70">※ GC該当 + 純資産の符号を外した場合 → ×0.7 ペナルティ</div>
+              </div>
+            </div>
+
+            {/* SABC Rank */}
+            <div>
+              <div className="text-slate-300 font-bold mb-0.5">シンクロ率 SABC評価</div>
+              <div className="flex gap-2 flex-wrap text-[9px]">
+                <span className="text-yellow-300">S: ≥90%</span>
+                <span className="text-green-400">A: ≥75%</span>
+                <span className="text-blue-400">B: ≥60%</span>
+                <span className="text-slate-300">C: ≥40%</span>
+                <span className="text-red-400">D: &lt;40%</span>
+              </div>
+            </div>
+
+            {/* Management Eye Score */}
+            <div>
+              <div className="text-slate-300 font-bold mb-0.5">経営眼スコア (0〜100)</div>
+              <div className="bg-slate-900/50 rounded px-2 py-1.5 font-mono text-[9px] space-y-1">
+                <div className="text-cyan-300/80">① シンクロ率 × <span className="text-white font-bold">40%</span></div>
+                <div className="text-cyan-300/80">② 方向性スコア × <span className="text-white font-bold">30%</span></div>
+                <div className="pl-3 text-slate-500">純資産の符号が一致 → 100点 / 不一致 → 20点</div>
+                <div className="text-cyan-300/80">③ 減損予測精度 × <span className="text-white font-bold">30%</span></div>
+                <div className="pl-3 text-slate-500">
+                  予測減損 ≒ 実績: 誤差率&lt;20%→100 / &lt;50%→70 / &lt;100%→40 / else→20
+                </div>
+                <div className="mt-1 text-green-300/80 font-bold">経営眼 = ① + ② + ③</div>
+              </div>
+            </div>
+
+            {/* Management Eye Rank */}
+            <div>
+              <div className="text-slate-300 font-bold mb-0.5">経営眼 SABC評価</div>
+              <div className="flex gap-3 text-[9px]">
+                <span className="text-yellow-300">S: ≥70</span>
+                <span className="text-green-400">A: ≥50</span>
+                <span className="text-blue-400">B: ≥30</span>
+                <span className="text-slate-300">C: &lt;30</span>
+              </div>
+            </div>
+          </div>
+        </details>
       </motion.div>
 
       {/* Stock Price Change */}

@@ -274,3 +274,119 @@ body {
 .cash-runway-pulse {
   animation: cash-runway-pulse 0.8s ease-in-out infinite;
 }
+
+/* ===== 3D B/S column — extruded block with visible faces ===== */
+
+/* Outer wrapper (no overflow:hidden) — holds pseudo-element faces */
+.bs-col-3d {
+  position: relative;
+}
+
+/* Right side face */
+.bs-col-3d::after {
+  content: '';
+  position: absolute;
+  top: 5px;
+  left: 100%;
+  width: 10px;
+  height: 100%;
+  background: linear-gradient(90deg, #64748b 0%, #475569 40%, #334155 100%);
+  border-radius: 0 4px 4px 0;
+  pointer-events: none;
+}
+
+/* Bottom face */
+.bs-col-3d::before {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 5px;
+  width: 100%;
+  height: 8px;
+  background: linear-gradient(180deg, #475569 0%, #334155 60%, #1e293b 100%);
+  border-radius: 0 0 4px 4px;
+  pointer-events: none;
+}
+
+/* Inner column (has overflow:hidden for content) */
+.bs-col-inner {
+  position: relative;
+  z-index: 1;
+  border-top: 2px solid rgba(255,255,255,0.3);
+  border-left: 1px solid rgba(255,255,255,0.12);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.4);
+}
+
+/* Individual block segments — beveled slab look */
+.bs-col-inner > div {
+  box-shadow:
+    inset 5px 0 8px -3px rgba(255,255,255,0.12),
+    inset -5px 0 8px -3px rgba(0,0,0,0.25),
+    inset 0 2px 3px -1px rgba(255,255,255,0.1),
+    inset 0 -2px 3px -1px rgba(0,0,0,0.2);
+  border-bottom: 1px solid rgba(0,0,0,0.25);
+}
+.bs-col-inner > *:last-child {
+  border-bottom: none;
+}
+
+/* ===== 3D Slider styling ===== */
+.bs-range.bs-range-3d {
+  background: linear-gradient(
+    to right,
+    rgba(0,0,0,0.25),
+    rgba(100,116,139,0.45) 25%,
+    rgba(100,116,139,0.35) 75%,
+    rgba(0,0,0,0.15)
+  );
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.5), inset 0 -1px 2px rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.06);
+}
+.bs-range.bs-range-3d::-webkit-slider-thumb {
+  background: radial-gradient(circle at 35% 35%, rgba(255,255,255,0.5), var(--thumb-color, #facc15) 55%);
+  box-shadow:
+    0 2px 8px rgba(0,0,0,0.5),
+    inset 0 1px 3px rgba(255,255,255,0.4),
+    0 0 10px rgba(0,0,0,0.2);
+  border: 2px solid rgba(255,255,255,0.5);
+  width: 28px;
+  height: 28px;
+}
+.bs-range.bs-range-3d::-moz-range-thumb {
+  background: radial-gradient(circle at 35% 35%, rgba(255,255,255,0.5), var(--thumb-color, #facc15) 55%);
+  box-shadow:
+    0 2px 8px rgba(0,0,0,0.5),
+    inset 0 1px 3px rgba(255,255,255,0.4),
+    0 0 10px rgba(0,0,0,0.2);
+  border: 2px solid rgba(255,255,255,0.5);
+  width: 28px;
+  height: 28px;
+}
+
+@media (pointer: coarse) {
+  .bs-range.bs-range-3d::-webkit-slider-thumb { width: 40px; height: 40px; }
+  .bs-range.bs-range-3d::-moz-range-thumb { width: 40px; height: 40px; }
+}
+
+/* ===== Prediction pulse (golden glow, no layout shift) ===== */
+@keyframes prediction-pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 2px rgba(250,204,21,0.25), 0 0 8px rgba(250,204,21,0.15);
+  }
+  50% {
+    box-shadow: 0 0 0 3px rgba(250,204,21,0.7), 0 0 24px rgba(250,204,21,0.4), 0 0 48px rgba(250,204,21,0.1);
+  }
+}
+.prediction-pulse {
+  border-radius: 12px;
+  animation: prediction-pulse 2s ease-in-out infinite;
+}
+
+/* ===== Prediction label blink ===== */
+@keyframes prediction-label-blink {
+  0%, 100% { opacity: 1; text-shadow: 0 0 12px rgba(250,204,21,0.6); }
+  50% { opacity: 0.35; text-shadow: none; }
+}
+.prediction-label-blink {
+  animation: prediction-label-blink 1.2s ease-in-out infinite;
+}

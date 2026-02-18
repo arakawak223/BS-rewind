@@ -80,11 +80,12 @@ export default function BSBar({
       {year && (
         <div className="text-lg font-black text-white">{year}年</div>
       )}
-      <div className="flex gap-1 items-start" style={{ height: barHeight }}>
+      <div className="flex gap-4 items-start" style={{ height: barHeight }}>
         {/* Assets (left) */}
+        <div className="relative bs-col-3d">
         <Wrapper
           {...containerProps(assetColH)}
-          className="flex flex-col w-16 border border-slate-600 rounded overflow-hidden bg-slate-800/50"
+          className="flex flex-col w-16 rounded-md overflow-hidden bg-slate-800/50 bs-col-inner"
         >
           {/* 現金 */}
           {animate ? (
@@ -185,13 +186,15 @@ export default function BSBar({
             )
           )}
         </Wrapper>
+        </div>
 
         {/* Liabilities + Equity (right) */}
         <div className="flex flex-col w-16">
           {/* 正の領域 */}
+          <div className="relative bs-col-3d">
           <Wrapper
             {...containerProps(rightPosH)}
-            className="flex flex-col w-full border border-slate-600 rounded-t overflow-hidden bg-slate-800/50"
+            className="flex flex-col w-full rounded-t-md overflow-hidden bg-slate-800/50 bs-col-inner"
           >
             {/* 有利子負債 */}
             {animate ? (
@@ -279,6 +282,7 @@ export default function BSBar({
               )
             )}
           </Wrapper>
+          </div>
 
           {/* 債務超過: 0ラインから突き抜ける */}
           {isNeg && (
@@ -327,7 +331,7 @@ export default function BSBar({
           )}
         </div>
       </div>
-      <div className="flex gap-1 text-[10px] text-slate-400">
+      <div className="flex gap-4 text-[10px] text-slate-400">
         <span className="w-16 text-center">資産</span>
         <span className="w-16 text-center">負債+純資産</span>
       </div>

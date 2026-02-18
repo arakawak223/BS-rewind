@@ -680,6 +680,7 @@ function App() {
                   <DraggableBSBar
                     initialData={postDeal}
                     dealData={postDeal}
+                    actualData={stage.data.after_actual}
                     barHeight={BAR_HEIGHT}
                     onDataChange={handleDataChange}
                     year={stage.after_year}
@@ -688,13 +689,10 @@ function App() {
                     stockPrice={stage.data.stockPrice}
                     companyName={stage.company_name}
                   />
-                  <div className="text-[10px] text-slate-500 mt-1">
-                    スライダーで予測B/Sを作成
-                  </div>
                 </div>
               </div>
 
-              {/* Side guide — lg+ only */}
+              {/* Side guide — desktop sidebar */}
               <div className="hidden lg:block self-center">
                 <HowToPlayGuide
                   visible={showGuide}
@@ -713,7 +711,30 @@ function App() {
                   </button>
                 )}
               </div>
+
+              {/* Mobile guide — floating button + overlay */}
+              <div className="lg:hidden">
+                <HowToPlayGuide
+                  visible={showGuide}
+                  onDismiss={() => setShowGuide(false)}
+                  overlay
+                />
               </div>
+              </div>
+
+              {/* Mobile floating guide button */}
+              {!showGuide && (
+                <button
+                  onClick={() => setShowGuide(true)}
+                  className="lg:hidden fixed bottom-6 right-4 z-30 bg-slate-800/90 text-yellow-300 border border-yellow-400/50 p-3 rounded-full backdrop-blur-sm shadow-lg shadow-yellow-500/20 cursor-pointer"
+                  title="操作ガイド"
+                >
+                  <svg width="20" height="20" viewBox="0 0 16 16" fill="none">
+                    <circle cx="8" cy="8" r="7" stroke="currentColor" strokeWidth="1.5" />
+                    <text x="8" y="12" textAnchor="middle" fill="currentColor" fontSize="11" fontWeight="bold">?</text>
+                  </svg>
+                </button>
+              )}
 
               {/* DECISION button */}
               <div className="flex justify-center mt-10">
