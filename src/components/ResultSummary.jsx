@@ -532,29 +532,30 @@ function getRank(rate) {
 
 /**
  * Calculate management eye score (経営眼スコア).
- * ①純資産予測精度(30%) + ②シンクロ率(30%) + ③方向性(20%) + ④減損予測精度(20%)
+ * ①純資産予測精度(25%) + ②シンクロ率(25%) + ③方向性(15%) + ④減損予測精度(15%) + ⑤ネットキャッシュ予測精度(20%)
  */
 function calcManagementEyeScore(prediction, actual, stage, syncRate) {
-  // 1. Equity prediction accuracy (30%)
+  // 1. Equity prediction accuracy (25%)
   const predEquity = prediction.equity;
   const actEquity = actual.equity;
   const equityDiff = Math.abs(predEquity - actEquity);
   const equityRef = Math.max(Math.abs(actEquity), 1);
   const equityRatio = equityDiff / equityRef;
   const equityAccuracy = equityRatio < 0.15 ? 100 : equityRatio < 0.3 ? 80 : equityRatio < 0.5 ? 60 : equityRatio < 1.0 ? 30 : 10;
-  const equityComponent = equityAccuracy * 0.3;
+  const equityComponent = equityAccuracy * 0.25;
 
-  // 2. Sync rate component (30%)
-  const syncComponent = syncRate * 0.3;
+  // 2. Sync rate component (25%)
+  const syncComponent = syncRate * 0.25;
 
-  // 3. Direction component (20%): equity sign match
+  // 3. Direction component (15%): equity sign match
   const sameSign =
     (predEquity >= 0 && actEquity >= 0) || (predEquity < 0 && actEquity < 0);
   const directionScore = sameSign ? 100 : 20;
-  const directionComponent = directionScore * 0.2;
+  const directionComponent = directionScore * 0.15;
 
-  // 4. Impairment prediction accuracy (20%)
+  // 4. Impairment prediction accuracy (15%)
   const totalImpairment = stage.data?.summary?.totalImpairment || 0;
+  let impairmentAccuracy;
   if (totalImpairment === 0) {
     const dealGW = stage.data?.deal?.assets?.goodwill || 0;
     const dealOthers = stage.data?.deal?.assets?.others || 0;
@@ -563,30 +564,38 @@ function calcManagementEyeScore(prediction, actual, stage, syncRate) {
     const predTotalLoss = predGWLoss + predOthersLoss;
     const maxRef = Math.max(dealGW + dealOthers, 1);
     const lossRatio = predTotalLoss / maxRef;
-    const impairmentAccuracy = lossRatio < 0.1 ? 100 : lossRatio < 0.3 ? 70 : 40;
-    return Math.round(equityComponent + syncComponent + directionComponent + impairmentAccuracy * 0.2);
+    impairmentAccuracy = lossRatio < 0.1 ? 100 : lossRatio < 0.3 ? 70 : 40;
+  } else {
+    const dealGW = stage.data?.deal?.assets?.goodwill || 0;
+    const dealOthers = stage.data?.deal?.assets?.others || 0;
+    const predGWLoss = Math.max(0, dealGW - (prediction.assets.goodwill || 0));
+    const predOthersLoss = Math.max(0, dealOthers - (prediction.assets.others || 0));
+    const predImpairment = predGWLoss + predOthersLoss;
+    const diff = Math.abs(predImpairment - totalImpairment);
+    const ref = Math.max(totalImpairment, 1);
+    const ratio = diff / ref;
+    impairmentAccuracy = ratio < 0.2 ? 100 : ratio < 0.5 ? 70 : ratio < 1.0 ? 40 : 20;
   }
+  const impairmentComponent = impairmentAccuracy * 0.15;
 
-  const dealGW = stage.data?.deal?.assets?.goodwill || 0;
-  const dealOthers = stage.data?.deal?.assets?.others || 0;
-  const predGWLoss = Math.max(0, dealGW - (prediction.assets.goodwill || 0));
-  const predOthersLoss = Math.max(0, dealOthers - (prediction.assets.others || 0));
-  const predImpairment = predGWLoss + predOthersLoss;
+  // 5. Net cash (cash - debt) prediction accuracy (20%)
+  const predNetCash = (prediction.assets.cash || 0) - (prediction.liabilities.debt || 0);
+  const actNetCash = (actual.assets.cash || 0) - (actual.liabilities.debt || 0);
+  const netCashDiff = Math.abs(predNetCash - actNetCash);
+  const netCashRef = Math.max(Math.abs(actNetCash), 1);
+  const netCashRatio = netCashDiff / netCashRef;
+  const netCashAccuracy = netCashRatio < 0.15 ? 100 : netCashRatio < 0.3 ? 80 : netCashRatio < 0.5 ? 60 : netCashRatio < 1.0 ? 30 : 10;
+  const netCashComponent = netCashAccuracy * 0.2;
 
-  const diff = Math.abs(predImpairment - totalImpairment);
-  const ref = Math.max(totalImpairment, 1);
-  const ratio = diff / ref;
-  const impairmentAccuracy = ratio < 0.2 ? 100 : ratio < 0.5 ? 70 : ratio < 1.0 ? 40 : 20;
-
-  return Math.round(equityComponent + syncComponent + directionComponent + impairmentAccuracy * 0.2);
+  return Math.round(equityComponent + syncComponent + directionComponent + impairmentComponent + netCashComponent);
 }
 
 function getManagementEyeRank(score) {
-  if (score >= 90) return { label: "S", color: "text-yellow-300", desc: "卓越した経営眼!" };
-  if (score >= 75) return { label: "A", color: "text-green-400", desc: "優れた分析力!" };
-  if (score >= 50) return { label: "B", color: "text-blue-400", desc: "基礎は押さえている" };
-  if (score >= 30) return { label: "C", color: "text-slate-300", desc: "まだまだこれから" };
-  return { label: "D", color: "text-red-400", desc: "まだ伸びしろあり" };
+  if (score >= 80) return { label: "S", color: "text-yellow-300", desc: "卓越した経営眼!" };
+  if (score >= 60) return { label: "A", color: "text-green-400", desc: "優れた分析力!" };
+  if (score >= 40) return { label: "B", color: "text-blue-400", desc: "筋は悪くない" };
+  if (score >= 20) return { label: "C", color: "text-slate-300", desc: "もう少し!" };
+  return { label: "D", color: "text-red-400", desc: "次はがんばろう!" };
 }
 
 /**
@@ -719,8 +728,8 @@ export default function ResultSummary({ prediction, actual, stage, postDeal, onR
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.3 }}
           style={{
-            color: managementEyeScore >= 75 ? "#4ade80" : managementEyeScore >= 50 ? "#facc15" : "#f87171",
-            textShadow: `0 0 24px ${managementEyeScore >= 75 ? "rgba(74,222,128,0.5)" : managementEyeScore >= 50 ? "rgba(250,204,21,0.5)" : "rgba(248,113,113,0.5)"}`,
+            color: managementEyeScore >= 60 ? "#4ade80" : managementEyeScore >= 40 ? "#facc15" : "#f87171",
+            textShadow: `0 0 24px ${managementEyeScore >= 60 ? "rgba(74,222,128,0.5)" : managementEyeScore >= 40 ? "rgba(250,204,21,0.5)" : "rgba(248,113,113,0.5)"}`,
           }}
         >
           {managementEyeScore}
@@ -794,18 +803,22 @@ export default function ResultSummary({ prediction, actual, stage, postDeal, onR
             <div>
               <div className="text-slate-300 font-bold mb-0.5">経営眼スコア (0〜100)</div>
               <div className="bg-slate-900/50 rounded px-2 py-1.5 font-mono text-[9px] space-y-1">
-                <div className="text-cyan-300/80">① 純資産予測精度 × <span className="text-white font-bold">30%</span></div>
+                <div className="text-cyan-300/80">① 純資産予測精度 × <span className="text-white font-bold">25%</span></div>
                 <div className="pl-3 text-slate-500">
                   誤差率&lt;15%→100 / &lt;30%→80 / &lt;50%→60 / &lt;100%→30 / else→10
                 </div>
-                <div className="text-cyan-300/80">② シンクロ率 × <span className="text-white font-bold">30%</span></div>
-                <div className="text-cyan-300/80">③ 方向性スコア × <span className="text-white font-bold">20%</span></div>
+                <div className="text-cyan-300/80">② シンクロ率 × <span className="text-white font-bold">25%</span></div>
+                <div className="text-cyan-300/80">③ 方向性スコア × <span className="text-white font-bold">15%</span></div>
                 <div className="pl-3 text-slate-500">純資産の符号が一致 → 100点 / 不一致 → 20点</div>
-                <div className="text-cyan-300/80">④ 減損予測精度 × <span className="text-white font-bold">20%</span></div>
+                <div className="text-cyan-300/80">④ 減損予測精度 × <span className="text-white font-bold">15%</span></div>
                 <div className="pl-3 text-slate-500">
                   予測減損 ≒ 実績: 誤差率&lt;20%→100 / &lt;50%→70 / &lt;100%→40 / else→20
                 </div>
-                <div className="mt-1 text-green-300/80 font-bold">経営眼 = ① + ② + ③ + ④</div>
+                <div className="text-cyan-300/80">⑤ ネットキャッシュ予測精度 × <span className="text-white font-bold">20%</span></div>
+                <div className="pl-3 text-slate-500">
+                  (現預金−有利子負債)の誤差率&lt;15%→100 / &lt;30%→80 / &lt;50%→60 / &lt;100%→30 / else→10
+                </div>
+                <div className="mt-1 text-green-300/80 font-bold">経営眼 = ① + ② + ③ + ④ + ⑤</div>
               </div>
             </div>
 
@@ -813,11 +826,11 @@ export default function ResultSummary({ prediction, actual, stage, postDeal, onR
             <div>
               <div className="text-slate-300 font-bold mb-0.5">経営眼 SABCD評価</div>
               <div className="flex gap-3 text-[9px]">
-                <span className="text-yellow-300">S: ≥90</span>
-                <span className="text-green-400">A: ≥75</span>
-                <span className="text-blue-400">B: ≥50</span>
-                <span className="text-slate-300">C: ≥30</span>
-                <span className="text-red-400">D: &lt;30</span>
+                <span className="text-yellow-300">S: ≥80</span>
+                <span className="text-green-400">A: ≥60</span>
+                <span className="text-blue-400">B: ≥40</span>
+                <span className="text-slate-300">C: ≥20</span>
+                <span className="text-red-400">D: &lt;20</span>
               </div>
             </div>
           </div>
