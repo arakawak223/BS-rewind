@@ -431,7 +431,7 @@ function App() {
               className="text-xl font-black text-white tracking-tight cursor-pointer hover:text-yellow-300 transition-colors"
               onClick={handleBackToSelect}
             >
-              One Decision
+              "DECISIONS"-Before/After
             </h1>
             <span className="text-xs text-slate-500 hidden sm:inline">
               財務シミュレーションゲーム
@@ -478,7 +478,7 @@ function App() {
                   transition={{ delay: 0.05 }}
                   className="text-3xl font-black text-white mb-3"
                 >
-                  One Decision
+                  "DECISIONS"-Before/After
                 </motion.h2>
                 <motion.p
                   initial={{ y: -10, opacity: 0 }}
@@ -799,7 +799,7 @@ function App() {
 
       {/* Footer */}
       <footer className="border-t border-slate-800 mt-16 py-6 text-center text-xs text-slate-600">
-        One Decision - 歴史から学ぶ財務シミュレーション
+        "DECISIONS"-Before/After - 歴史から学ぶ財務シミュレーション
       </footer>
     </div>
   );

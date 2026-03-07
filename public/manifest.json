@@ -1,6 +1,6 @@
 {
-  "name": "One Decision - B/S変化予測シミュレーション",
-  "short_name": "One Decision",
+  "name": "\"DECISIONS\"-Before/After - B/S変化予測シミュレーション",
+  "short_name": "\"DECISIONS\"-Before/After",
   "description": "歴史的な経営判断のその後を予測せよ",
   "start_url": "/BS-rewind/",
   "scope": "/BS-rewind/",
